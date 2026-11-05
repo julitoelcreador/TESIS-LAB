@@ -1,0 +1,652 @@
+
+{% extends "base.html" %}
+
+{% block title %}Agenda de tutorías | TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+    .agenda-page {
+        max-width: 1450px;
+        margin: 0 auto;
+        padding: 25px;
+        color: #17243b;
+    }
+
+    .agenda-encabezado {
+        margin-bottom: 25px;
+    }
+
+    .agenda-etiqueta {
+        color: #4775bd;
+        font-size: 12px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .agenda-encabezado h1 {
+        font-size: 29px;
+        margin: 8px 0;
+    }
+
+    .agenda-encabezado p {
+        color: #718096;
+        margin: 0;
+    }
+
+    /* DISTRIBUCIÓN PRINCIPAL */
+
+    .agenda-layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1.8fr) minmax(280px, .85fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    .agenda-seccion {
+        margin-bottom: 30px;
+    }
+
+    .agenda-seccion h2 {
+        font-size: 20px;
+        margin: 0 0 15px;
+    }
+
+    .agenda-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 15px;
+    }
+
+    .reunion-card,
+    .panel-card {
+        background: white;
+        border: 1px solid #e5eaf1;
+        border-radius: 13px;
+        padding: 17px;
+        box-shadow: 0 4px 15px rgba(20, 40, 70, .04);
+        min-width: 0;
+    }
+
+    .reunion-fecha {
+        color: #4775bd;
+        font-size: 12px;
+        font-weight: 800;
+        margin-bottom: 9px;
+    }
+
+    .reunion-card h3 {
+        font-size: 16px;
+        margin: 0 0 11px;
+    }
+
+    .reunion-dato {
+        color: #64748b;
+        font-size: 13px;
+        margin: 7px 0;
+        line-height: 1.5;
+    }
+
+    .reunion-dato strong {
+        color: #26364d;
+    }
+
+    .reunion-acciones {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 14px;
+    }
+
+    .agenda-btn {
+        display: inline-block;
+        padding: 9px 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: 700;
+    }
+
+    .agenda-btn-meet {
+        background: #eaf1ff;
+        color: #2856a1;
+    }
+
+    .agenda-btn-detalle {
+        background: #edf0f5;
+        color: #35445b;
+    }
+
+    .agenda-btn-guardar {
+        background: #173d75;
+        color: white;
+    }
+
+    .reunion-formulario {
+        border-top: 1px solid #e8edf3;
+        margin-top: 15px;
+        padding-top: 12px;
+    }
+
+    .reunion-formulario label,
+    .panel-formulario label {
+        display: block;
+        font-size: 12px;
+        font-weight: 700;
+        margin: 11px 0 5px;
+    }
+
+    .reunion-formulario textarea,
+    .panel-formulario textarea,
+    .panel-formulario input,
+    .panel-formulario select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #dce3ed;
+        border-radius: 8px;
+        font: inherit;
+        font-size: 12px;
+        background: white;
+        color: #26364d;
+    }
+
+    .reunion-formulario textarea,
+    .panel-formulario textarea {
+        min-height: 65px;
+        resize: vertical;
+    }
+
+    .reunion-realizada {
+        border-left: 4px solid #27966b;
+    }
+
+    .reunion-pendiente {
+        border-left: 4px solid #d49a35;
+    }
+
+    .agenda-vacia {
+        background: #f7f9fc;
+        border: 1px dashed #cbd5e1;
+        padding: 22px;
+        border-radius: 11px;
+        color: #718096;
+        text-align: center;
+        grid-column: 1 / -1;
+        font-size: 13px;
+    }
+
+    /* PANEL DERECHO */
+
+    .agenda-lateral {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        position: sticky;
+        top: 20px;
+    }
+
+    .panel-card h2 {
+        font-size: 17px;
+        margin: 0 0 15px;
+    }
+
+    .solicitud-card {
+        border: 1px solid #e8edf4;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 11px;
+        background: #fbfcfe;
+    }
+
+    .solicitud-card h3 {
+        font-size: 14px;
+        margin: 0 0 7px;
+    }
+
+    .solicitud-card p {
+        font-size: 12px;
+        color: #64748b;
+        line-height: 1.5;
+        margin: 5px 0;
+    }
+
+    .solicitud-formulario {
+        border-top: 1px solid #e8edf3;
+        padding-top: 10px;
+        margin-top: 10px;
+    }
+
+    .solicitud-formulario label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        margin: 8px 0 5px;
+    }
+
+    .solicitud-formulario input {
+        width: 100%;
+        padding: 9px;
+        border: 1px solid #dce3ed;
+        border-radius: 7px;
+        font-size: 12px;
+    }
+
+    .solicitud-formulario button {
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .panel-formulario button {
+        width: 100%;
+        margin-top: 14px;
+    }
+
+    .panel-ayuda {
+        font-size: 11px;
+        color: #8290a3;
+        line-height: 1.5;
+        margin-top: 10px;
+    }
+
+    .reunion-resultados {
+        background: #f7f9fc;
+        border-radius: 9px;
+        padding: 12px;
+        margin-top: 12px;
+        font-size: 13px;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+    .reunion-resultados p {
+        margin: 5px 0 12px;
+    }
+
+    @media (max-width: 950px) {
+        .agenda-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .agenda-lateral {
+            position: static;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 650px) {
+        .agenda-page {
+            padding: 15px;
+        }
+
+        .agenda-grid,
+        .agenda-lateral {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="agenda-page">
+
+    <header class="agenda-encabezado">
+        <span class="agenda-etiqueta">Módulo investigación</span>
+        <h1>Agenda de tutorías</h1>
+        <p>Reuniones, acuerdos y compromisos para el siguiente encuentro.</p>
+    </header>
+
+    <div class="agenda-layout">
+
+        <!-- COLUMNA IZQUIERDA -->
+
+        <main>
+
+            <section class="agenda-seccion">
+                <h2>📅 Próximas tutorías</h2>
+
+                <div class="agenda-grid">
+
+                    {% for reunion in proximas %}
+
+                        <article class="reunion-card">
+
+                            <div class="reunion-fecha">
+                                {{ reunion.fecha_solicitada }}
+                                · {{ reunion.hora_solicitada }}
+                            </div>
+
+                            <h3>{{ reunion.motivo }}</h3>
+
+                            <p class="reunion-dato">
+                                <strong>Grupo:</strong>
+                                {{ reunion.grupo_nombre or "Sin grupo" }}
+                            </p>
+
+                            <p class="reunion-dato">
+                                <strong>Investigación:</strong>
+                                {{ reunion.investigacion_titulo }}
+                            </p>
+
+                            {% if reunion.estudiante_nombre %}
+                                <p class="reunion-dato">
+                                    <strong>Solicitada por:</strong>
+                                    {{ reunion.estudiante_nombre }}
+                                </p>
+                            {% endif %}
+
+                            <div class="reunion-acciones">
+
+                                {% if reunion.enlace_meet %}
+                                    <a href="{{ reunion.enlace_meet }}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="agenda-btn agenda-btn-meet">
+                                        Videollamada
+                                    </a>
+                                {% endif %}
+
+                                <a href="{{ url_for('detalle_investigacion', investigacion_id=reunion.investigacion_id) }}"
+                                   class="agenda-btn agenda-btn-detalle">
+                                    Ver investigación
+                                </a>
+
+                            </div>
+
+                            <form method="POST"
+                                  action="{{ url_for('finalizar_tutoria', reunion_id=reunion.id, origen=reunion.origen) }}"
+                                  class="reunion-formulario">
+
+                                <label>Acuerdos de la tutoría</label>
+                                <textarea name="acuerdos"
+                                          placeholder="¿Qué se acordó?"
+                                          required></textarea>
+
+                                <label>Compromisos del grupo</label>
+                                <textarea name="compromisos"
+                                          placeholder="¿Qué debe realizar el grupo?"
+                                          required></textarea>
+
+                                <button type="submit"
+                                        class="agenda-btn agenda-btn-guardar">
+                                    Registrar como realizada
+                                </button>
+
+                            </form>
+
+                        </article>
+
+                    {% else %}
+
+                        <div class="agenda-vacia">
+                            No hay próximas tutorías aceptadas o programadas.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+            </section>
+
+            <section class="agenda-seccion">
+
+                <h2>⏳ Tutorías pendientes de registro</h2>
+
+                <div class="agenda-grid">
+
+                    {% for reunion in pendientes %}
+
+                        <article class="reunion-card reunion-pendiente">
+
+                            <div class="reunion-fecha">
+                                {{ reunion.fecha_solicitada }}
+                                · {{ reunion.hora_solicitada }}
+                            </div>
+
+                            <h3>{{ reunion.motivo }}</h3>
+
+                            <p class="reunion-dato">
+                                <strong>Grupo:</strong>
+                                {{ reunion.grupo_nombre or "Sin grupo" }}
+                            </p>
+
+                            <p class="reunion-dato">
+                                <strong>Investigación:</strong>
+                                {{ reunion.investigacion_titulo }}
+                            </p>
+
+                            <form method="POST"
+                                  action="{{ url_for('finalizar_tutoria', reunion_id=reunion.id, origen=reunion.origen) }}"
+                                  class="reunion-formulario">
+
+                                <label>Acuerdos</label>
+                                <textarea name="acuerdos" required></textarea>
+
+                                <label>Compromisos</label>
+                                <textarea name="compromisos" required></textarea>
+
+                                <button type="submit"
+                                        class="agenda-btn agenda-btn-guardar">
+                                    Registrar tutoría realizada
+                                </button>
+
+                            </form>
+
+                        </article>
+
+                    {% else %}
+
+                        <div class="agenda-vacia">
+                            No hay tutorías pasadas pendientes de registro.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+            <section class="agenda-seccion">
+
+                <h2>✓ Tutorías realizadas</h2>
+
+                <div class="agenda-grid">
+
+                    {% for reunion in realizadas %}
+
+                        <article class="reunion-card reunion-realizada">
+
+                            <div class="reunion-fecha">
+                                Realizada: {{ reunion.fecha_realizada }}
+                            </div>
+
+                            <h3>{{ reunion.motivo }}</h3>
+
+                            <p class="reunion-dato">
+                                <strong>Grupo:</strong>
+                                {{ reunion.grupo_nombre or "Sin grupo" }}
+                            </p>
+
+                            <p class="reunion-dato">
+                                <strong>Investigación:</strong>
+                                {{ reunion.investigacion_titulo }}
+                            </p>
+
+                            <div class="reunion-resultados">
+                                <strong>Acuerdos:</strong>
+                                <p>{{ reunion.acuerdos or "Sin acuerdos registrados." }}</p>
+
+                                <strong>Compromisos:</strong>
+                                <p>{{ reunion.compromisos or "Sin compromisos registrados." }}</p>
+                            </div>
+
+                            {% if reunion.enlace_meet %}
+                                <div class="reunion-acciones">
+                                    <a href="{{ reunion.enlace_meet }}"
+                                       target="_blank"
+                                       rel="noopener noreferrer"
+                                       class="agenda-btn agenda-btn-meet">
+                                        Abrir enlace de reunión
+                                    </a>
+                                </div>
+                            {% endif %}
+
+                        </article>
+
+                    {% else %}
+
+                        <div class="agenda-vacia">
+                            Todavía no hay tutorías registradas como realizadas.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+        </main>
+
+        <!-- COLUMNA DERECHA -->
+
+        <aside class="agenda-lateral">
+
+            <!-- SOLICITUDES -->
+
+            <section class="panel-card">
+
+                <h2>📩 Solicitudes de los grupos</h2>
+
+                {% for solicitud in solicitudes %}
+
+                    <article class="solicitud-card">
+
+                        <h3>{{ solicitud.grupo_nombre or "Grupo sin nombre" }}</h3>
+
+                        <p>{{ solicitud.motivo }}</p>
+
+                        <p>
+                            {{ solicitud.fecha_solicitada }}
+                            · {{ solicitud.hora_solicitada }}
+                        </p>
+
+                        <p>
+                            <strong>Estudiante:</strong>
+                            {{ solicitud.estudiante_nombre }}
+                        </p>
+
+                        <form method="POST"
+                              action="{{ url_for('responder_reunion', reunion_id=solicitud.id) }}"
+                              class="solicitud-formulario">
+
+                            <input type="hidden" name="estado" value="Aceptada">
+
+                            <label>Enlace de Google Meet</label>
+
+                            <input type="url"
+                                   name="enlace_meet"
+                                   placeholder="https://meet.google.com/..."
+                                   required>
+
+                            <button type="submit"
+                                    class="agenda-btn agenda-btn-guardar">
+                                Aceptar y agendar
+                            </button>
+
+                        </form>
+
+                    </article>
+
+                {% else %}
+
+                    <div class="agenda-vacia">
+                        No hay solicitudes nuevas.
+                    </div>
+
+                {% endfor %}
+
+            </section>
+
+            <!-- PROGRAMAR REUNIÓN -->
+
+            <section class="panel-card">
+
+                <h2>＋ Programar reunión</h2>
+
+                <form method="POST"
+                      action="{{ url_for('programar_tutoria') }}"
+                      class="panel-formulario">
+
+                    <label>Grupo e investigación</label>
+
+                    <select name="investigacion_id" required>
+
+                        <option value="">Seleccionar grupo</option>
+
+                        {% for investigacion in investigaciones_tutor %}
+
+                            <option value="{{ investigacion.id }}">
+                                {{ investigacion.grupo_nombre or "Sin grupo" }}
+                                — {{ investigacion.titulo }}
+                            </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <label>Motivo</label>
+
+                    <input type="text"
+                           name="motivo"
+                           placeholder="Ej. Revisión del capítulo II"
+                           required>
+
+                    <label>Fecha</label>
+
+                    <input type="date"
+                           name="fecha"
+                           required>
+
+                    <label>Hora</label>
+
+                    <input type="time"
+                           name="hora"
+                           required>
+
+                    <label>Duración</label>
+
+                    <select name="duracion">
+                        <option value="15">15 minutos</option>
+                        <option value="30" selected>30 minutos</option>
+                        <option value="45">45 minutos</option>
+                        <option value="60">60 minutos</option>
+                    </select>
+
+                    <label>Enlace de Google Meet (opcional)</label>
+
+                    <input type="url"
+                           name="enlace_meet"
+                           placeholder="https://meet.google.com/...">
+
+                    <button type="submit"
+                            class="agenda-btn agenda-btn-guardar">
+                        Programar reunión
+                    </button>
+
+                </form>
+
+                <p class="panel-ayuda">
+                    Podés programar una tutoría directamente para cualquiera
+                    de tus investigaciones, aunque el grupo no haya enviado
+                    una solicitud.
+                </p>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+</div>
+
+{% endblock %}

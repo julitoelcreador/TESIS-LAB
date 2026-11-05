@@ -1,0 +1,756 @@
+{% extends "base.html" %}
+
+{% block title %}Grupos de investigación · AulaInvestiga{% endblock %}
+
+{% block content %}
+
+<style>
+.grupos-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 8px 0 35px;
+}
+
+.grupos-hero {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 27px;
+    margin-bottom: 22px;
+    border-radius: 20px;
+    background: linear-gradient(115deg, #08152d, #103b75 65%, #0878ed);
+    color: #fff;
+    box-shadow: 0 10px 26px rgba(8, 21, 45, .14);
+}
+
+.grupos-hero-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 58px;
+    height: 58px;
+    border-radius: 17px;
+    background: rgba(255,255,255,.13);
+    font-size: 29px;
+}
+
+.grupos-hero h1 {
+    margin: 0 0 7px;
+    color: #fff;
+    font-size: clamp(23px, 4vw, 30px);
+    font-weight: 850;
+}
+
+.grupos-hero p {
+    margin: 0;
+    color: #d5e5ff;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.grupos-eyebrow {
+    display: block;
+    margin-bottom: 7px;
+    color: #9bcaff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+}
+
+.grupos-reglas {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    padding: 18px 20px;
+    margin-bottom: 23px;
+    border: 1px solid #cfe2ff;
+    border-radius: 15px;
+    background: #f0f6ff;
+    color: #16355e;
+}
+
+.grupos-reglas-icon {
+    flex-shrink: 0;
+    font-size: 22px;
+}
+
+.grupos-reglas strong {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 13px;
+}
+
+.grupos-reglas p {
+    margin: 0;
+    color: #49617e;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.grupos-card {
+    padding: 24px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color, #e3eaf3);
+    border-radius: 19px;
+    background: var(--card-bg, #fff);
+    box-shadow: 0 6px 20px rgba(15, 35, 65, .045);
+}
+
+.grupos-section-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 19px;
+}
+
+.grupos-section-head h2 {
+    margin: 0 0 6px;
+    color: var(--heading-color, #102343);
+    font-size: 20px;
+    font-weight: 850;
+}
+
+.grupos-section-head p {
+    margin: 0;
+    color: var(--muted-color, #718096);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.grupos-eyebrow-light {
+    display: block;
+    margin-bottom: 7px;
+    color: #0878ed;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.grupos-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    border-radius: 30px;
+    background: #eaf3ff;
+    color: #0759b5;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.grupos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.grupos-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 15px 16px;
+    border: 1px solid var(--border-color, #e5eaf2);
+    border-radius: 13px;
+    background: var(--card-bg, #fff);
+    color: inherit;
+    text-decoration: none;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+}
+
+a.grupos-row:hover {
+    transform: translateY(-2px);
+    border-color: #a7ceff;
+    box-shadow: 0 5px 15px rgba(15, 65, 125, .07);
+}
+
+.grupos-row-main {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+.grupos-row-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 43px;
+    height: 43px;
+    border-radius: 12px;
+    background: #eaf3ff;
+    font-size: 21px;
+}
+
+.grupos-row-info {
+    min-width: 0;
+}
+
+.grupos-row-info strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--heading-color, #102343);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.grupos-row-info span {
+    display: block;
+    color: var(--muted-color, #718096);
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.grupos-row-arrow {
+    flex-shrink: 0;
+    color: #6b8bb4;
+    font-size: 23px;
+}
+
+.grupos-empty {
+    padding: 30px 20px;
+    border: 1px dashed var(--border-color, #d8e1ed);
+    border-radius: 15px;
+    text-align: center;
+}
+
+.grupos-empty-icon {
+    margin-bottom: 10px;
+    font-size: 34px;
+}
+
+.grupos-empty h3 {
+    margin: 0 0 7px;
+    color: var(--heading-color, #102343);
+    font-size: 17px;
+}
+
+.grupos-empty p {
+    margin: 0 0 17px;
+    color: var(--muted-color, #718096);
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.grupos-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 17px;
+    border: 0;
+    border-radius: 11px;
+    background: linear-gradient(110deg, #0866d8, #087ff5);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    cursor: pointer;
+    transition: transform .2s, box-shadow .2s;
+}
+
+.grupos-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 5px 13px rgba(8, 112, 226, .2);
+}
+
+.grupos-btn-secondary {
+    background: #edf2f8;
+    color: #294665;
+}
+
+.grupos-form {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.grupos-form label {
+    margin-top: 5px;
+    color: var(--heading-color, #253858);
+    font-size: 12px;
+    font-weight: 750;
+}
+
+.grupos-form select {
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 12px 13px;
+    border: 1px solid var(--border-color, #dce4ef);
+    border-radius: 11px;
+    background: var(--input-bg, #fff);
+    color: var(--text-color, #172b4d);
+    font: inherit;
+    font-size: 13px;
+}
+
+.grupos-form select:focus {
+    outline: 2px solid #9bcaff;
+    border-color: #0878ed;
+}
+
+.grupos-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.grupos-member {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 14px;
+    border: 1px solid var(--border-color, #e5eaf2);
+    border-radius: 13px;
+    background: var(--card-bg, #fff);
+}
+
+.grupos-member-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    background: #eaf3ff;
+    color: #0759b5;
+    font-size: 18px;
+    font-weight: 850;
+}
+
+.grupos-member-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.grupos-member-info strong {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--heading-color, #102343);
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.grupos-member-info span {
+    display: inline-block;
+    color: var(--muted-color, #718096);
+    font-size: 11px;
+}
+
+.grupos-leader-tag {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 4px;
+    margin-top: 3px;
+    padding: 5px 8px;
+    border-radius: 20px;
+    background: #fff4d8;
+    color: #8b5c00 !important;
+    font-weight: 800;
+}
+
+.grupos-welcome {
+    padding: 17px 19px;
+    margin-bottom: 22px;
+    border: 1px solid #ccebdc;
+    border-radius: 14px;
+    background: #effbf5;
+}
+
+.grupos-welcome strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #176541;
+    font-size: 14px;
+}
+
+.grupos-welcome p {
+    margin: 0;
+    color: #397456;
+    font-size: 12px;
+    line-height: 1.8;
+}
+
+.grupos-subtitle {
+    margin: 24px 0 13px;
+    color: var(--heading-color, #102343);
+    font-size: 15px;
+    font-weight: 850;
+}
+
+@media (max-width: 600px) {
+    .grupos-hero {
+        padding: 21px 17px;
+        gap: 12px;
+        border-radius: 16px;
+    }
+
+    .grupos-hero-icon {
+        width: 46px;
+        height: 46px;
+        border-radius: 13px;
+        font-size: 24px;
+    }
+
+    .grupos-hero p {
+        font-size: 12px;
+    }
+
+    .grupos-card {
+        padding: 18px 14px;
+    }
+
+    .grupos-row {
+        padding: 12px 10px;
+    }
+
+    .grupos-row-icon {
+        width: 37px;
+        height: 37px;
+        font-size: 18px;
+    }
+
+    .grupos-member {
+        padding: 12px 10px;
+        gap: 10px;
+    }
+
+    .grupos-actions {
+        width: 100%;
+    }
+}
+</style>
+
+<div class="grupos-page">
+
+    <!-- ENCABEZADO -->
+
+    <section class="grupos-hero">
+        <div class="grupos-hero-icon">👥</div>
+
+        <div>
+            <span class="grupos-eyebrow">AULAINVESTIGA · TRABAJO COLABORATIVO</span>
+            <h1>Grupos de investigación</h1>
+            <p>Forma tu equipo y organiza el trabajo de tu investigación académica.</p>
+        </div>
+    </section>
+
+    <!-- REGLAS CORRECTAS -->
+
+    <div class="grupos-reglas">
+        <div class="grupos-reglas-icon">📌</div>
+        <div>
+            <strong>Reglas del grupo</strong>
+            <p>
+                Puedes trabajar individualmente o formar un equipo.
+                Cada grupo admite de <strong>1 a 3 estudiantes</strong>.
+                El líder puede comenzar solo e invitar a sus compañeros cuando lo desee.
+            </p>
+        </div>
+    </div>
+
+
+    <!-- ADMINISTRADOR Y TUTOR -->
+
+    {% if usuario is defined and usuario.rol != 'estudiante' %}
+
+        <section class="grupos-card">
+            <div class="grupos-section-head">
+                <div>
+                    <h2>Grupos registrados</h2>
+                    <p>Consulta los equipos de investigación y sus integrantes.</p>
+                </div>
+                <span class="grupos-count">👥 {{ grupos|length }} grupo(s)</span>
+            </div>
+
+            {% if grupos %}
+                <div class="grupos-list">
+                    {% for grupo_item in grupos %}
+                        <a href="{{ url_for('grupo_detalle', grupo_id=grupo_item['id']) }}"
+                           class="grupos-row">
+
+                            <div class="grupos-row-main">
+                                <div class="grupos-row-icon">👥</div>
+                                <div class="grupos-row-info">
+                                    <strong>{{ grupo_item['nombre'] }}</strong>
+                                    <span>{{ grupo_item['cantidad_miembros'] }} de 3 integrantes</span>
+                                </div>
+                            </div>
+
+                            <span class="grupos-row-arrow">›</span>
+                        </a>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="grupos-empty">
+                    <div class="grupos-empty-icon">👥</div>
+                    <h3>No hay grupos registrados</h3>
+                    <p>Cuando los estudiantes creen sus grupos, aparecerán aquí.</p>
+                </div>
+            {% endif %}
+        </section>
+
+    {% else %}
+
+        <!-- ESTUDIANTE SIN GRUPO -->
+
+        {% if not grupo %}
+
+            <section class="grupos-card">
+                <div class="grupos-section-head">
+                    <div>
+                        <span class="grupos-eyebrow-light">COMIENZA TU PROYECTO</span>
+                        <h2>Crea tu grupo</h2>
+                        <p>Puedes comenzar solo. Después podrás invitar hasta dos compañeros.</p>
+                    </div>
+                </div>
+
+                <form method="POST"
+                      action="{{ url_for('grupos') }}"
+                      class="grupos-form">
+
+                    <button class="grupos-btn" type="submit">
+                        ➕ Crear mi grupo
+                    </button>
+                </form>
+            </section>
+
+              <!-- INVITACIONES RECIBIDAS -->
+
+            {% if invitaciones %}
+                <section class="grupos-card">
+                    <div class="grupos-section-head">
+                        <div>
+                            <h2>📩 Invitaciones recibidas</h2>
+                            <p>Revisa quién te invita y conoce a sus compañeros antes de decidir.</p>
+                        </div>
+                        <span class="grupos-count">
+                            ✉️ {{ invitaciones|length }} pendiente(s)
+                        </span>
+                    </div>
+
+                    <div class="grupos-list">
+                        {% for invitacion in invitaciones %}
+
+                            <div class="grupos-row" style="align-items: center; flex-wrap: wrap;">
+
+                                <!-- INFORMACIÓN DEL GRUPO, A LA IZQUIERDA -->
+
+                                <div class="grupos-row-main"
+                                     style="flex: 1 1 260px; align-items: flex-start;">
+
+                                    <div class="grupos-row-icon">👥</div>
+
+                                    <div class="grupos-row-info">
+
+                                        <strong style="font-size: 15px;">
+                                            Invitación al {{ invitacion['grupo_nombre'] }}
+                                        </strong>
+
+                                        <span style="margin-bottom: 10px;">
+                                            📩 Invitado por:
+                                            <strong style="display: inline; color: var(--heading-color, #102343);">
+                                                {{ invitacion['lider_nombre'] or 'Líder del grupo' }}
+                                            </strong>
+                                        </span>
+
+                                        <span style="margin-bottom: 7px;">
+                                            👑 <strong style="display: inline;">Líder:</strong>
+                                            {{ invitacion['lider_nombre'] or 'No disponible' }}
+                                        </span>
+
+                                        <span style="margin-bottom: 7px;">
+                                            👨‍🎓 <strong style="display: inline;">Compañeros del grupo:</strong>
+                                        </span>
+
+                                        {% if invitacion['integrantes_nombres'] %}
+                                            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin: 5px 0 10px;">
+
+                                                {% for nombre in invitacion['integrantes_nombres'].split(', ') %}
+                                                    <span style="
+                                                        display: inline-block;
+                                                        padding: 6px 9px;
+                                                        border-radius: 8px;
+                                                        background: var(--input-bg, #f0f6ff);
+                                                        border: 1px solid var(--border-color, #dce8f7);
+                                                        color: var(--text-color, #294665);
+                                                        font-size: 11px;
+                                                        overflow-wrap: anywhere;
+                                                    ">
+                                                        👤 {{ nombre }}
+                                                    </span>
+                                                {% endfor %}
+
+                                            </div>
+                                        {% else %}
+                                            <span style="margin-bottom: 10px;">
+                                                Todavía no hay compañeros registrados.
+                                            </span>
+                                        {% endif %}
+
+                                        {% if invitacion['cantidad_miembros'] is defined %}
+                                            <span style="
+                                                margin-top: 5px;
+                                                color: #0878ed;
+                                                font-weight: 800;
+                                            ">
+                                                👥 {{ invitacion['cantidad_miembros'] }} de 3 integrantes
+                                                {% if invitacion['cantidad_miembros'] < 3 %}
+                                                    · {{ 3 - invitacion['cantidad_miembros'] }} cupo(s) disponible(s)
+                                                {% else %}
+                                                    · Grupo completo
+                                                {% endif %}
+                                            </span>
+                                        {% endif %}
+
+                                    </div>
+                                </div>
+
+                                <!-- BOTONES A LA DERECHA, COMO TE GUSTAN -->
+
+                                <div class="grupos-actions"
+                                     style="flex: 0 0 auto; margin-left: auto; justify-content: flex-end; align-self: center;">
+
+                                    <form method="POST"
+                                          action="{{ url_for('responder_invitacion', invitacion_id=invitacion['id'], accion='aceptar') }}">
+
+                                        <button class="grupos-btn" type="submit">
+                                            ✓ Aceptar
+                                        </button>
+
+                                    </form>
+
+                                    <form method="POST"
+                                          action="{{ url_for('responder_invitacion', invitacion_id=invitacion['id'], accion='rechazar') }}">
+
+                                        <button class="grupos-btn grupos-btn-secondary" type="submit">
+                                            ✕ Rechazar
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+        {% else %}
+
+            <!-- ESTUDIANTE CON GRUPO -->
+
+            <section class="grupos-card">
+
+                <div class="grupos-section-head">
+                    <div>
+                        <span class="grupos-eyebrow-light">AULAINVESTIGA · EQUIPO</span>
+                        <h2>👥 {{ grupo['nombre'] }}</h2>
+                        <p>Consulta a tus compañeros y administra las invitaciones de tu equipo.</p>
+                    </div>
+
+                    <span class="grupos-count">
+                        👤 {{ miembros|length }} de 3 integrantes
+                    </span>
+                </div>
+
+                <div class="grupos-welcome">
+                    <strong>¡Bienvenido al {{ grupo['nombre'] }}!</strong>
+                    <p>
+                        {% if miembros|length < 3 %}
+                            Tu grupo está listo para trabajar. Puedes continuar individualmente
+                            o invitar compañeros hasta alcanzar el máximo de 3 integrantes.
+                        {% else %}
+                            Tu equipo ya alcanzó el máximo de 3 integrantes.
+                        {% endif %}
+                    </p>
+                </div>
+
+                <h3 class="grupos-subtitle">👨‍🎓 Integrantes del grupo</h3>
+
+                {% if miembros %}
+                    <div class="grupos-list">
+                        {% for miembro in miembros %}
+                            <div class="grupos-member">
+
+                                <div class="grupos-member-avatar">
+                                    {{ (miembro['nombre'] or 'U')[0]|upper }}
+                                </div>
+
+                                <div class="grupos-member-info">
+                                    <strong>{{ miembro['nombre'] }} {{ miembro['apellido'] }}</strong>
+
+                                    {% if miembro['es_lider'] %}
+                                        <span class="grupos-leader-tag">👑 Líder del grupo</span>
+                                    {% else %}
+                                        <span>Integrante</span>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="muted">Todavía no hay integrantes registrados.</p>
+                {% endif %}
+
+                <!-- INVITACIONES: SOLO EL LÍDER -->
+
+                {% if grupo['es_lider'] and miembros|length < 3 %}
+
+                    <h3 class="grupos-subtitle">📨 Invitar a un compañero</h3>
+
+                    <p class="muted">
+                        Puedes invitar hasta {{ 3 - miembros|length }}
+                        compañero(s) más. Las invitaciones son opcionales.
+                    </p>
+
+                    {% if estudiantes_disponibles %}
+                        <form method="POST"
+                              action="{{ url_for('invitar_estudiante', grupo_id=grupo['id']) }}"
+                              class="grupos-form">
+
+                            <label for="estudiante_id">Selecciona un estudiante</label>
+
+                            <select id="estudiante_id" name="estudiante_id" required>
+                                <option value="">Selecciona un estudiante</option>
+
+                                {% for estudiante in estudiantes_disponibles %}
+                                    <option value="{{ estudiante['id'] }}">
+                                        {{ estudiante['nombre'] }} {{ estudiante['apellido'] }}
+                                        ({{ estudiante['usuario'] }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                            <div>
+                                <button class="grupos-btn" type="submit">
+                                    📨 Enviar invitación
+                                </button>
+                            </div>
+                        </form>
+                    {% else %}
+                        <p class="muted">
+                            No hay estudiantes disponibles para invitar en este momento.
+                        </p>
+                    {% endif %}
+
+                {% endif %}
+
+            </section>
+
+        {% endif %}
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

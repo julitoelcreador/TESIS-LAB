@@ -1,0 +1,420 @@
+
+/* =====================================
+   CENTRO DE CONTROL INSTITUCIONAL
+===================================== */
+
+.control-header {
+    margin-bottom: 25px;
+}
+
+.control-eyebrow {
+    display: inline-block;
+    margin-bottom: 8px;
+    color: #2876d2;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.control-header h1 {
+    margin: 0 0 12px;
+    color: #192d49;
+    font-size: 27px;
+    font-weight: 800;
+}
+
+.control-header h2 {
+    margin: 0 0 6px;
+    color: #263b58;
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.control-header p {
+    margin: 0;
+    color: #8491a5;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+
+/* PRIMERA FILA: 4 TARJETAS */
+
+.control-metrics-four {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+
+/* SEGUNDA FILA: 3 TARJETAS */
+
+.control-metrics-three {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+
+/* TARJETAS */
+
+.control-card {
+    position: relative;
+    min-width: 0;
+    min-height: 125px;
+    padding: 20px;
+    overflow: hidden;
+    border: 1px solid #e5ebf3;
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 0 3px 12px rgba(25, 45, 73, 0.04);
+}
+
+.control-card-label {
+    display: block;
+    margin-bottom: 13px;
+    color: #718198;
+    font-size: 12px;
+    font-weight: 650;
+}
+
+.control-card strong {
+    display: block;
+    color: #1d3555;
+    font-size: 29px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.control-card-icon {
+    position: absolute;
+    top: 17px;
+    right: 17px;
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    background: #edf4ff;
+    font-size: 18px;
+}
+
+.control-card-description {
+    display: block;
+    margin-top: 8px;
+    color: #8996a9;
+    font-size: 11px;
+}
+
+.control-card-warning {
+    border-color: #f1dfbd;
+    background: #fffdf9;
+}
+
+.control-card-warning .control-card-icon {
+    background: #fff1d8;
+}
+
+.control-card-warning strong {
+    color: #d28a20;
+}
+
+.control-card-warning a {
+    display: inline-block;
+    margin-top: 7px;
+    color: #2876d2;
+    font-size: 11px;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+
+/* ADAPTACIÓN A TABLETS */
+
+@media (max-width: 900px) {
+    .control-metrics-four {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .control-metrics-three {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* ADAPTACIÓN A CELULARES */
+
+@media (max-width: 550px) {
+    .control-header h1 {
+        font-size: 22px;
+    }
+
+    .control-metrics-four,
+    .control-metrics-three {
+        grid-template-columns: 1fr;
+        gap: 11px;
+    }
+
+    .control-card {
+        min-height: 110px;
+    }
+}
+
+
+/* =====================================
+   ALERTAS ACADÉMICAS
+===================================== */
+
+.admin-alerts {
+    margin-top: 28px;
+    margin-bottom: 25px;
+}
+
+.admin-block-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 17px;
+}
+
+.admin-block-heading h2 {
+    margin: 0;
+    color: #1d3452;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.admin-block-heading p {
+    margin: 6px 0 0;
+    color: #8996a9;
+    font-size: 12px;
+}
+
+.risk-link,
+.view-all-link {
+    color: #2876d2;
+    font-size: 12px;
+    font-weight: 750;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.alert-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.alert-card {
+    display: block;
+    padding: 19px;
+    border: 1px solid #f0dfc5;
+    border-left: 4px solid #e6a13b;
+    border-radius: 13px;
+    background: #fffdfa;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.alert-card:hover {
+    border-color: #e6a13b;
+    transform: translateY(-2px);
+}
+
+.alert-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 13px;
+}
+
+.priority-label {
+    color: #bd791d;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.alert-arrow {
+    color: #a7b0bd;
+    font-size: 18px;
+}
+
+.alert-card h3 {
+    margin: 0 0 8px;
+    color: #263c59;
+    font-size: 14px;
+}
+
+.alert-card p {
+    margin: 0;
+    color: #7e8b9e;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+/* =====================================
+   COLUMNAS INFERIORES
+===================================== */
+
+.admin-bottom-grid {
+    display: grid;
+    grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.65fr);
+    align-items: start;
+    gap: 18px;
+    margin-bottom: 30px;
+}
+
+.admin-access-panel,
+.admin-progress-panel {
+    min-width: 0;
+    padding: 20px;
+    border: 1px solid #e5ebf3;
+    border-radius: 15px;
+    background: #ffffff;
+    box-shadow: 0 3px 12px rgba(25, 45, 73, 0.04);
+}
+
+
+/* =====================================
+   ACCESOS RÁPIDOS
+===================================== */
+
+.admin-access-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-access-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf1f6;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.admin-access-item:last-child {
+    border-bottom: 0;
+}
+
+.admin-access-item:hover strong {
+    color: #2876d2;
+}
+
+.access-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #edf4ff;
+    font-size: 17px;
+}
+
+.admin-access-item strong,
+.admin-access-item small {
+    display: block;
+}
+
+.admin-access-item strong {
+    color: #30445f;
+    font-size: 12px;
+}
+
+.admin-access-item small {
+    margin-top: 4px;
+    color: #8b98aa;
+    font-size: 10px;
+}
+
+.access-arrow {
+    margin-left: auto;
+    color: #a0adbd;
+    font-size: 16px;
+}
+
+
+/* =====================================
+   AVANCE DE INVESTIGACIONES
+===================================== */
+
+.admin-progress-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.admin-progress-item {
+    padding: 17px 0;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.admin-progress-item:last-child {
+    border-bottom: 0;
+}
+
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.progress-info strong {
+    color: #30445f;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.progress-info span {
+    flex-shrink: 0;
+    color: #2876d2;
+    font-size: 16px;
+    font-weight: 850;
+}
+
+.progress-track {
+    height: 8px;
+    margin: 11px 0 9px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #edf1f6;
+}
+
+.progress-value {
+    height: 100%;
+    border-radius: 20px;
+    background: linear-gradient(90deg, #2876d2, #58a4f5);
+}
+
+.admin-progress-item small {
+    color: #8996a9;
+    font-size: 10px;
+}
+
+
+/* =====================================
+   RESPONSIVE
+===================================== */
+
+@media (max-width: 900px) {
+    .admin-bottom-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .alert-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .admin-block-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}

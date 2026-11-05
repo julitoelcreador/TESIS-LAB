@@ -1,0 +1,531 @@
+
+{% extends "base.html" %}
+
+{% block title %}Seguimiento de grupos | TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+
+    .seguimiento-contenedor {
+        width: 100%;
+        max-width: 1400px;
+        margin: auto;
+    }
+
+    .seguimiento-encabezado {
+        margin-bottom: 25px;
+    }
+
+    .seguimiento-encabezado h1 {
+        margin: 0 0 8px;
+        color: #17365f;
+        font-size: 27px;
+        font-weight: 800;
+    }
+
+    .seguimiento-encabezado p {
+        margin: 0;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+
+    .seguimiento-filtros {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin-bottom: 22px;
+    }
+
+    .filtro-nivel {
+        padding: 9px 15px;
+        border: 1px solid #dbe3ed;
+        border-radius: 9px;
+        background: #ffffff;
+        color: #475569;
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .filtro-nivel:hover {
+        border-color: #2563eb;
+        color: #2563eb;
+    }
+
+    .filtro-nivel.activo {
+        background: #17365f;
+        border-color: #17365f;
+        color: #ffffff;
+    }
+
+    .seguimiento-tabla-contenedor {
+        width: 100%;
+        overflow-x: auto;
+        margin-bottom: 25px;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #ffffff;
+    }
+
+    .seguimiento-tabla {
+        width: 100%;
+        min-width: 700px;
+        border-collapse: collapse;
+    }
+
+    .seguimiento-tabla th {
+        padding: 14px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 11px;
+        text-align: left;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .seguimiento-tabla td {
+        padding: 15px 14px;
+        border-top: 1px solid #edf1f5;
+        color: #334155;
+        font-size: 12px;
+    }
+
+    .grupo-nombre {
+        color: #17365f;
+        font-weight: 800;
+    }
+
+    .grupo-investigacion {
+        display: block;
+        margin-top: 5px;
+        color: #94a3b8;
+        font-size: 11px;
+        font-weight: 400;
+    }
+
+    .nivel-etiqueta {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 7px;
+        background: #eff6ff;
+        color: #1d4ed8;
+        font-weight: 800;
+    }
+
+    .avance-numero {
+        color: #17365f;
+        font-weight: 800;
+    }
+
+    .avance-barra {
+        width: 100px;
+        height: 7px;
+        margin-top: 7px;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #e2e8f0;
+    }
+
+    .avance-progreso {
+        height: 100%;
+        border-radius: 20px;
+        background: #2563eb;
+    }
+
+    .alerta-estado {
+        display: inline-block;
+        padding: 6px 9px;
+        border-radius: 20px;
+        font-size: 10px;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+    .alerta-prioritaria {
+        background: #fef2f2;
+        color: #b91c1c;
+    }
+
+    .alerta-normal {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .seguimiento-tarjetas {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .seguimiento-tarjeta {
+        display: block;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        border-radius: 13px;
+        background: #ffffff;
+        color: inherit;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .seguimiento-tarjeta:hover {
+        border-color: #93c5fd;
+        box-shadow: 0 5px 18px rgba(20, 40, 70, 0.07);
+        transform: translateY(-2px);
+    }
+
+    .tarjeta-superior {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 13px;
+    }
+
+    .tarjeta-grupo {
+        color: #17365f;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .tarjeta-titulo {
+        min-height: 38px;
+        margin-bottom: 18px;
+        color: #64748b;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+    .tarjeta-avance {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+        color: #64748b;
+        font-size: 11px;
+    }
+
+    .tarjeta-barra {
+        width: 100%;
+        height: 8px;
+        overflow: hidden;
+        border-radius: 20px;
+        background: #e2e8f0;
+    }
+
+    .tarjeta-barra-progreso {
+        height: 100%;
+        border-radius: 20px;
+        background: #2563eb;
+    }
+
+    .tarjeta-pie {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 17px;
+        padding-top: 13px;
+        border-top: 1px solid #edf1f5;
+    }
+
+    .tarjeta-actividad {
+        color: #94a3b8;
+        font-size: 11px;
+    }
+
+    .tarjeta-enlace {
+        color: #2563eb;
+        font-size: 11px;
+        font-weight: 800;
+    }
+
+    .seguimiento-vacio {
+        grid-column: 1 / -1;
+        padding: 35px 20px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 12px;
+        background: #ffffff;
+        color: #64748b;
+        text-align: center;
+        font-size: 13px;
+    }
+
+    @media (max-width: 800px) {
+        .seguimiento-tarjetas {
+            grid-template-columns: 1fr;
+        }
+    }
+
+</style>
+
+<div class="seguimiento-contenedor">
+
+    <div class="seguimiento-encabezado">
+
+        <h1>Seguimiento de grupos</h1>
+
+        <p>
+            Avance, nivel actual, alertas y última actividad
+            de cada grupo.
+        </p>
+
+    </div>
+
+    <!-- FILTROS -->
+
+    <div class="seguimiento-filtros">
+
+        <button
+            type="button"
+            class="filtro-nivel activo"
+            data-nivel="todos">
+            Todos los niveles
+        </button>
+
+        {% for nivel in range(1, 7) %}
+
+            <button
+                type="button"
+                class="filtro-nivel"
+                data-nivel="{{ nivel }}">
+                Nivel {{ nivel }}
+            </button>
+
+        {% endfor %}
+
+    </div>
+
+    <!-- TABLA -->
+
+    <div class="seguimiento-tabla-contenedor">
+
+        <table class="seguimiento-tabla">
+
+            <thead>
+                <tr>
+                    <th>Grupo</th>
+                    <th>Nivel</th>
+                    <th>Avance</th>
+                    <th>Última actividad</th>
+                    <th>Alertas</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for grupo in grupos_seguimiento %}
+
+                    <tr
+                        class="fila-seguimiento"
+                        data-nivel="{{ grupo.nivel_actual }}">
+
+                        <td>
+                            <span class="grupo-nombre">
+                                {{ grupo.grupo_nombre }}
+                            </span>
+
+                            <span class="grupo-investigacion">
+                                {{ grupo.investigacion_titulo }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="nivel-etiqueta">
+                                N{{ grupo.nivel_actual }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="avance-numero">
+                                {{ grupo.avance }}%
+                            </span>
+
+                            <div class="avance-barra">
+                                <div
+                                    class="avance-progreso"
+                                    style="width: {{ grupo.avance }}%;">
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            {{ grupo.ultima_actividad or "Sin actividad registrada" }}
+                        </td>
+
+                        <td>
+                            {% if grupo.alerta == "Apoyo prioritario" %}
+
+                                <span class="alerta-estado alerta-prioritaria">
+                                    Apoyo prioritario
+                                </span>
+
+                            {% else %}
+
+                                <span class="alerta-estado alerta-normal">
+                                    Sin alertas
+                                </span>
+
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+    <!-- TARJETAS -->
+
+    <div class="seguimiento-tarjetas">
+
+        {% for grupo in grupos_seguimiento %}
+
+            <a
+                href="{{ url_for('detalle_investigacion', investigacion_id=grupo.investigacion_id) }}"
+                class="seguimiento-tarjeta tarjeta-seguimiento"
+                data-nivel="{{ grupo.nivel_actual }}">
+
+                <div class="tarjeta-superior">
+
+                    <span class="tarjeta-grupo">
+                        {{ grupo.grupo_nombre }}
+                    </span>
+
+                    <span class="nivel-etiqueta">
+                        Nivel {{ grupo.nivel_actual }}
+                    </span>
+
+                </div>
+
+                <div class="tarjeta-titulo">
+                    {{ grupo.investigacion_titulo }}
+                </div>
+
+                <div class="tarjeta-avance">
+
+                    <span>Avance general</span>
+
+                    <strong>{{ grupo.avance }}%</strong>
+
+                </div>
+
+                <div class="tarjeta-barra">
+
+                    <div
+                        class="tarjeta-barra-progreso"
+                        style="width: {{ grupo.avance }}%;">
+                    </div>
+
+                </div>
+
+                <div class="tarjeta-pie">
+
+                    <span class="tarjeta-actividad">
+                        Última actividad:
+                        {{ grupo.ultima_actividad or "Sin registro" }}
+                    </span>
+
+                    <span class="tarjeta-enlace">
+                        Ver investigación →
+                    </span>
+
+                </div>
+
+                {% if grupo.alerta == "Apoyo prioritario" %}
+
+                    <div style="margin-top: 13px;">
+                        <span class="alerta-estado alerta-prioritaria">
+                            Apoyo prioritario
+                        </span>
+                    </div>
+
+                {% else %}
+
+                    <div style="margin-top: 13px;">
+                        <span class="alerta-estado alerta-normal">
+                            Sin alertas
+                        </span>
+                    </div>
+
+                {% endif %}
+
+            </a>
+
+        {% else %}
+
+            <div class="seguimiento-vacio">
+                <strong>No hay grupos para mostrar.</strong>
+
+                <p>
+                    Cuando tengas investigaciones asignadas,
+                    aparecerán aquí.
+                </p>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</div>
+
+<!-- FILTROS FUNCIONALES -->
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const filtros = document.querySelectorAll(".filtro-nivel");
+
+        const filas = document.querySelectorAll(".fila-seguimiento");
+
+        const tarjetas = document.querySelectorAll(".tarjeta-seguimiento");
+
+        filtros.forEach(function (boton) {
+
+            boton.addEventListener("click", function () {
+
+                const nivelSeleccionado = this.dataset.nivel;
+
+                filtros.forEach(function (filtro) {
+                    filtro.classList.remove("activo");
+                });
+
+                this.classList.add("activo");
+
+                filas.forEach(function (fila) {
+
+                    const coincide =
+                        nivelSeleccionado === "todos" ||
+                        fila.dataset.nivel === nivelSeleccionado;
+
+                    fila.style.display = coincide ? "" : "none";
+
+                });
+
+                tarjetas.forEach(function (tarjeta) {
+
+                    const coincide =
+                        nivelSeleccionado === "todos" ||
+                        tarjeta.dataset.nivel === nivelSeleccionado;
+
+                    tarjeta.style.display = coincide ? "" : "none";
+
+                });
+
+            });
+
+        });
+
+    });
+
+</script>
+
+{% endblock %}

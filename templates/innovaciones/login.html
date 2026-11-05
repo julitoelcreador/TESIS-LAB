@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#06152e">
+
+    <title>Iniciar sesión | TESIS LAB</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.ai-login-page {
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            color: #ffffff;
+            background:
+                radial-gradient(ellipse at 15% 15%, rgba(27, 112, 225, .20), transparent 38%),
+                radial-gradient(ellipse at 90% 85%, rgba(0, 180, 216, .12), transparent 35%),
+                #06152e;
+        }
+
+        .ai-login-page a {
+            text-decoration: none;
+        }
+
+        .login-topbar {
+            min-height: 85px;
+            padding: 18px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            border-bottom: 1px solid rgba(255,255,255,.10);
+            background: rgba(4, 17, 39, .55);
+        }
+
+        .login-brand {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -.5px;
+        }
+
+        .login-brand-mark {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: linear-gradient(135deg, #1677f9, #00a9d6);
+            box-shadow: 0 7px 22px rgba(22,119,249,.28);
+            font-size: 18px;
+            letter-spacing: -1px;
+        }
+
+        .login-brand small {
+            display: block;
+            margin-top: 4px;
+            color: #9db6d8;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
+        }
+
+        .login-back {
+            padding: 11px 17px;
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 30px;
+            color: #dce9fb;
+            font-size: 13px;
+            font-weight: 650;
+            transition: .2s ease;
+        }
+
+        .login-back:hover {
+            border-color: #65b4ff;
+            background: rgba(255,255,255,.08);
+        }
+
+        .login-main {
+            width: 100%;
+            min-height: calc(100vh - 160px);
+            padding: 48px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-wrap {
+            width: 100%;
+            max-width: 455px;
+        }
+
+        .auth-card {
+            width: 100%;
+            padding: 40px;
+            border: 1px solid rgba(133,181,242,.20);
+            border-radius: 24px;
+            background: linear-gradient(145deg, #10294d, #0a1c37);
+            box-shadow: 0 25px 75px rgba(0,0,0,.30);
+        }
+
+        .brand-center {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 23px;
+        }
+
+        .brand-mark {
+            width: 78px;
+            height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,.25);
+            border-radius: 23px;
+            background: linear-gradient(135deg, #1677f9, #00a9d6);
+            color: white;
+            font-size: 31px;
+            font-weight: 900;
+            letter-spacing: -2px;
+            box-shadow: 0 12px 30px rgba(22,119,249,.28);
+        }
+
+        .auth-card h1 {
+            margin-bottom: 10px;
+            color: #ffffff;
+            font-size: 31px;
+            font-weight: 850;
+            letter-spacing: -.8px;
+            text-align: center;
+        }
+
+        .auth-card > .muted {
+            margin-bottom: 29px;
+            color: #afc3df;
+            font-size: 14px;
+            line-height: 1.7;
+            text-align: center;
+        }
+
+        .form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form label {
+            margin-top: 9px;
+            color: #e0ebfb;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .form input {
+            width: 100%;
+            min-height: 49px;
+            padding: 13px 15px;
+            outline: none;
+            border: 1px solid #294569;
+            border-radius: 11px;
+            background: #071a34;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color .2s, box-shadow .2s;
+        }
+
+        .form input::placeholder {
+            color: #7f96b7;
+        }
+
+        .form input:focus {
+            border-color: #3995ff;
+            box-shadow: 0 0 0 3px rgba(57,149,255,.13);
+        }
+
+        .form button.btn.primary.full {
+            width: 100%;
+            min-height: 51px;
+            margin-top: 18px;
+            padding: 13px 18px;
+            border: none;
+            border-radius: 11px;
+            background: linear-gradient(100deg, #1677f9, #0864db);
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 9px 24px rgba(22,119,249,.22);
+            transition: transform .2s, box-shadow .2s, filter .2s;
+        }
+
+        .form button.btn.primary.full:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+            box-shadow: 0 12px 30px rgba(22,119,249,.32);
+        }
+
+        .form button.btn.primary.full:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            margin-bottom: 16px;
+            padding: 12px 14px;
+            border: 1px solid rgba(255,255,255,.13);
+            border-radius: 10px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .alert.error,
+        .alert.danger {
+            border-color: rgba(255,105,105,.35);
+            background: rgba(190,42,55,.15);
+            color: #ffc1c1;
+        }
+
+        .alert.success {
+            border-color: rgba(75,220,155,.3);
+            background: rgba(25,160,105,.13);
+            color: #a6f5d0;
+        }
+
+        .alert.warning {
+            border-color: rgba(255,200,80,.3);
+            background: rgba(180,125,15,.13);
+            color: #ffe2a0;
+        }
+
+        .login-note {
+            margin-top: 23px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,.10);
+            color: #a9bfdb;
+            font-size: 12px;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        .login-note strong {
+            color: #d9eaff;
+        }
+
+        .login-footer {
+            padding: 20px;
+            color: #8298b8;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        .login-footer span {
+            color: #70b7ff;
+        }
+
+        @media (max-width: 520px) {
+            .login-topbar {
+                padding: 15px 5%;
+            }
+
+            .login-brand {
+                font-size: 19px;
+            }
+
+            .login-brand-mark {
+                width: 41px;
+                height: 41px;
+            }
+
+            .login-brand small {
+                font-size: 9px;
+                letter-spacing: .8px;
+            }
+
+            .login-back {
+                padding: 10px 12px;
+                font-size: 12px;
+            }
+
+            .login-main {
+                min-height: auto;
+                padding: 35px 17px;
+            }
+
+            .auth-card {
+                padding: 30px 23px;
+                border-radius: 20px;
+            }
+
+            .auth-card h1 {
+                font-size: 27px;
+            }
+
+            .brand-mark {
+                width: 69px;
+                height: 69px;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body class="ai-login-page">
+
+    <header class="login-topbar">
+        <a class="login-brand" href="{{ url_for('inicio') }}">
+            <img
+             class="login-brand-mark"
+             src="https://scontent.flpb2-1.fna.fbcdn.net/v/t39.30808-6/272119463_5050749628303820_8474890001812688022_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1080&ctp=s1080x1080&_nc_cat=102&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=l1NA3NQ2O-gQ7kNvwG3UCf2&_nc_oc=Adqca6U1qyJhMWfECj5YpmnxQf_UkqQ0NrSLhYFwcMw_1IvZ3tkzZkwcqStJ8LC6bIY&_nc_zt=23&_nc_ht=scontent.flpb2-1.fna&_nc_gid=5ir_myndvu6aqzj9GdygqQ&_nc_ss=7b289&oh=00_AQPlm87Wmqfx_gy1KATSTeycYL54da_Hz-VjVimI1JZ-KA&oe=6ACE3E57"
+                alt="La Salle Tarija"
+                >
+                <span> TESIS LAB
+                   <small>La Salle · Tarija</small>
+                </span>
+        </a>
+
+        <a class="login-back" href="{{ url_for('inicio') }}">
+            ← Volver al inicio
+        </a>
+    </header>
+
+    <main class="login-main">
+        <div class="auth-wrap">
+            <section class="auth-card">
+
+                <div class="brand-center">
+                    <img
+                     class="brand-mark"
+                     src="https://scontent.flpb2-1.fna.fbcdn.net/v/t39.30808-6/272119463_5050749628303820_8474890001812688022_n.jpg?stp=dst-jpg_tt6&cstp=mx1080x1080&ctp=s1080x1080&_nc_cat=102&_nc_map=urlgen_bucketless&ccb=1-7&_nc_sid=a5f93a&_nc_ohc=l1NA3NQ2O-gQ7kNvwG3UCf2&_nc_oc=Adqca6U1qyJhMWfECj5YpmnxQf_UkqQ0NrSLhYFwcMw_1IvZ3tkzZkwcqStJ8LC6bIY&_nc_zt=23&_nc_ht=scontent.flpb2-1.fna&_nc_gid=5ir_myndvu6aqzj9GdygqQ&_nc_ss=7b289&oh=00_AQPlm87Wmqfx_gy1KATSTeycYL54da_Hz-VjVimI1JZ-KA&oe=6ACE3E57"
+                     alt="Escudo La Salle Tarija"
+                    >
+                </div>
+
+                <h1>¡Bienvenido!</h1>
+
+                <p class="muted">
+                    Ingresa a TESIS LAB y continúa desarrollando
+                    tu investigación académica.
+                </p>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert {{ category }}" role="alert">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST" class="form">
+
+                    <label for="usuario">Usuario institucional</label>
+                    <input
+                        id="usuario"
+                        type="text"
+                        name="usuario"
+                        placeholder="Ingresa tu usuario"
+                        required
+                        autocomplete="username"
+                        autofocus
+                    >
+
+                    <label for="password">Contraseña</label>
+                    <input
+                        id="password"
+                        type="password"
+                        name="password"
+                        placeholder="Ingresa tu contraseña"
+                        required
+                        autocomplete="current-password"
+                    >
+
+                    <button type="submit" class="btn primary full">
+                        Iniciar sesión&nbsp; →
+                    </button>
+
+                </form>
+
+                <div class="login-note">
+                    🔒 <strong>Acceso institucional</strong>
+                    <br>
+                    Ingresa con la cuenta que te fue asignada.
+                    <br>
+                    Tu espacio académico de La Salle.
+                </div>
+
+            </section>
+        </div>
+    </main>
+
+    <footer class="login-footer">
+        © 2026 <span>TESIS LAB</span> · Recurso Educativo Digital · La Salle Tarija
+    </footer>
+
+</body>
+</html>
+

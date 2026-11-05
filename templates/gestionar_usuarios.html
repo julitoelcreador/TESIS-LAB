@@ -1,0 +1,452 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios | TESIS LAB{% endblock %}
+
+{% block content %}
+
+<div class="gestion-usuarios">
+
+    <div class="usuarios-encabezado">
+        <div>
+            <span class="usuarios-etiqueta">ADMINISTRACIÓN</span>
+            <h1>Usuarios</h1>
+            <p>Crea, edita y elimina cuentas de la plataforma.</p>
+        </div>
+    </div>
+
+    <div class="usuarios-layout">
+
+        <!-- COLUMNA IZQUIERDA: REGISTRO -->
+        <section class="usuarios-panel panel-registro">
+
+            <div class="panel-titulo">
+                <div>
+                    <h2>Nuevo usuario</h2>
+                    <p>Registra una cuenta institucional.</p>
+                </div>
+                <span class="panel-icono">＋</span>
+            </div>
+
+            <form method="POST" class="formulario-usuario">
+
+                <div class="campo-usuario">
+                    <label for="rol">Tipo de cuenta</label>
+                    <select name="rol" id="rol" required>
+                        <option value="estudiante">Estudiante</option>
+                        <option value="tutor">Profesor (tutor)</option>
+                    </select>
+                    <small>El rol de administrador no se asigna desde aquí.</small>
+                </div>
+
+                <div class="campo-usuario">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" id="nombre" name="nombre"
+                           placeholder="Ej. Valeria" required>
+                </div>
+
+                <div class="campo-usuario">
+                    <label for="apellido">Apellido</label>
+                    <input type="text" id="apellido" name="apellido"
+                           placeholder="Ej. Mendoza" required>
+                </div>
+
+                <div class="campo-usuario">
+                    <label for="correo">Correo institucional</label>
+                    <input type="email" id="correo" name="correo"
+                           placeholder="usuario@lasalle.edu.bo">
+                </div>
+
+                <div class="campo-usuario">
+                    <label for="usuario">Nombre de usuario</label>
+                    <input type="text" id="usuario" name="usuario"
+                           placeholder="Ej. vmendoza" required>
+                </div>
+
+                <div class="campo-usuario">
+                    <label for="password">Contraseña inicial</label>
+                    <input type="password" id="password" name="password"
+                           placeholder="Mínimo 8 caracteres" minlength="8" required>
+                </div>
+
+                <div class="campo-usuario" id="campo-curso">
+                    <label for="curso">Curso y paralelo</label>
+
+                    <select id="curso" name="curso">
+                        <option value="">Selecciona el paralelo</option>
+                        <option value="5to A">5to A</option>
+                        <option value="5to B">5to B</option>
+                        <option value="5to C">5to C</option>
+                    </select>
+
+                    <small>Selecciona el paralelo al que pertenece el estudiante.</small>
+                </div>
+
+                <button type="submit" class="btn-crear-usuario">
+                    ＋ Crear cuenta
+                </button>
+
+            </form>
+
+        </section>
+
+        <!-- COLUMNA DERECHA: LISTA -->
+        <section class="usuarios-panel panel-listado">
+
+            <div class="panel-titulo">
+                <div>
+                    <h2>Cuentas registradas</h2>
+                    <p>Usuarios de la plataforma.</p>
+                </div>
+                <span class="contador-usuarios">{{ usuarios|length }}</span>
+            </div>
+
+            <div class="lista-cuentas">
+
+                {% for u in usuarios %}
+
+                <div class="cuenta-usuario">
+
+                    <div class="cuenta-avatar">
+                        {{ u.nombre[0]|upper }}{{ u.apellido[0]|upper }}
+                    </div>
+
+                    <div class="cuenta-informacion">
+                        <h3>{{ u.nombre }} {{ u.apellido }}</h3>
+                        <p>{{ u.correo or 'Sin correo institucional' }}</p>
+
+                        <div class="cuenta-etiquetas">
+                            {% if u.rol == 'admin' %}
+                                <span class="rol-cuenta rol-admin">Administrador</span>
+                            {% elif u.rol == 'tutor' %}
+                                <span class="rol-cuenta rol-tutor">Tutor</span>
+                            {% else %}
+                                <span class="rol-cuenta rol-estudiante">Estudiante</span>
+                            {% endif %}
+
+                            {% if u.activo %}
+                                <span class="estado-activo">● Activo</span>
+                            {% else %}
+                                <span class="estado-inactivo">● Inactivo</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <div class="usuarios-vacio">
+                    <span>👥</span>
+                    <h3>No hay usuarios registrados</h3>
+                    <p>Las cuentas creadas aparecerán aquí.</p>
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+<style>
+
+.gestion-usuarios {
+    max-width: 1450px;
+    margin: auto;
+    padding: 25px;
+    color: #1e293b;
+}
+
+.usuarios-encabezado {
+    margin-bottom: 23px;
+}
+
+.usuarios-etiqueta {
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.usuarios-encabezado h1 {
+    margin: 7px 0;
+    font-size: 28px;
+}
+
+.usuarios-encabezado p {
+    color: #64748b;
+    font-size: 13px;
+    margin: 0;
+}
+
+/* DISTRIBUCIÓN EN DOS COLUMNAS */
+
+.usuarios-layout {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.85fr) minmax(0, 1.5fr);
+    gap: 20px;
+    align-items: start;
+}
+
+.usuarios-panel {
+    background: #fff;
+    border: 1px solid #e5eaf1;
+    border-radius: 14px;
+    padding: 21px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, .025);
+    min-width: 0;
+}
+
+.panel-titulo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 21px;
+}
+
+.panel-titulo h2 {
+    font-size: 16px;
+    margin: 0 0 5px;
+}
+
+.panel-titulo p {
+    color: #64748b;
+    font-size: 12px;
+    margin: 0;
+}
+
+.panel-icono {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #2563eb;
+    background: #eff6ff;
+    font-size: 21px;
+}
+
+.contador-usuarios {
+    background: #eff6ff;
+    color: #2563eb;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+/* FORMULARIO */
+
+.formulario-usuario {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.campo-usuario {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.campo-usuario label {
+    font-size: 12px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.campo-usuario input,
+.campo-usuario select {
+    width: 100%;
+    height: 41px;
+    padding: 0 11px;
+    border: 1px solid #dce3ed;
+    border-radius: 8px;
+    background: white;
+    outline: none;
+    color: #1e293b;
+    font-size: 12px;
+}
+
+.campo-usuario input:focus,
+.campo-usuario select:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, .10);
+}
+
+.campo-usuario small {
+    color: #64748b;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.btn-crear-usuario {
+    width: 100%;
+    border: none;
+    background: #2563eb;
+    color: white;
+    border-radius: 9px;
+    padding: 12px;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+    margin-top: 3px;
+}
+
+.btn-crear-usuario:hover {
+    background: #1d4ed8;
+}
+
+/* LISTA DE CUENTAS */
+
+.lista-cuentas {
+    display: flex;
+    flex-direction: column;
+}
+
+.cuenta-usuario {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 16px 3px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.cuenta-usuario:last-child {
+    border-bottom: none;
+}
+
+.cuenta-avatar {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.cuenta-informacion {
+    flex: 1;
+    min-width: 0;
+}
+
+.cuenta-informacion h3 {
+    margin: 0 0 5px;
+    font-size: 13px;
+    font-weight: 750;
+}
+
+.cuenta-informacion p {
+    margin: 0 0 8px;
+    color: #64748b;
+    font-size: 11px;
+    overflow-wrap: anywhere;
+}
+
+.cuenta-etiquetas {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.rol-cuenta {
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.rol-admin {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.rol-tutor {
+    background: #f3e8ff;
+    color: #7e22ce;
+}
+
+.rol-estudiante {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.estado-activo,
+.estado-inactivo {
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.estado-activo {
+    color: #15803d;
+}
+
+.estado-inactivo {
+    color: #dc2626;
+}
+
+.usuarios-vacio {
+    text-align: center;
+    padding: 40px 15px;
+    color: #64748b;
+}
+
+.usuarios-vacio span {
+    font-size: 30px;
+}
+
+.usuarios-vacio h3 {
+    color: #334155;
+    font-size: 14px;
+}
+
+.usuarios-vacio p {
+    font-size: 12px;
+}
+
+@media (max-width: 850px) {
+    .usuarios-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .gestion-usuarios {
+        padding: 15px;
+    }
+
+    .usuarios-panel {
+        padding: 16px;
+    }
+}
+
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const rol = document.getElementById("rol");
+    const campoCurso = document.getElementById("campo-curso");
+    const curso = document.getElementById("curso");
+
+    function actualizarCurso() {
+        const esEstudiante = rol.value === "estudiante";
+        campoCurso.style.display = esEstudiante ? "flex" : "none";
+        curso.required = esEstudiante;
+    }
+
+    rol.addEventListener("change", actualizarCurso);
+    actualizarCurso();
+});
+</script>
+
+{% endblock %}

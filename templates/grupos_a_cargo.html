@@ -1,0 +1,308 @@
+
+{% extends "base.html" %}
+
+{% block title %}Grupos a cargo · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+.grupos-page {
+    width: min(1200px, 94%);
+    margin: auto;
+    padding: 12px 0 35px;
+    color: #10213e;
+    font-size: 14px;
+}
+
+.grupos-hero {
+    margin-bottom: 25px;
+}
+
+.grupos-hero h1 {
+    margin: 0 0 7px;
+    font-size: 25px;
+    font-weight: 800;
+}
+
+.grupos-hero p {
+    margin: 0;
+    color: #64748b;
+}
+
+.grupos-contador {
+    display: inline-block;
+    margin: 15px 0;
+    padding: 9px 13px;
+    border: 1px solid #dbeafe;
+    border-radius: 9px;
+    background: #eff6ff;
+    color: #1754a0;
+    font-weight: 750;
+}
+
+.grupos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+    align-items: stretch;
+}
+
+.grupo-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    padding: 19px;
+    border: 1px solid #dce6f3;
+    border-top: 3px solid #0878ed;
+    border-radius: 13px;
+    background: white;
+    box-shadow: 0 3px 12px rgba(8,21,45,.05);
+}
+
+.grupo-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.grupo-icono {
+    display: grid;
+    place-items: center;
+    width: 43px;
+    height: 43px;
+    border-radius: 11px;
+    background: #e8f2ff;
+    font-size: 22px;
+}
+
+.grupo-cantidad {
+    padding: 6px 9px;
+    border-radius: 7px;
+    background: #eff6ff;
+    color: #1754a0;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.grupo-nombre {
+    margin: 0 0 13px;
+    font-size: 19px;
+    font-weight: 800;
+}
+
+.grupo-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+    margin-bottom: 16px;
+}
+
+.grupo-dato {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.grupo-dato strong {
+    color: #33445f;
+}
+
+.grupo-integrantes {
+    padding: 13px;
+    border: 1px solid #e5edf7;
+    border-radius: 9px;
+    background: #f8fbff;
+}
+
+.grupo-integrantes h3 {
+    margin: 0 0 8px;
+    color: #33445f;
+    font-size: 12px;
+}
+
+.grupo-integrantes p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.grupo-abrir {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid #e9eff7;
+    color: #0878ed;
+    font-size: 12px;
+    font-weight: 800;
+    text-align: right;
+}
+
+.grupos-vacio {
+    padding: 35px 18px;
+    border: 1px dashed #cbd9eb;
+    border-radius: 13px;
+    background: #f8fbff;
+    text-align: center;
+}
+
+.grupos-vacio-icono {
+    margin-bottom: 10px;
+    font-size: 35px;
+}
+
+.grupos-vacio h3 {
+    margin: 0 0 7px;
+    font-size: 17px;
+}
+
+.grupos-vacio p {
+    margin: 0;
+    color: #64748b;
+    font-size: 12px;
+}
+
+@media (max-width: 900px) {
+    .grupos-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .grupos-page {
+        width: calc(100% - 22px);
+    }
+
+    .grupos-hero h1 {
+        font-size: 22px;
+    }
+
+    .grupos-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="grupos-page">
+
+    <section class="grupos-hero">
+        <h1>👥 Grupos a cargo</h1>
+        <p>
+            Consulta los grupos que tienes asignados, sus investigaciones
+            y los estudiantes que forman parte de cada equipo.
+        </p>
+    </section>
+
+    <div class="grupos-contador">
+        📂 {{ grupos_a_cargo|length }}
+        {% if grupos_a_cargo|length == 1 %}
+            grupo asignado
+        {% else %}
+            grupos asignados
+        {% endif %}
+    </div>
+
+    {% if grupos_a_cargo %}
+
+        <div class="grupos-grid">
+
+            {% for grupo in grupos_a_cargo %}
+
+                <article class="grupo-card">
+
+                    <div class="grupo-top">
+                        <div class="grupo-icono">👥</div>
+
+                        <span class="grupo-cantidad">
+                            {{ grupo.cantidad_miembros }} estudiantes
+                        </span>
+                    </div>
+
+                    <h2 class="grupo-nombre">
+                        {{ grupo.grupo_nombre }}
+                    </h2>
+
+                    <div class="grupo-datos">
+
+                        <div class="grupo-dato">
+                            <span>👑</span>
+                            <span>
+                                <strong>Líder:</strong>
+                                {{ grupo.lider_nombre or 'No asignado' }}
+                            </span>
+                        </div>
+
+                        <div class="grupo-dato">
+                            <span>🔬</span>
+                            <span>
+                                <strong>Investigación:</strong>
+                                {{ grupo.investigacion_titulo or 'Sin título' }}
+                            </span>
+                        </div>
+
+                        <div class="grupo-dato">
+                            <span>📚</span>
+                            <span>
+                                <strong>Área:</strong>
+                                {{ grupo.area_principal or 'No especificada' }}
+                            </span>
+                        </div>
+
+                        <div class="grupo-dato">
+                            <span>🧪</span>
+                            <span>
+                                <strong>Subárea:</strong>
+                                {{ grupo.subarea or 'No especificada' }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="grupo-integrantes">
+                        <h3>Integrantes del grupo</h3>
+
+                        <p>
+                            {{ grupo.integrantes or 'Todavía no hay integrantes registrados.' }}
+                        </p>
+                    </div>
+
+                    {% if grupo.investigacion_id %}
+                        <a
+                            href="{{ url_for('detalle_investigacion', investigacion_id=grupo.investigacion_id) }}"
+                            class="grupo-abrir"
+                            style="text-decoration:none; display:block;"
+                        >
+                            Ver investigación →
+                        </a>
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="grupos-vacio">
+            <div class="grupos-vacio-icono">👥</div>
+
+            <h3>No tienes grupos a cargo</h3>
+
+            <p>
+                Cuando se te asigne una investigación, el grupo correspondiente
+                aparecerá aquí con sus integrantes.
+            </p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

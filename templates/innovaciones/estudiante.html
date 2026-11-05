@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+
+{% block title %}Módulo del estudiante · AulaInvestiga{% endblock %}
+
+{% block content %}
+
+<style>
+.estudiante-page {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 25px 15px 45px;
+}
+
+.estudiante-hero {
+    background: linear-gradient(135deg, #102b55, #174b85);
+    color: white;
+    padding: 35px;
+    border-radius: 18px;
+    margin-bottom: 28px;
+}
+
+.estudiante-hero h1 {
+    font-size: 30px;
+    margin: 0 0 10px;
+    color: white;
+}
+
+.estudiante-hero p {
+    margin: 0;
+    color: #dce8f8;
+    font-size: 15px;
+}
+
+.modulo-titulo {
+    color: #10213e;
+    font-size: 21px;
+    margin-bottom: 16px;
+}
+
+.modulo-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.modulo-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 15px;
+    padding: 23px;
+    text-decoration: none;
+    color: #10213e;
+    display: block;
+    transition: .2s;
+}
+
+.modulo-card:hover {
+    transform: translateY(-3px);
+    border-color: #2563a6;
+    box-shadow: 0 8px 20px rgba(15, 40, 75, .08);
+}
+
+.modulo-icono {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+    background: #eaf2fc;
+    color: #174b85;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.modulo-card h3 {
+    font-size: 17px;
+    margin: 0 0 8px;
+}
+
+.modulo-card p {
+    color: #64748b;
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0;
+}
+
+@media (max-width: 650px) {
+    .modulo-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .estudiante-hero {
+        padding: 25px;
+    }
+
+    .estudiante-hero h1 {
+        font-size: 24px;
+    }
+}
+</style>
+
+<div class="estudiante-page">
+
+    <section class="estudiante-hero">
+        <h1>Módulo del estudiante</h1>
+        <p>
+            Bienvenido, {{ usuario.nombre }}.
+            Gestiona tu investigación, trabaja con tu grupo y consulta tu progreso académico.
+        </p>
+    </section>
+
+    <h2 class="modulo-titulo">Módulo investigación</h2>
+
+    <div class="modulo-grid">
+
+        <a href="{{ url_for('elegir_tema') }}" class="modulo-card">
+            <div class="modulo-icono">✏️</div>
+            <h3>Crear / elegir tema</h3>
+            <p>
+                Propón el tema de investigación de tu grupo y comienza a organizar tu trabajo.
+            </p>
+        </a>
+
+        <a href="{{ url_for('grupos') }}" class="modulo-card">
+            <div class="modulo-icono">👥</div>
+            <h3>Mi grupo</h3>
+            <p>
+                Consulta los integrantes de tu grupo y revisa la información de sus miembros.
+            </p>
+        </a>
+
+        <a href="{{ url_for('investigaciones') }}" class="modulo-card">
+            <div class="modulo-icono">📚</div>
+            <h3>Mi investigación</h3>
+            <p>
+                Accede a tu investigación y consulta sus avances y entregas.
+            </p>
+        </a>
+
+        <a href="{{ url_for('interacciones') }}" class="modulo-card">
+            <div class="modulo-icono">💬</div>
+            <h3>Interacciones</h3>
+            <p>
+                Comunícate con tu tutor y consulta las interacciones relacionadas con tu trabajo.
+            </p>
+        </a>
+
+        <a href="{{ url_for('biblioteca') }}" class="modulo-card">
+            <div class="modulo-icono">📖</div>
+            <h3>Biblioteca virtual</h3>
+            <p>
+                Consulta los recursos y materiales de apoyo para tu investigación.
+            </p>
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

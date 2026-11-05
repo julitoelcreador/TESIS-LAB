@@ -1,0 +1,1295 @@
+{% extends "base.html" %}
+
+{% block title %}Panel del tutor · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<div class="tutor-dashboard">
+
+    <!-- ENCABEZADO -->
+    <section class="tutor-header">
+        <div class="tutor-header-title">
+            <span class="tutor-header-icon" aria-hidden="true">🎓</span>
+            <span>Panel Tutor</span>
+        </div>
+
+        <h1>Buen día, {{ session.get('nombre', 'Tutor') }}</h1>
+
+        <p>Acompañamiento, revisión y evaluación de investigaciones.</p>
+    </section>
+
+    <!-- RESUMEN -->
+    <section class="tutor-stats" aria-label="Resumen del tutor">
+
+        <article class="tutor-stat-card">
+            <div class="tutor-stat-icon stat-blue" aria-hidden="true">🔬</div>
+            <div class="tutor-stat-content">
+                <span class="tutor-stat-label">Mis investigaciones</span>
+                <strong class="tutor-stat-number">{{ investigaciones|length }}</strong>
+                <span class="tutor-stat-detail">Trabajos asignados</span>
+            </div>
+        </article>
+
+        <article class="tutor-stat-card">
+            <div class="tutor-stat-icon stat-orange" aria-hidden="true">📋</div>
+            <div class="tutor-stat-content">
+                <span class="tutor-stat-label">Entregas pendientes</span>
+                <strong class="tutor-stat-number">{{ entregas_pendientes|length }}</strong>
+                <span class="tutor-stat-detail">Por revisar</span>
+            </div>
+        </article>
+
+        <article class="tutor-stat-card">
+            <div class="tutor-stat-icon stat-purple" aria-hidden="true">📅</div>
+            <div class="tutor-stat-content">
+                <span class="tutor-stat-label">Próximas reuniones</span>
+                <strong class="tutor-stat-number">{{ proximas_reuniones|length }}</strong>
+                <span class="tutor-stat-detail">Próximas o por confirmar</span>
+            </div>
+        </article>
+
+        <article class="tutor-stat-card">
+            <div class="tutor-stat-icon stat-blue" aria-hidden="true">📩</div>
+            <div class="tutor-stat-content">
+                <span class="tutor-stat-label">Propuestas recibidas</span>
+                <strong class="tutor-stat-number">{{ propuestas_asignacion|length }}</strong>
+                <span class="tutor-stat-detail">Por responder</span>
+            </div>
+        </article>
+
+    </section>
+
+    <!-- ENTREGAS Y REUNIONES -->
+    <div class="tutor-priority-grid">
+
+        <!-- ENTREGAS PENDIENTES -->
+        <section class="tutor-priority-section">
+
+            <div class="tutor-section-heading">
+                <div>
+                    <span class="tutor-section-kicker">REVISIÓN ACADÉMICA</span>
+                    <h2>📋 Entregas pendientes</h2>
+                    <p>Trabajos que esperan tu evaluación.</p>
+                </div>
+
+                <span class="tutor-count">{{ entregas_pendientes|length }}</span>
+            </div>
+
+            <div class="tutor-priority-list">
+
+                {% for entrega in entregas_pendientes %}
+                <article class="tutor-priority-item">
+
+                    <div class="tutor-priority-item-content">
+                        <span class="tutor-label tutor-label-orange">Pendiente de revisión</span>
+
+                        <h3>{{ entrega.titulo }}</h3>
+
+                        <p><strong>Grupo:</strong> {{ entrega.grupo_nombre }}</p>
+
+                        <p>
+                            <strong>Entrega:</strong>
+                            {% if entrega.nivel == 1 %}
+                                Presentación del tema
+                            {% elif entrega.nivel == 2 %}
+                                Capítulo I
+                            {% elif entrega.nivel == 3 %}
+                                Capítulo II
+                            {% elif entrega.nivel == 4 %}
+                                Capítulo III
+                            {% elif entrega.nivel == 5 %}
+                                Capítulo IV
+                            {% elif entrega.nivel == 6 %}
+                                Capítulo V
+                            {% else %}
+                                Nivel {{ entrega.nivel }}
+                            {% endif %}
+                        </p>
+                    </div>
+
+                    
+            <div class="acciones-entrega">
+
+                <a href="{{ url_for(
+                'detalle_investigacion',
+                investigacion_id=entrega.investigacion_id
+                ) }}" class="tutor-btn tutor-btn-primary">
+                Revisar entrega →
+                </a>
+
+                {% if entrega.total_versiones and entrega.total_versiones > 1
+               and entrega.historial_actual_id
+                and entrega.estado == 'Pendiente de revisión' %}
+
+                <a href="{{ url_for(
+                'comparador_correcciones',
+                investigacion_id=entrega.investigacion_id,
+                historial_id=entrega.historial_actual_id
+                ) }}" class="tutor-btn tutor-btn-outline">
+                ⇄ Comparar versiones
+                </a>
+
+                {% endif %}
+
+            </div>
+
+
+                </article>
+                {% else %}
+                <div class="tutor-priority-empty">
+                    <span aria-hidden="true">✓</span>
+                    <div>
+                        <strong>¡Todo al día!</strong>
+                        <p>No tienes entregas pendientes de revisión.</p>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </section>
+
+        <!-- PRÓXIMAS REUNIONES -->
+        <section class="tutor-priority-section">
+
+            <div class="tutor-section-heading">
+                <div>
+                    <span class="tutor-section-kicker">ORIENTACIÓN ACADÉMICA</span>
+                    <h2>📅 Próximas reuniones</h2>
+                    <p>Solicitudes y reuniones programadas.</p>
+                </div>
+
+                <span class="tutor-count">{{ proximas_reuniones|length }}</span>
+            </div>
+
+            <div class="tutor-priority-list">
+
+                {% for reunion in proximas_reuniones %}
+                <article class="tutor-priority-item">
+
+                    <div class="tutor-priority-item-content">
+
+                        {% if reunion.estado == 'Aceptada' %}
+                            <span class="tutor-label tutor-label-blue">Reunión confirmada</span>
+                        {% elif reunion.estado == 'Nueva propuesta' %}
+                            <span class="tutor-label tutor-label-purple">Nueva propuesta</span>
+                        {% else %}
+                            <span class="tutor-label tutor-label-orange">Pendiente</span>
+                        {% endif %}
+
+                        <h3>{{ reunion.investigacion_titulo }}</h3>
+
+                        <p><strong>Fecha:</strong> {{ reunion.fecha_solicitada }}</p>
+                        <p><strong>Hora:</strong> {{ reunion.hora_solicitada }}</p>
+                        <p>
+                            <strong>Estudiante:</strong>
+                            {{ reunion.estudiante_nombre }}
+                            {{ reunion.estudiante_apellido }}
+                        </p>
+                        <p><strong>Motivo:</strong> {{ reunion.motivo }}</p>
+
+                    </div>
+
+                    <div class="tutor-priority-actions">
+
+                        <a href="{{ url_for('detalle_investigacion', investigacion_id=reunion.investigacion_id) }}"
+                           class="tutor-btn tutor-btn-outline">
+                            Ver investigación
+                        </a>
+
+                        {% if reunion.estado == 'Aceptada'
+                              and reunion.enlace_meet
+                              and reunion.enlace_meet.startswith('https://meet.google.com/') %}
+                            <a href="{{ url_for('entrar_reunion', reunion_id=reunion.reunion_id) }}"
+                               class="tutor-btn tutor-btn-primary">
+                                Entrar a Meet →
+                            </a>
+                        {% endif %}
+
+                    </div>
+                </article>
+                {% else %}
+                <div class="tutor-priority-empty">
+                    <span aria-hidden="true">📅</span>
+                    <div>
+                        <strong>No hay reuniones próximas</strong>
+                        <p>Cuando haya reuniones programadas, aparecerán aquí.</p>
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+        </section>
+
+    </div>
+
+       <!-- CENTRO DE REVISIONES -->
+    <section class="tutor-review-access">
+
+        <div class="tutor-review-icon" aria-hidden="true">📝</div>
+
+        <div class="tutor-review-content">
+            <span class="tutor-my-work-kicker">GESTIÓN ACADÉMICA</span>
+            <h2>Centro de revisiones</h2>
+            <p>
+                Accede a las entregas de los estudiantes, revisa los documentos,
+                registra observaciones y evalúa el avance de las monografías.
+            </p>
+        </div>
+
+        <a href="{{ url_for('centro_tareas_tutor') }}"
+           class="tutor-btn tutor-btn-primary tutor-review-button">
+            Ir al centro de revisiones <span aria-hidden="true">→</span>
+        </a>
+
+    </section>
+
+    <!-- MIS INVESTIGACIONES -->
+    <section class="tutor-my-work-card">
+
+        <div class="tutor-my-work-icon" aria-hidden="true">🔬</div>
+
+        <div class="tutor-my-work-content">
+            <span class="tutor-my-work-kicker">SEGUIMIENTO ACADÉMICO</span>
+            <h2>Mis investigaciones</h2>
+            <p>
+                Consulta los trabajos que tienes asignados, revisa su estado
+                y entra al detalle de cada investigación.
+            </p>
+        </div>
+
+        <a href="{{ url_for('investigaciones') }}"
+           class="tutor-btn tutor-btn-primary tutor-my-work-button">
+            Ver mis investigaciones <span aria-hidden="true">→</span>
+        </a>
+
+    </section>
+
+   <!-- ACCESO AL CATÁLOGO ACADÉMICO -->
+    <section class="tutor-my-work-card tutor-catalog-access">
+
+    <div class="tutor-my-work-icon tutor-catalog-access-icon"
+         aria-hidden="true">📚</div>
+
+    <div class="tutor-my-work-content">
+        <span class="tutor-my-work-kicker">CATÁLOGO ACADÉMICO</span>
+
+        <h2>Explorar investigaciones</h2>
+
+        <p>
+            Consulta las investigaciones registradas, revisa cuáles necesitan
+            tutor y solicita orientar nuevos trabajos desde un solo lugar.
+        </p>
+    </div>
+
+    <a href="{{ url_for('catalogo_academico') }}"
+       class="tutor-btn tutor-btn-primary tutor-my-work-button">
+        Explorar catálogo académico <span aria-hidden="true">→</span>
+    </a>
+
+    </section>
+
+    <!-- BIBLIOTECA -->
+    <section class="tutor-library-banner">
+
+        <div class="tutor-library-icon" aria-hidden="true">📚</div>
+
+        <div class="tutor-library-content">
+            <h2>Biblioteca educativa</h2>
+            <p>
+                Consulta guías, videos y otros recursos para apoyar
+                la orientación de los trabajos de investigación.
+            </p>
+        </div>
+
+        <a href="{{ url_for('biblioteca') }}"
+           class="tutor-btn tutor-btn-light">
+            Entrar a la biblioteca <span aria-hidden="true">→</span>
+        </a>
+
+    </section>
+   
+<style>
+/* =========================================
+   TESIS LAB - PANEL DEL TUTOR
+   Diseño compacto y adaptable
+   ========================================= */
+
+.tutor-dashboard {
+    width: min(1440px, 94%);
+    margin: 28px auto 42px;
+    color: #24344b;
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+
+.tutor-dashboard .acciones-entrega {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+}
+
+.tutor-dashboard .acciones-entrega .tutor-btn {
+    margin: 0;
+}
+
+@media (max-width: 600px) {
+    .tutor-dashboard .acciones-entrega {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .tutor-dashboard .acciones-entrega .tutor-btn {
+        width: 100%;
+    }
+}
+
+.tutor-dashboard *,
+.tutor-dashboard *::before,
+.tutor-dashboard *::after {
+    box-sizing: border-box;
+}
+
+.tutor-dashboard h1,
+.tutor-dashboard h2,
+.tutor-dashboard h3,
+.tutor-dashboard p {
+    overflow-wrap: anywhere;
+}
+
+/* Encabezado: se conserva el saludo dinámico */
+.tutor-dashboard .tutor-header {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding: 0 0 16px;
+    margin: -50px 0 0;
+}
+
+.tutor-dashboard .tutor-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: #174a91;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.tutor-dashboard .tutor-header-icon {
+    font-size: 21px;
+}
+
+.tutor-dashboard .tutor-header h1 {
+    margin: 0 0 6px;
+    color: #10233f;
+    font-size: clamp(23px, 2.4vw, 29px);
+    font-weight: 800;
+    line-height: 1.25;
+}
+
+.tutor-dashboard .tutor-header p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* Tarjetas de resumen */
+.tutor-dashboard .tutor-stats {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+    margin: 0 0 22px;
+}
+
+.tutor-dashboard .tutor-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+    min-height: 86px;
+    padding: 13px 14px;
+    border: 1px solid #e2eaf4;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(15, 45, 85, .045);
+}
+
+.tutor-dashboard .tutor-stat-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    font-size: 21px;
+}
+
+.tutor-dashboard .stat-blue {
+    background: #e6f0ff;
+}
+
+.tutor-dashboard .stat-orange {
+    background: #fff0df;
+}
+
+.tutor-dashboard .stat-purple {
+    background: #f0eaff;
+}
+
+.tutor-dashboard .tutor-stat-content {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.tutor-dashboard .tutor-stat-label {
+    color: #52647c;
+    font-size: 11px;
+    font-weight: 650;
+    line-height: 1.35;
+}
+
+.tutor-dashboard .tutor-stat-number {
+    margin: 1px 0;
+    color: #10284c;
+    font-size: 24px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.tutor-dashboard .tutor-stat-detail {
+    color: #8290a3;
+    font-size: 10px;
+    line-height: 1.35;
+}
+
+/* Títulos de sección */
+.tutor-dashboard .tutor-section-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.tutor-dashboard .tutor-section-kicker {
+    display: block;
+    margin-bottom: 4px;
+    color: #2670c7;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.tutor-dashboard .tutor-section-heading h2 {
+    margin: 0 0 5px;
+    color: #10284c;
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.tutor-dashboard .tutor-section-heading p {
+    margin: 0;
+    color: #718096;
+    font-size: 12px;
+}
+
+.tutor-dashboard .tutor-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 4px 8px;
+    border-radius: 9px;
+    background: #edf4ff;
+    color: #1756a0;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+/* Entregas y reuniones */
+.tutor-dashboard .tutor-priority-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.tutor-dashboard .tutor-priority-section,
+.tutor-dashboard .tutor-catalog-section {
+    min-width: 0;
+    padding: 17px;
+    border: 1px solid #e2eaf4;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(15, 45, 85, .04);
+}
+
+.tutor-dashboard .tutor-priority-list {
+    display: grid;
+    gap: 10px;
+}
+
+.tutor-dashboard .tutor-priority-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 0;
+    padding: 13px;
+    border: 1px solid #e8edf4;
+    border-radius: 11px;
+    background: #fbfdff;
+}
+
+.tutor-dashboard .tutor-priority-item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.tutor-dashboard .tutor-priority-item h3 {
+    margin: 8px 0 7px;
+    color: #1b3150;
+    font-size: 14px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
+.tutor-dashboard .tutor-priority-item p {
+    margin: 3px 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.tutor-dashboard .tutor-priority-item p strong {
+    color: #40536b;
+}
+
+.tutor-dashboard .tutor-priority-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 7px;
+    flex: 0 0 auto;
+    max-width: 170px;
+}
+
+.tutor-dashboard .tutor-priority-empty {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 12px;
+    border: 1px dashed #d7e4f2;
+    border-radius: 11px;
+    background: #f8fbff;
+}
+
+.tutor-dashboard .tutor-priority-empty > span {
+    display: grid;
+    place-items: center;
+    flex: 0 0 34px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #e2f7ea;
+    color: #178348;
+    font-size: 17px;
+}
+
+.tutor-dashboard .tutor-priority-empty strong {
+    color: #24405f;
+    font-size: 12px;
+}
+
+.tutor-dashboard .tutor-priority-empty p {
+    margin: 3px 0 0;
+    color: #718096;
+    font-size: 11px;
+}
+
+/* Etiquetas */
+.tutor-dashboard .tutor-label {
+    display: inline-block;
+    max-width: 100%;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
+.tutor-dashboard .tutor-label-orange {
+    background: #fff0dd;
+    color: #a85a08;
+}
+
+.tutor-dashboard .tutor-label-blue {
+    background: #e6f0ff;
+    color: #1756a0;
+}
+
+.tutor-dashboard .tutor-label-purple {
+    background: #f0eaff;
+    color: #6741a5;
+}
+
+/* Botones */
+.tutor-dashboard .tutor-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    min-height: 34px;
+    padding: 8px 11px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 750;
+    line-height: 1.35;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.tutor-dashboard .tutor-btn:hover {
+    transform: translateY(-1px);
+}
+
+.tutor-dashboard .tutor-btn-primary {
+    background: #1756a0;
+    border-color: #1756a0;
+    color: #fff;
+}
+
+.tutor-dashboard .tutor-btn-primary:hover {
+    background: #10447f;
+    border-color: #10447f;
+}
+
+.tutor-dashboard .tutor-btn-outline {
+    background: #fff;
+    border-color: #cbd9e9;
+    color: #245486;
+}
+
+.tutor-dashboard .tutor-btn-outline:hover {
+    background: #f0f6ff;
+}
+
+.tutor-dashboard .tutor-btn-secondary {
+    background: #f1f5f9;
+    border-color: #e2e8f0;
+    color: #475569;
+}
+
+.tutor-dashboard .tutor-btn-light {
+    background: #fff;
+    color: #174a91;
+}
+
+/* Mis investigaciones: tarjeta compacta */
+.tutor-dashboard .tutor-my-work-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    margin: 0 0 20px;
+    padding: 14px 17px;
+    border: 1px solid #d8e7fa;
+    border-radius: 13px;
+    background: linear-gradient(115deg, #fff, #f1f7ff);
+    box-shadow: 0 3px 12px rgba(15, 45, 85, .04);
+}
+
+.tutor-dashboard .tutor-my-work-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: #e1efff;
+    font-size: 21px;
+}
+
+.tutor-dashboard .tutor-my-work-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.tutor-dashboard .tutor-my-work-kicker {
+    color: #0878ed;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .8px;
+}
+
+.tutor-dashboard .tutor-my-work-content h2 {
+    margin: 2px 0 3px;
+    color: #10284c;
+    font-size: 17px;
+    line-height: 1.3;
+}
+
+.tutor-dashboard .tutor-my-work-content p {
+    margin: 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.tutor-dashboard .tutor-my-work-button {
+    flex: 0 0 auto;
+    white-space: normal;
+}
+
+/* Buscador */
+.tutor-dashboard .tutor-catalog-section {
+    margin-bottom: 20px;
+}
+
+.tutor-dashboard .tutor-catalog-search {
+    margin-bottom: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    background: #f7faff;
+}
+
+.tutor-dashboard .tutor-catalog-search label {
+    display: block;
+    margin-bottom: 7px;
+    color: #43566e;
+    font-size: 11px;
+    font-weight: 750;
+}
+
+.tutor-dashboard .tutor-catalog-search-controls {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.tutor-dashboard .tutor-catalog-search input {
+    flex: 1;
+    min-width: 0;
+    min-height: 36px;
+    padding: 8px 11px;
+    border: 1px solid #d6e0ed;
+    border-radius: 8px;
+    background: #fff;
+    color: #24344b;
+    font: inherit;
+    font-size: 12px;
+}
+
+.tutor-dashboard .tutor-catalog-search input:focus {
+    outline: 2px solid #bfdbfe;
+    border-color: #5595e8;
+}
+
+/* Lista del catálogo */
+.tutor-dashboard .tutor-catalog-list {
+    display: grid;
+    gap: 10px;
+}
+
+.tutor-dashboard .tutor-catalog-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    min-width: 0;
+    padding: 14px;
+    border: 1px solid #e5ebf3;
+    border-radius: 11px;
+    background: #fff;
+}
+
+.tutor-dashboard .tutor-catalog-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.tutor-dashboard .tutor-catalog-main h3 {
+    margin: 0 0 8px;
+    color: #1c3454;
+    font-size: 14px;
+    font-weight: 800;
+    line-height: 1.4;
+}
+
+.tutor-dashboard .tutor-catalog-main p {
+    margin: 3px 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.tutor-dashboard .tutor-catalog-main .tutor-label {
+    margin-top: 8px;
+}
+
+.tutor-dashboard .tutor-catalog-tutor {
+    margin-top: 8px !important;
+}
+
+.tutor-dashboard .tutor-catalog-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 7px;
+    flex: 0 0 auto;
+    width: 175px;
+    max-width: 35%;
+}
+
+.tutor-dashboard .tutor-catalog-actions form {
+    width: 100%;
+    margin: 0;
+}
+
+.tutor-dashboard .tutor-catalog-actions .tutor-btn {
+    width: 100%;
+}
+
+.tutor-dashboard .tutor-catalog-readonly {
+    display: inline-block;
+    padding: 8px 10px;
+    border: 1px dashed #d5deea;
+    border-radius: 8px;
+    color: #64748b;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* Catálogo vacío */
+.tutor-dashboard .tutor-empty-state {
+    padding: 28px 15px;
+    border: 1px dashed #d6e2f0;
+    border-radius: 12px;
+    background: #f9fbfe;
+    text-align: center;
+}
+
+.tutor-dashboard .tutor-empty-icon {
+    margin-bottom: 7px;
+    font-size: 27px;
+}
+
+.tutor-dashboard .tutor-empty-state h3 {
+    margin: 0 0 5px;
+    color: #1c3454;
+    font-size: 14px;
+}
+
+.tutor-dashboard .tutor-empty-state p {
+    margin: 0;
+    color: #718096;
+    font-size: 12px;
+}
+
+/* Biblioteca */
+.tutor-dashboard .tutor-library-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    padding: 17px;
+    border-radius: 13px;
+    background: linear-gradient(115deg, #12345b, #1c5793);
+    color: #fff;
+}
+
+.tutor-dashboard .tutor-library-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: rgba(255, 255, 255, .14);
+    font-size: 22px;
+}
+
+.tutor-dashboard .tutor-library-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.tutor-dashboard .tutor-library-content h2 {
+    margin: 0 0 4px;
+    color: #fff;
+    font-size: 17px;
+    line-height: 1.3;
+}
+
+.tutor-dashboard .tutor-library-content p {
+    margin: 0;
+    color: #e1edfc;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* TABLET */
+@media (max-width: 1000px) {
+    .tutor-dashboard .tutor-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tutor-dashboard .tutor-priority-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .tutor-dashboard .tutor-priority-section {
+        padding: 15px;
+    }
+}
+
+/* CELULARES */
+@media (max-width: 600px) {
+    .tutor-dashboard {
+        width: calc(100% - 24px);
+        margin: 20px auto 30px;
+        font-size: 13px;
+    }
+
+    .tutor-dashboard .tutor-header {
+        padding-bottom: 12px;
+        margin-bottom: 10px;
+    }
+
+    .tutor-dashboard .tutor-header-title {
+        font-size: 15px;
+    }
+
+    .tutor-dashboard .tutor-header h1 {
+        font-size: 23px;
+    }
+
+    .tutor-dashboard .tutor-header p {
+        font-size: 12px;
+    }
+
+    .tutor-dashboard .tutor-stats {
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+
+    .tutor-dashboard .tutor-stat-card {
+        align-items: flex-start;
+        gap: 8px;
+        min-height: 78px;
+        padding: 10px;
+    }
+
+    .tutor-dashboard .tutor-stat-icon {
+        flex-basis: 32px;
+        width: 32px;
+        height: 32px;
+        border-radius: 9px;
+        font-size: 17px;
+    }
+
+    .tutor-dashboard .tutor-stat-label {
+        font-size: 10px;
+    }
+
+    .tutor-dashboard .tutor-stat-number {
+        font-size: 22px;
+    }
+
+    .tutor-dashboard .tutor-stat-detail {
+        font-size: 9px;
+    }
+
+    .tutor-dashboard .tutor-priority-section,
+    .tutor-dashboard .tutor-catalog-section {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .tutor-dashboard .tutor-section-heading h2 {
+        font-size: 16px;
+    }
+
+    .tutor-dashboard .tutor-section-heading p {
+        font-size: 11px;
+    }
+
+    .tutor-dashboard .tutor-priority-item {
+        flex-direction: column;
+        gap: 11px;
+        padding: 11px;
+    }
+
+    .tutor-dashboard .tutor-priority-item > .tutor-btn,
+    .tutor-dashboard .tutor-priority-actions {
+        width: 100%;
+        max-width: none;
+    }
+
+    .tutor-dashboard .tutor-priority-actions {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .tutor-dashboard .tutor-priority-actions .tutor-btn {
+        flex: 1 1 130px;
+    }
+
+    .tutor-dashboard .tutor-my-work-card {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .tutor-dashboard .tutor-my-work-content {
+        grid-column: 2;
+    }
+
+    .tutor-dashboard .tutor-my-work-icon {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .tutor-dashboard .tutor-my-work-button {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .tutor-dashboard .tutor-catalog-search-controls {
+        flex-wrap: wrap;
+    }
+
+    .tutor-dashboard .tutor-catalog-search input {
+        flex: 1 1 100%;
+        width: 100%;
+    }
+
+    .tutor-dashboard .tutor-catalog-search-controls .tutor-btn {
+        flex: 1 1 auto;
+    }
+
+    .tutor-dashboard .tutor-catalog-item {
+        flex-direction: column;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .tutor-dashboard .tutor-catalog-actions {
+        width: 100%;
+        max-width: none;
+    }
+
+    .tutor-dashboard .tutor-library-banner {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 10px;
+        padding: 13px;
+    }
+
+    .tutor-dashboard .tutor-library-icon {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .tutor-dashboard .tutor-library-content {
+        grid-column: 2;
+    }
+
+    .tutor-dashboard .tutor-library-banner > .tutor-btn {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
+
+/* CELULARES MUY ESTRECHOS */
+@media (max-width: 360px) {
+    .tutor-dashboard {
+        width: calc(100% - 16px);
+    }
+
+    .tutor-dashboard .tutor-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .tutor-dashboard .tutor-stat-card {
+        min-height: 70px;
+    }
+
+    .tutor-dashboard .tutor-section-heading {
+        gap: 7px;
+    }
+
+    .tutor-dashboard .tutor-count {
+        min-width: 25px;
+        min-height: 25px;
+    }
+}
+
+/* =========================================
+   CENTRO DE REVISIONES
+   ========================================= */
+
+.tutor-dashboard .tutor-review-access {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 0;
+    margin: 0 0 20px;
+    padding: 15px 17px;
+    border: 1px solid #d5e5f8;
+    border-radius: 13px;
+    background: linear-gradient(115deg, #edf5ff, #ffffff);
+    box-shadow: 0 3px 12px rgba(15, 45, 85, .04);
+}
+
+.tutor-dashboard .tutor-review-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+    border-radius: 11px;
+    background: #dcecff;
+    font-size: 21px;
+}
+
+.tutor-dashboard .tutor-review-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.tutor-dashboard .tutor-review-content h2 {
+    margin: 2px 0 3px;
+    color: #10284c;
+    font-size: 17px;
+    line-height: 1.3;
+}
+
+.tutor-dashboard .tutor-review-content p {
+    margin: 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.tutor-dashboard .tutor-review-button {
+    flex: 0 0 auto;
+}
+
+/* =========================================
+   GUÍA RÁPIDA DEL TUTOR
+   ========================================= */
+
+.tutor-dashboard .tutor-guide {
+    margin-top: 20px;
+    padding: 17px;
+    border: 1px solid #e2eaf4;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 3px 12px rgba(15, 45, 85, .04);
+}
+
+.tutor-dashboard .tutor-guide-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+}
+
+.tutor-dashboard .tutor-guide-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: #fff3d9;
+    font-size: 21px;
+}
+
+.tutor-dashboard .tutor-guide-heading h2 {
+    margin: 2px 0 3px;
+    color: #10284c;
+    font-size: 17px;
+}
+
+.tutor-dashboard .tutor-guide-heading p {
+    margin: 0;
+    color: #718096;
+    font-size: 11px;
+}
+
+.tutor-dashboard .tutor-guide-list {
+    display: grid;
+    gap: 8px;
+}
+
+.tutor-dashboard .tutor-guide-item {
+    padding: 12px 14px;
+    border: 1px solid #e5ebf3;
+    border-radius: 9px;
+    background: #fbfdff;
+}
+
+.tutor-dashboard .tutor-guide-item summary {
+    color: #24405f;
+    font-size: 12px;
+    font-weight: 750;
+    cursor: pointer;
+}
+
+.tutor-dashboard .tutor-guide-item summary:hover {
+    color: #1756a0;
+}
+
+.tutor-dashboard .tutor-guide-item p {
+    margin: 10px 0 0;
+    padding-top: 9px;
+    border-top: 1px solid #e8edf4;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+/* Adaptación para celulares */
+@media (max-width: 600px) {
+    .tutor-dashboard .tutor-review-access {
+        display: grid;
+        grid-template-columns: 42px minmax(0, 1fr);
+        gap: 10px;
+        padding: 12px;
+    }
+
+    .tutor-dashboard .tutor-review-icon {
+        grid-column: 1;
+        grid-row: 1;
+    }
+
+    .tutor-dashboard .tutor-review-content {
+        grid-column: 2;
+    }
+
+    .tutor-dashboard .tutor-review-button {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+
+    .tutor-dashboard .tutor-guide {
+        padding: 12px;
+    }
+}
+</style>
+
+{% endblock %}

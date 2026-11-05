@@ -1,0 +1,264 @@
+
+{% extends "base.html" %}
+
+{% block title %}Proponer tema · AulaInvestiga{% endblock %}
+
+{% block content %}
+
+<div class="elegir-tema-page">
+
+    <header class="tema-header">
+        <span>MÓDULO INVESTIGACIÓN</span>
+        <h1>Crear / elegir tema</h1>
+        <p>
+            Solo el líder del grupo puede proponer el tema de investigación.
+        </p>
+    </header>
+
+    <section class="tema-ejemplos">
+        <h2>Ejemplos de temas de investigación</h2>
+        <p>Estos temas son únicamente orientativos y no se pueden seleccionar.</p>
+
+        <div class="ejemplos-temas-grid">
+
+            <div class="ejemplo-tema">
+                <strong>Energías renovables en el entorno escolar</strong>
+                <small>Ciencias naturales · Ejemplo</small>
+            </div>
+
+            <div class="ejemplo-tema">
+                <strong>Lectura y escritura en entornos digitales</strong>
+                <small>Lenguaje · Ejemplo</small>
+            </div>
+
+            <div class="ejemplo-tema">
+                <strong>Patrimonio cultural de Tarija</strong>
+                <small>Ciencias sociales · Ejemplo</small>
+            </div>
+
+            <div class="ejemplo-tema">
+                <strong>Bienestar emocional y tecnología</strong>
+                <small>Psicología · Ejemplo</small>
+            </div>
+
+            <div class="ejemplo-tema">
+                <strong>Matemática aplicada a la economía familiar</strong>
+                <small>Matemática · Ejemplo</small>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="tema-formulario">
+
+        <h2>Proponer un tema</h2>
+        <p>Escribe el tema original que tu grupo desea investigar.</p>
+
+        <form method="POST" action="{{ url_for('investigaciones') }}">
+            <label for="titulo">Nombre del tema</label>
+            <input
+                type="text"
+                id="titulo"
+                name="titulo"
+                placeholder="Escribe el título de tu investigación"
+                required
+            >
+
+            <label for="area_principal">Área de investigación</label>
+
+            <select id="area_principal" name="area_principal" required>
+            <option value="">Seleccionar área</option>
+
+            {% for area, subareas in areas.items() %}
+            <option value="{{ area }}">{{ area }}</option>
+            {% endfor %}
+            </select>
+
+            <label for="subarea">Subárea de investigación</label>
+
+            <select id="subarea" name="subarea" required>
+            <option value="">Seleccionar subárea</option>
+            </select>
+
+            <label for="descripcion">Descripción de la propuesta</label>
+            <textarea
+                id="descripcion"
+                name="descripcion"
+                rows="4"
+                placeholder="Explica brevemente qué desea investigar tu grupo..."
+                required
+            ></textarea>
+
+            <button type="submit">Proponer tema</button>
+
+        </form>
+
+    </section>
+
+</div>
+
+<style>
+.elegir-tema-page {
+    max-width: 1100px;
+    margin: -15px auto 0;
+    padding: 10px 0 40px;
+    color: #172b4d;
+}
+
+.tema-header {
+    margin-bottom: 22px;
+}
+
+.tema-header span {
+    color: #2878d0;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.tema-header h1 {
+    font-size: 27px;
+    margin: 8px 0;
+}
+
+.tema-header p,
+.tema-ejemplos > p,
+.tema-formulario > p {
+    color: #718096;
+    font-size: 13px;
+}
+
+.tema-aviso {
+    padding: 17px;
+    background: #edf5ff;
+    border: 1px solid #d5e6fb;
+    border-radius: 12px;
+    margin-bottom: 25px;
+}
+
+.tema-aviso p {
+    font-size: 12px;
+    margin-bottom: 0;
+    color: #64748b;
+}
+
+.tema-ejemplos,
+.tema-formulario {
+    background: white;
+    border: 1px solid #e3eaf3;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 20px;
+}
+
+.tema-ejemplos h2,
+.tema-formulario h2 {
+    font-size: 18px;
+    margin: 0;
+}
+
+.ejemplos-temas-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.ejemplo-tema {
+    padding: 14px;
+    background: #f7f9fc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+}
+
+.ejemplo-tema strong {
+    display: block;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.ejemplo-tema small {
+    color: #718096;
+    font-size: 11px;
+}
+
+.tema-formulario form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+.tema-formulario label {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.tema-formulario input,
+.tema-formulario select,
+.tema-formulario textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dce4ef;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 13px;
+    margin-bottom: 9px;
+}
+
+.tema-formulario button {
+    border: none;
+    border-radius: 9px;
+    padding: 13px;
+    background: #1769c2;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.tema-formulario button:hover {
+    background: #1056a5;
+}
+
+@media (max-width: 600px) {
+    .ejemplos-temas-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .elegir-tema-page {
+        padding: 12px;
+    }
+}
+</style>
+
+<script>
+const areas = {{ areas | tojson }};
+
+const selectorArea = document.getElementById("area_principal");
+const selectorSubarea = document.getElementById("subarea");
+
+selectorArea.addEventListener("change", function () {
+
+    const areaSeleccionada = this.value;
+
+    selectorSubarea.innerHTML =
+        '<option value="">Seleccionar subárea</option>';
+
+    if (areas[areaSeleccionada]) {
+
+        areas[areaSeleccionada].forEach(function (subarea) {
+
+            const opcion = document.createElement("option");
+
+            opcion.value = subarea;
+            opcion.textContent = subarea;
+
+            selectorSubarea.appendChild(opcion);
+
+        });
+
+    }
+
+});
+</script>
+
+{% endblock %}

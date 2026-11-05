@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#071a38">
+
+    <title>TESIS LAB | La Salle Tarija</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body.pagina-inicio {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #071a38;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
+
+        .pagina-inicio a {
+            text-decoration: none;
+        }
+
+        /* =========================
+           ENCABEZADO
+        ========================= */
+
+        .ai-header {
+            width: 100%;
+            min-height: 92px;
+            padding: 16px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+            background: #06152e;
+            border-bottom: 1px solid rgba(255,255,255,0.12);
+            box-shadow: 0 5px 25px rgba(0,0,0,0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        .ai-logo {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            color: #ffffff;
+            font-size: 25px;
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .ai-logo-icon {
+            width: 49px;
+            height: 49px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #1976f3, #00b4d8);
+            font-size: 25px;
+            box-shadow: 0 5px 18px rgba(0,139,255,0.25);
+        }
+
+        .ai-logo small {
+            display: block;
+            margin-top: 4px;
+            color: #9db6d8;
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .ai-nav {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .ai-nav a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 19px;
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 30px;
+            color: #e6efff;
+            font-size: 14px;
+            font-weight: 650;
+            transition: 0.25s ease;
+        }
+
+        .ai-nav a:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: #54a5ff;
+            transform: translateY(-2px);
+        }
+
+        .ai-nav .ai-login {
+            background: #1677f9;
+            border-color: #1677f9;
+            color: white;
+            box-shadow: 0 5px 18px rgba(22,119,249,0.25);
+        }
+
+        .ai-nav .ai-login:hover {
+            background: #0862da;
+            border-color: #0862da;
+        }
+
+        /* =========================
+           PORTADA PRINCIPAL
+        ========================= */
+
+        .ai-hero {
+            width: 92%;
+            max-width: 1500px;
+            min-height: 475px;
+            margin: 36px auto 55px;
+            padding: 45px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 45px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(112,174,255,0.22);
+            border-radius: 26px;
+            background:
+                radial-gradient(ellipse at 10% 0%, rgba(22,105,220,0.22), transparent 48%),
+                linear-gradient(125deg, #0b2348 0%, #0a1d3c 55%, #102e5d 100%);
+            box-shadow: 0 25px 65px rgba(0,0,0,0.25);
+        }
+
+        .ai-hero::before {
+            content: "";
+            position: absolute;
+            width: 340px;
+            height: 340px;
+            right: -150px;
+            top: -180px;
+            border: 1px solid rgba(92,166,255,0.2);
+            border-radius: 50%;
+            box-shadow:
+                0 0 0 35px rgba(92,166,255,0.035),
+                0 0 0 70px rgba(92,166,255,0.025);
+            pointer-events: none;
+        }
+
+        .ai-hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .ai-eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 23px;
+            padding: 9px 14px;
+            border: 1px solid rgba(92,171,255,0.3);
+            border-radius: 30px;
+            background: rgba(26,116,231,0.12);
+            color: #7dbbff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.3px;
+        }
+
+        .ai-hero h1 {
+            max-width: 650px;
+            margin-bottom: 23px;
+            color: #ffffff;
+            font-size: clamp(36px, 4.2vw, 60px);
+            line-height: 1.12;
+            font-weight: 850;
+            letter-spacing: -2px;
+        }
+
+        .ai-hero h1 span {
+            color: #62b4ff;
+        }
+
+        .ai-hero-content > p {
+            max-width: 540px;
+            margin-bottom: 30px;
+            color: #c2d2e9;
+            font-size: 17px;
+            line-height: 1.85;
+        }
+
+        .ai-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 13px;
+        }
+
+        .ai-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 49px;
+            padding: 13px 22px;
+            border: 1px solid transparent;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 750;
+            transition: 0.25s ease;
+        }
+
+        .ai-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .ai-btn-primary {
+            background: #1677f9;
+            color: #ffffff;
+            box-shadow: 0 8px 24px rgba(22,119,249,0.25);
+        }
+
+        .ai-btn-primary:hover {
+            background: #308bff;
+        }
+
+        .ai-btn-light {
+            border-color: rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.06);
+            color: #ffffff;
+        }
+
+        .ai-btn-light:hover {
+            border-color: #68b5ff;
+            background: rgba(255,255,255,0.12);
+        }
+
+        /* =========================
+           IMAGEN DE LA SALLE
+        ========================= */
+
+        .ai-hero-visual {
+            width: 100%;
+            height: 340px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.17);
+            border-radius: 22px;
+            background: #06152e;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.3);
+        }
+
+        .ai-photo-frame {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #06152e;
+        }
+
+        .ai-photo-frame img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+        }
+
+        /* =========================
+           PRESENTACIÓN
+        ========================= */
+
+        .ai-intro {
+            width: 88%;
+            max-width: 1250px;
+            margin: 0 auto 80px;
+            padding: 27px 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            border: 1px solid rgba(110,171,255,0.2);
+            border-radius: 19px;
+            background: linear-gradient(110deg, #0c2851, #0a1d3c);
+        }
+
+        .ai-intro-image {
+            width: 62px;
+            height: 62px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(98,180,255,0.25);
+            border-radius: 18px;
+            background: rgba(22,119,249,0.16);
+        }
+
+        .ai-intro-image::after {
+            content: "⚗";
+            color: #72bdff;
+            font-size: 31px;
+        }
+
+        .ai-intro-text h2 {
+            margin-bottom: 7px;
+            color: #ffffff;
+            font-size: 21px;
+        }
+
+        .ai-intro-text p {
+            color: #b8cbe5;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* =========================
+           CARACTERÍSTICAS
+        ========================= */
+
+        .ai-features {
+            width: 88%;
+            max-width: 1250px;
+            margin: 0 auto 85px;
+        }
+
+        .ai-section-heading {
+            margin-bottom: 36px;
+            text-align: center;
+        }
+
+        .ai-section-heading h2 {
+            margin-bottom: 12px;
+            color: #ffffff;
+            font-size: clamp(26px, 3vw, 36px);
+            font-weight: 800;
+            letter-spacing: -0.7px;
+        }
+
+        .ai-section-heading p {
+            color: #a9bfdf;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .ai-feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .ai-feature-card {
+            min-height: 250px;
+            padding: 29px 25px;
+            border: 1px solid rgba(125,173,235,0.2);
+            border-radius: 19px;
+            background: linear-gradient(150deg, #102b52, #0a1c38);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+
+        .ai-feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(91,169,255,0.7);
+        }
+
+        .ai-feature-number {
+            display: inline-block;
+            margin-bottom: 25px;
+            padding: 7px 11px;
+            border: 1px solid rgba(97,173,255,0.22);
+            border-radius: 7px;
+            background: rgba(22,119,249,0.12);
+            color: #78baff;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.1px;
+        }
+
+        .ai-feature-card h3 {
+            margin-bottom: 12px;
+            color: #ffffff;
+            font-size: 21px;
+            font-weight: 750;
+        }
+
+        .ai-feature-card p {
+            margin-bottom: 22px;
+            color: #b3c5df;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .ai-feature-card a {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #69b4ff;
+            font-size: 13px;
+            font-weight: 750;
+        }
+
+        .ai-feature-card a:hover {
+            color: #ffffff;
+        }
+
+        /* =========================
+           LLAMADA A LA ACCIÓN
+        ========================= */
+
+        .ai-cta {
+            width: 88%;
+            max-width: 1250px;
+            margin: 0 auto 75px;
+            padding: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 25px;
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 22px;
+            background:
+                radial-gradient(circle at 90% 10%, rgba(90,178,255,0.25), transparent 35%),
+                linear-gradient(115deg, #123e7a, #0d63c9);
+            box-shadow: 0 18px 45px rgba(0,0,0,0.2);
+        }
+
+        .ai-cta h2 {
+            margin-bottom: 10px;
+            color: #ffffff;
+            font-size: 26px;
+        }
+
+        .ai-cta p {
+            max-width: 650px;
+            color: #d8e9ff;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .ai-cta .ai-btn {
+            flex-shrink: 0;
+            background: #ffffff;
+            color: #0a2a55;
+        }
+
+        .ai-cta .ai-btn:hover {
+            background: #e5f2ff;
+        }
+
+        /* =========================
+           PIE DE PÁGINA
+        ========================= */
+
+        .ai-footer {
+            min-height: 105px;
+            padding: 27px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            border-top: 1px solid rgba(255,255,255,0.12);
+            background: #041127;
+        }
+
+        .ai-footer .ai-logo {
+            font-size: 20px;
+        }
+
+        .ai-footer .ai-logo small {
+            color: #80b9f5;
+        }
+
+        .ai-footer p {
+            color: #91a9ca;
+            font-size: 12px;
+            text-align: right;
+        }
+
+        /* =========================
+           ADAPTACIÓN A CELULARES
+        ========================= */
+
+        @media (max-width: 950px) {
+            .ai-hero {
+                grid-template-columns: 1fr;
+                padding: 35px;
+                gap: 30px;
+            }
+
+            .ai-hero h1 {
+                font-size: 43px;
+            }
+
+            .ai-hero-visual {
+                height: 300px;
+            }
+
+            .ai-feature-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .ai-feature-card:last-child {
+                grid-column: 1 / -1;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .ai-header {
+                padding: 15px 5%;
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 16px;
+            }
+
+            .ai-logo {
+                font-size: 22px;
+            }
+
+            .ai-nav {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .ai-nav a {
+                flex: 1;
+                padding: 11px 12px;
+                font-size: 12px;
+            }
+
+            .ai-hero {
+                width: 92%;
+                margin-top: 22px;
+                padding: 25px 20px;
+                border-radius: 19px;
+            }
+
+            .ai-eyebrow {
+                font-size: 9px;
+                letter-spacing: 0.7px;
+            }
+
+            .ai-hero h1 {
+                font-size: 35px;
+                letter-spacing: -1px;
+            }
+
+            .ai-hero-content > p {
+                font-size: 15px;
+            }
+
+            .ai-hero-visual {
+                height: 200px;
+                border-radius: 15px;
+            }
+
+            .ai-actions {
+                flex-direction: column;
+            }
+
+            .ai-btn {
+                width: 100%;
+            }
+
+            .ai-intro,
+            .ai-features,
+            .ai-cta {
+                width: 92%;
+            }
+
+            .ai-intro {
+                padding: 22px 18px;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .ai-intro-image {
+                width: 48px;
+                height: 48px;
+                border-radius: 13px;
+            }
+
+            .ai-intro-image::after {
+                font-size: 25px;
+            }
+
+            .ai-intro-text h2 {
+                font-size: 18px;
+            }
+
+            .ai-intro-text p {
+                font-size: 13px;
+            }
+
+            .ai-feature-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .ai-feature-card:last-child {
+                grid-column: auto;
+            }
+
+            .ai-feature-card {
+                min-height: auto;
+            }
+
+            .ai-cta {
+                padding: 27px 21px;
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .ai-cta h2 {
+                font-size: 23px;
+            }
+
+            .ai-footer {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .ai-footer p {
+                text-align: left;
+            }
+        }
+    </style>
+</head>
+
+<body class="pagina-inicio">
+
+<header class="ai-header">
+    <a class="ai-logo" href="{{ url_for('inicio') }}">
+        <span class="ai-logo-icon">🎓</span>
+        <span>
+            TESIS LAB
+            <small>Recurso Educativo Digital</small>
+        </span>
+    </a>
+
+    <nav class="ai-nav">
+        <a class="ai-login" href="{{ url_for('login') }}">🔒 Iniciar sesión</a>
+        <a href="{{ url_for('biblioteca') }}">▤ Biblioteca</a>
+    </nav>
+</header>
+
+<main>
+
+    <section class="ai-hero">
+        <div class="ai-hero-content">
+            <span class="ai-eyebrow">
+                ✦ EDUCACIÓN · INVESTIGACIÓN · INNOVACIÓN
+            </span>
+
+            <h1>
+                Investigar paso a paso,<br>
+                <span>aprender de verdad.</span>
+            </h1>
+
+            <p>
+                TESIS LAB acompaña a los estudiantes desde la elección
+                del tema hasta la presentación final de su investigación,
+                con herramientas para colaborar, organizarse y aprender.
+            </p>
+
+            <div class="ai-actions">
+                <a class="ai-btn ai-btn-primary" href="{{ url_for('login') }}">
+                    🔒 Iniciar sesión
+                </a>
+
+                <a class="ai-btn ai-btn-light" href="{{ url_for('biblioteca') }}">
+                    ▤ Explorar biblioteca
+                </a>
+            </div>
+        </div>
+
+        <div class="ai-hero-visual">
+            <div class="ai-photo-frame">
+                <img
+                    src="https://lasalletarija.org/wp-content/uploads/2026/03/WhatsApp-Image-2026-03-01-at-18.58.00-1536x548.jpeg"
+                    alt="Colegio La Salle Tarija"
+                    loading="eager"
+                    onerror="this.style.display='none';"
+                >
+            </div>
+        </div>
+    </section>
+
+    <section class="ai-intro">
+        <div class="ai-intro-image" aria-label="Icono de investigación"></div>
+
+        <div class="ai-intro-text">
+            <h2>Tu investigación, organizada en un solo lugar</h2>
+            <p>
+                Organiza tu trabajo, colabora con tu grupo, recibe orientación
+                de tu profesor y avanza por las diferentes etapas de tu proyecto.
+            </p>
+        </div>
+    </section>
+
+    <section class="ai-features">
+        <div class="ai-section-heading">
+            <h2>¿Qué puedes hacer con TESIS LAB?</h2>
+            <p>
+                Todo lo que necesitas para desarrollar tu investigación
+                académica, desde el primer paso hasta el resultado final.
+            </p>
+        </div>
+
+        <div class="ai-feature-grid">
+
+            <article class="ai-feature-card">
+                <div class="ai-feature-body">
+                    <span class="ai-feature-number">01 / COLABORACIÓN</span>
+                    <h3>Trabajar en grupo</h3>
+                    <p>
+                        Crea tu grupo de investigación, invita a tus compañeros
+                        y organiza el trabajo en equipo.
+                    </p>
+                    <a href="{{ url_for('login') }}">Conocer más ↗</a>
+                </div>
+            </article>
+
+            <article class="ai-feature-card">
+                <div class="ai-feature-body">
+                    <span class="ai-feature-number">02 / ORIENTACIÓN</span>
+                    <h3>Recibir orientación</h3>
+                    <p>
+                        Comunícate con tu profesor y recibe acompañamiento
+                        y retroalimentación durante el proceso.
+                    </p>
+                    <a href="{{ url_for('login') }}">Conocer más ↗</a>
+                </div>
+            </article>
+
+            <article class="ai-feature-card">
+                <div class="ai-feature-body">
+                    <span class="ai-feature-number">03 / PROGRESO</span>
+                    <h3>Avanzar por niveles</h3>
+                    <p>
+                        Completa cada etapa de tu investigación siguiendo
+                        las indicaciones y el cronograma académico.
+                    </p>
+                    <a href="{{ url_for('login') }}">Conocer más ↗</a>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <section class="ai-cta">
+        <div>
+            <h2>Tu próxima gran idea comienza aquí.</h2>
+            <p>
+                Investiga, aprende, trabaja en equipo y convierte tus ideas
+                en un proyecto académico bien organizado.
+            </p>
+        </div>
+
+        <a class="ai-btn" href="{{ url_for('login') }}">
+            Entrar a TESIS LAB →
+        </a>
+    </section>
+
+</main>
+
+<footer class="ai-footer">
+    <a class="ai-logo" href="{{ url_for('inicio') }}">
+        <span>
+            TESIS LAB
+            <small>★ La Salle Tarija</small>
+        </span>
+    </a>
+
+    <p>© 2026 TESIS LAB · Recurso Educativo Digital</p>
+</footer>
+
+</body>
+</html>
+

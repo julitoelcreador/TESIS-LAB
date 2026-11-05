@@ -1,0 +1,1032 @@
+
+{% extends "base.html" %}
+
+{% block title %}Mi progreso · AulaInvestiga{% endblock %}
+
+{% block content %}
+
+<style>
+
+/* ========================================
+   PANEL GENERAL
+======================================== */
+
+.progreso-page {
+    max-width: 1150px;
+    margin: 0 auto;
+    padding: 15px 0 40px;
+    color: #20314b;
+}
+
+/* ENCABEZADO */
+
+.progreso-encabezado {
+    margin-bottom: 25px;
+}
+
+.progreso-etiqueta {
+    color: #3478c8;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.progreso-saludo h1 {
+    font-size: 29px;
+    font-weight: 750;
+    margin: 0 0 8px;
+    color: #172b4d;
+}
+
+.progreso-saludo p {
+    color: #78869a;
+    font-size: 14px;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ========================================
+   INVESTIGACIÓN
+======================================== */
+
+.investigacion-card {
+    display: block;
+    background: #fff;
+    border: 1px solid #e7edf5;
+    border-radius: 17px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(25,48,80,.04);
+    color: inherit;
+    text-decoration: none;
+    transition: .2s ease;
+}
+
+.investigacion-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(25,48,80,.10);
+}
+
+.investigacion-card:focus-visible {
+    outline: 3px solid #3478d0;
+    outline-offset: 4px;
+}
+
+.investigacion-superior {
+    margin-bottom: 25px;
+}
+
+.investigacion-identidad small {
+    display: block;
+    color: #8290a3;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.investigacion-identidad h2 {
+    color: #203653;
+    font-size: 19px;
+    margin: 0;
+    font-weight: 700;
+}
+
+.investigacion-tutor {
+    color: #7d8a9c;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+/* ========================================
+   PROGRESO GENERAL
+======================================== */
+
+.progreso-general {
+    padding: 19px;
+    background: #f7f9fc;
+    border-radius: 13px;
+    margin-bottom: 27px;
+}
+
+.progreso-general-superior {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.progreso-general-superior h3 {
+    font-size: 14px;
+    margin: 0;
+    color: #344761;
+}
+
+.progreso-porcentaje {
+    color: #2878d0;
+    font-size: 23px;
+    font-weight: 750;
+}
+
+.progreso-barra {
+    height: 9px;
+    width: 100%;
+    background: #e2e9f2;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.progreso-barra-valor {
+    height: 100%;
+    background: linear-gradient(90deg,#3478d0,#62a3ed);
+    border-radius: 20px;
+}
+
+.progreso-descripcion {
+    color: #8290a3;
+    font-size: 11px;
+    margin-top: 9px;
+}
+
+/* ========================================
+   LÍNEA DE TIEMPO
+======================================== */
+
+.etapas-titulo {
+    font-size: 15px;
+    color: #344761;
+    margin: 0 0 25px;
+    font-weight: 700;
+}
+
+.etapas-contenedor {
+    width: 100%;
+    overflow-x: auto;
+    padding: 5px 0 15px;
+}
+
+.etapas-linea {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    min-width: 650px;
+    width: 100%;
+}
+
+.etapa {
+    flex: 1;
+    min-width: 0;
+    position: relative;
+    text-align: center;
+}
+
+.etapa-conexion {
+    position: absolute;
+    height: 3px;
+    background: #dce5f0;
+    top: 10px;
+    left: -50%;
+    width: 100%;
+    z-index: 0;
+}
+
+.etapa:first-child .etapa-conexion {
+    display: none;
+}
+
+.etapa-circulo {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: #fff;
+    border: 3px solid #cbd6e4;
+    margin: 0 auto 12px;
+    position: relative;
+    z-index: 2;
+    box-sizing: border-box;
+}
+
+.etapa-nombre {
+    display: block;
+    color: #7d8a9c;
+    font-size: 12px;
+    line-height: 1.4;
+    padding: 0 5px;
+}
+
+/* ========================================
+   TARJETAS DE RESUMEN
+======================================== */
+
+.resumen-progreso {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 14px;
+    margin: 20px 0;
+}
+
+.resumen-card {
+    position: relative;
+    overflow: hidden;
+    padding: 16px 18px;
+    min-height: 125px;
+    background: #fff;
+    border: 1px solid #e8edf5;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(15,35,70,.05);
+    transition: .2s ease;
+}
+
+.resumen-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 18px rgba(15,35,70,.09);
+}
+
+.resumen-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--color);
+}
+
+.resumen-etiqueta {
+    display: block;
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.resumen-valor {
+    display: block;
+    margin: 12px 0 5px;
+    color: var(--color);
+    font-size: 29px;
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.resumen-descripcion {
+    display: block;
+    color: #8491a5;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.resumen-card:nth-child(1) { --color: #2563eb; }
+.resumen-card:nth-child(2) { --color: #08916b; }
+.resumen-card:nth-child(3) { --color: #d97706; }
+.resumen-card:nth-child(4) { --color: #7652c9; }
+
+.aprobado {
+    background: #16a36a;
+}
+
+.aprobado-texto {
+    color: #08794c;
+    background: #dcfce7;
+}
+/* ========================================
+   ACCESOS RÁPIDOS
+======================================== */
+
+.accesos-rapidos {
+    display: grid;
+    grid-template-columns: repeat(6,1fr);
+    gap: 14px;
+    margin: 22px 0 30px;
+}
+
+.acceso-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-height: 75px;
+    padding: 12px;
+    background: #fff;
+    border: 1px solid #e7edf5;
+    border-radius: 13px;
+    color: #263b59;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    box-shadow: 0 3px 10px rgba(15,35,70,.04);
+    transition: .2s ease;
+}
+
+.acceso-card:hover {
+    transform: translateY(-3px);
+    border-color: #b9ccef;
+    background: #f8faff;
+    color: #174ea6;
+    box-shadow: 0 7px 16px rgba(15,35,70,.08);
+}
+
+.acceso-icono {
+    font-size: 20px;
+}
+
+/* ========================================
+   PANEL INFERIOR
+======================================== */
+
+.panel-inferior {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 25px 0;
+    align-items: start;
+}
+
+.panel-bloque {
+    background: #fff;
+    border: 1px solid #e8edf5;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 3px 12px rgba(15,35,70,.04);
+    min-width: 0;
+}
+
+.panel-bloque-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.panel-bloque-header h2 {
+    margin: 0;
+    color: #1e3453;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.panel-bloque-header a {
+    color: #2563eb;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* ========================================
+   SEMÁFORO DE ENTREGAS
+======================================== */
+
+.semaforo-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.semaforo-item {
+    display: flex;
+    gap: 11px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #edf1f6;
+    border-radius: 11px;
+}
+
+.semaforo-indicador {
+    width: 4px;
+    min-width: 4px;
+    border-radius: 5px;
+}
+
+.pendiente { background: #e9a23b; }
+.vencido { background: #dc4545; }
+.correccion { background: #dc4545; }
+
+.semaforo-contenido {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    min-width: 0;
+}
+
+.semaforo-estado {
+    color: #64748b;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.semaforo-contenido strong {
+    color: #263b59;
+    font-size: 13px;
+}
+
+.semaforo-contenido small {
+    color: #8491a5;
+    font-size: 11px;
+}
+
+.semaforo-etiqueta {
+    width: fit-content;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.pendiente-texto {
+    color: #a66b0b;
+    background: #fff2d6;
+}
+
+.vencido-texto,
+.correccion-texto {
+    color: #c13939;
+    background: #fee8e8;
+}
+
+/* LEYENDA */
+
+.semaforo-leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 17px;
+    padding-top: 14px;
+    border-top: 1px solid #edf1f6;
+}
+
+.semaforo-leyenda span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.semaforo-leyenda i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.leyenda-verde { background: #16a36a; }
+.leyenda-amarillo { background: #e9a23b; }
+.leyenda-rojo { background: #dc4545; }
+
+/* ========================================
+   PRÓXIMAS FECHAS
+======================================== */
+
+.fechas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.fecha-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #f8fafc;
+    border: 1px solid #edf1f6;
+    border-radius: 11px;
+}
+
+.fecha-dia {
+    min-width: 43px;
+    text-align: center;
+    color: #2563eb;
+    font-size: 19px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.fecha-dia small {
+    font-size: 10px;
+    letter-spacing: 1px;
+}
+
+.fecha-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.fecha-info strong {
+    color: #263b59;
+    font-size: 12px;
+}
+
+.fecha-info span {
+    color: #8491a5;
+    font-size: 11px;
+}
+
+.fecha-estado {
+    margin-left: auto;
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* ========================================
+   SIN INVESTIGACIÓN
+======================================== */
+
+.sin-investigacion {
+    padding: 35px 20px;
+    text-align: center;
+    background: #fff;
+    border: 1px dashed #cbd6e4;
+    border-radius: 15px;
+    margin-bottom: 25px;
+}
+
+.sin-investigacion i {
+    font-size: 30px;
+    color: #8da6c5;
+    margin-bottom: 12px;
+}
+
+.sin-investigacion h3 {
+    color: #344761;
+    font-size: 17px;
+}
+
+.sin-investigacion p {
+    color: #8290a3;
+    font-size: 13px;
+}
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 900px) {
+    .accesos-rapidos {
+        grid-template-columns: repeat(3,1fr);
+    }
+}
+
+@media (max-width: 750px) {
+    .resumen-progreso {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    .panel-inferior {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 650px) {
+    .progreso-page {
+        padding: 10px 0 30px;
+    }
+
+    .progreso-saludo h1 {
+        font-size: 24px;
+    }
+
+    .investigacion-card {
+        padding: 17px;
+    }
+}
+
+@media (max-width: 500px) {
+    .accesos-rapidos {
+        grid-template-columns: repeat(2,1fr);
+        gap: 10px;
+    }
+}
+
+@media (max-width: 450px) {
+    .resumen-progreso {
+        grid-template-columns: repeat(2,1fr);
+        gap: 10px;
+    }
+
+    .resumen-card {
+        padding: 14px;
+        min-height: 115px;
+    }
+
+    .resumen-valor {
+        font-size: 23px;
+    }
+
+    .panel-bloque {
+        padding: 15px;
+    }
+}
+
+</style>
+
+
+<div class="progreso-page">
+
+    <!-- ENCABEZADO -->
+
+    <section class="progreso-encabezado">
+
+        <div class="progreso-etiqueta">
+            PANEL DE PROGRESO PERSONAL
+        </div>
+
+        <div class="progreso-saludo">
+            <h1>Hola, {{ usuario.nombre }}</h1>
+
+            <p>
+                Qué hacer, cómo mejorar y cuánto te falta
+                para terminar tu investigación.
+            </p>
+        </div>
+
+    </section>
+
+
+    {% if investigacion %}
+
+    <!-- INVESTIGACIÓN -->
+
+    <a href="{{ url_for('detalle_investigacion', investigacion_id=investigacion['id']) }}"
+       class="investigacion-card">
+
+        <div class="investigacion-superior">
+
+            <div class="investigacion-identidad">
+
+                <small>MI INVESTIGACIÓN</small>
+
+                <h2>{{ investigacion['titulo'] }}</h2>
+
+                <div class="investigacion-tutor">
+                    <i class="fas fa-user-tie"></i>
+                    Investigación académica
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- PROGRESO GENERAL -->
+
+        <div class="progreso-general">
+
+            <div class="progreso-general-superior">
+
+                <h3>Progreso general de tu investigación</h3>
+
+                <span class="progreso-porcentaje">
+                    {{ progreso_porcentaje }}%
+                </span>
+
+            </div>
+
+            <div class="progreso-barra">
+
+                <div class="progreso-barra-valor"
+                     style="width: {{ progreso_porcentaje }}%;">
+                </div>
+
+            </div>
+
+            <div class="progreso-descripcion">
+                Avance según las etapas aprobadas de tu monografía.
+            </div>
+
+        </div>
+
+        <!-- LÍNEA DE TIEMPO -->
+
+        <div class="etapas-contenedor">
+
+            <div class="etapas-linea">
+
+                {% set etapas = [
+                    'Perfil y tema',
+                    'Marco teórico',
+                    'Metodología',
+                    'Resultados',
+                    'Conclusiones'
+                ] %}
+
+                {% for nombre in etapas %}
+
+                    <div class="etapa">
+
+                        <div class="etapa-conexion"></div>
+
+                        <div class="etapa-circulo">
+                            {{ loop.index }}
+                        </div>
+
+                        <span class="etapa-nombre">
+                            {{ nombre }}
+                        </span>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+    </a>
+
+
+    <!-- CUATRO TARJETAS DE RESUMEN -->
+
+    <section class="resumen-progreso">
+
+        <div class="resumen-card">
+
+            <span class="resumen-etiqueta">Avance total</span>
+
+            <strong class="resumen-valor">
+                {{ progreso_porcentaje }}%
+            </strong>
+
+            <span class="resumen-descripcion">
+                Te falta {{ 100 - progreso_porcentaje }}% para terminar
+            </span>
+
+        </div>
+
+        <div class="resumen-card">
+
+            <span class="resumen-etiqueta">Capítulos completados</span>
+
+            <strong class="resumen-valor">
+                {{ capitulos_completados }} de 5
+            </strong>
+
+            <span class="resumen-descripcion">
+                Capítulos aprobados por tu tutor
+            </span>
+
+        </div>
+
+        <div class="resumen-card">
+
+            <span class="resumen-etiqueta">Entregas pendientes</span>
+
+            <strong class="resumen-valor">
+                {{ entregas_pendientes }}
+            </strong>
+
+            <span class="resumen-descripcion">
+                Incluye trabajos por corregir
+            </span>
+
+        </div>
+
+        <div class="resumen-card">
+
+            <span class="resumen-etiqueta">Siguiente entrega</span>
+
+            {% if siguiente_entrega %}
+
+                <strong class="resumen-valor">
+                    {{ fecha_siguiente }}
+                </strong>
+
+                <span class="resumen-descripcion">
+                    {{ siguiente_entrega['titulo'] }}
+                    · {{ fecha_mensaje }}
+                </span>
+
+            {% else %}
+
+                <strong class="resumen-valor">—</strong>
+
+                <span class="resumen-descripcion">
+                    {{ fecha_mensaje }}
+                </span>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+
+    <!-- SEIS ACCESOS RÁPIDOS -->
+
+    <section class="accesos-rapidos">
+
+        <a href="{{ url_for('detalle_investigacion', investigacion_id=investigacion['id']) }}"
+           class="acceso-card">
+            <span class="acceso-icono">📤</span>
+            <span>Subir trabajo</span>
+        </a>
+
+       <a href="{{ url_for(
+        'correcciones_estudiante',
+        investigacion_id=investigacion['id']
+        ) }}" class="acceso-card">
+        <span class="acceso-icono">📝</span>
+        <span>Corregir</span>
+        </a>
+
+        <a href="{{ url_for(
+        'tareas_grupo_innovacion',
+        investigacion_id=investigacion['id']
+        ) }}" class="acceso-card">
+        <span class="acceso-icono">📋</span>
+        <span>Tareas</span>
+        </a>
+
+        <a href="#"
+        class="acceso-card"
+        id="tessiSidebarLink">
+        <span class="acceso-icono">🤖</span>
+        <span>Asistente TESSI</span>
+        </a>
+
+       <a href="{{ url_for('biblioteca') }}" class="acceso-card">
+        <span class="acceso-icono">📚</span>
+        <span>Biblioteca Virtual</span>
+        </a>
+
+       <a href="{{ url_for('innovaciones_logros') }}" class="acceso-card">
+        <span class="acceso-icono">🏆</span>
+        <span>Mis logros</span>
+        </a>
+    </section>
+
+
+    <!-- PANEL INFERIOR: DOS COLUMNAS -->
+
+    <section class="panel-inferior">
+
+        <!-- SEMÁFORO DE ENTREGAS -->
+
+        <div class="panel-bloque">
+
+            <div class="panel-bloque-header">
+
+                <h2>Semáforo de entregas</h2>
+
+                <a href="{{ url_for(
+                'detalle_investigacion',
+                investigacion_id=investigacion['id']
+                ) }}#formulario-entrega">                    Ver todas
+                </a>
+
+            </div>
+
+            
+    <div class="semaforo-lista">
+
+    {% for entrega in semaforo_entregas %}
+
+        <div class="semaforo-item">
+
+            <div class="semaforo-indicador {{ entrega.clase }}"></div>
+
+            <div class="semaforo-contenido">
+
+                <span class="semaforo-estado">
+                    {{ entrega.estado }}
+                </span>
+
+                <strong>{{ entrega.titulo }}</strong>
+
+                <small>
+                    {% if entrega.nivel %}
+                        Nivel {{ entrega.nivel }}
+                    {% else %}
+                        Tarea asignada
+                    {% endif %}
+                    {% if entrega.fecha %}
+                        · {{ entrega.fecha[:10] }}
+                    {% endif %}
+                </small>
+
+                <span class="semaforo-etiqueta
+                    {% if entrega.clase == 'aprobado' %}
+                        aprobado-texto
+                    {% elif entrega.clase == 'correccion' or entrega.clase == 'vencido' %}
+                        correccion-texto
+                    {% else %}
+                        pendiente-texto
+                    {% endif %}">
+                    {{ entrega.etiqueta }}
+                </span>
+
+                {% if entrega.observaciones %}
+                    <small>{{ entrega.observaciones }}</small>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    {% else %}
+
+        <p>No tienes entregas ni tareas para mostrar.</p>
+
+    {% endfor %}
+
+    </div>
+
+
+            <!-- LEYENDA DENTRO DE LA TARJETA -->
+
+            <div class="semaforo-leyenda">
+
+                <span>
+                    <i class="leyenda-verde"></i>
+                    Aprobado
+                </span>
+
+                <span>
+                    <i class="leyenda-amarillo"></i>
+                    Pendiente de revisión
+                </span>
+
+                <span>
+                    <i class="leyenda-rojo"></i>
+                    Necesita correcciones o está vencida
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRÓXIMAS FECHAS -->
+
+        <div class="panel-bloque">
+
+            <div class="panel-bloque-header">
+
+                <h2>Próximas fechas</h2>
+
+                <a href="#">Cronograma</a>
+
+            </div>
+
+           
+    <div class="fechas-lista">
+
+    {% for fecha in proximas_fechas %}
+
+        <div class="fecha-item">
+
+            <div class="fecha-dia">
+                {{ fecha.dia }}<br>
+                <small>{{ fecha.mes }}</small>
+            </div>
+
+            <div class="fecha-info">
+
+                <strong>{{ fecha.titulo }}</strong>
+
+                <span>{{ fecha.detalle }}</span>
+
+            </div>
+
+            <span class="fecha-estado">
+                {{ fecha.tipo }}
+            </span>
+
+        </div>
+
+    {% else %}
+
+        <p>No tienes próximas fechas registradas.</p>
+
+    {% endfor %}
+
+    </div>
+
+        </div>
+
+    </section>
+
+
+    {% else %}
+
+    <!-- SIN INVESTIGACIÓN -->
+
+    <section class="sin-investigacion">
+
+        <i class="fas fa-book-open"></i>
+
+        <h3>Aún no tienes una investigación asignada</h3>
+
+        <p>
+            Cuando formes parte de un grupo de investigación,
+            aquí podrás consultar tu progreso personal.
+        </p>
+
+    </section>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

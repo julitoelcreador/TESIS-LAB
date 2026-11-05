@@ -1,0 +1,585 @@
+{% extends "base.html" %}
+
+{% block title %}Guía para corregir trabajos · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+.correcciones-page {
+    width: min(1050px, 94%);
+    margin: 0 auto;
+    padding: 25px 0 45px;
+    color: #172b4d;
+}
+
+.correcciones-page * {
+    box-sizing: border-box;
+}
+
+.correcciones-volver {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #1769c2;
+    font-size: 13px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+
+.correcciones-etiqueta {
+    color: #93c5fd;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.correcciones-hero {
+    background: transparent;
+    color: #172b4d;
+}
+
+.correcciones-hero h1 {
+    color: #172b4d;
+}
+
+.correcciones-hero p {
+    color: #52627a;
+}
+
+.correcciones-hero span {
+    color: #52627a;
+}
+
+.correcciones-seccion {
+    padding: 22px;
+    margin-bottom: 22px;
+    background: white;
+    border: 1px solid #e2eaf4;
+    border-radius: 13px;
+}
+
+.correcciones-seccion h2 {
+    margin: 0 0 7px;
+    color: #10284b;
+    font-size: 19px;
+}
+
+.correcciones-descripcion {
+    margin-bottom: 18px;
+    color: #718096;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+.correccion-card {
+    padding: 18px;
+    margin-top: 15px;
+    border: 1px solid #e2eaf4;
+    border-radius: 11px;
+}
+
+.correccion-superior {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.correccion-superior h3 {
+    margin: 0;
+    color: #243b5b;
+    font-size: 15px;
+}
+
+.correccion-superior p {
+    margin: 6px 0;
+    color: #8492a6;
+    font-size: 11px;
+}
+
+.correccion-estado {
+    padding: 6px 9px;
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.correccion-progreso {
+    margin: 14px 0;
+    padding: 10px;
+    background: #f1f6fc;
+    border-radius: 7px;
+    color: #33445f;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.observacion-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 11px;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.observacion-item:last-child {
+    border-bottom: none;
+}
+
+.observacion-item input {
+    width: 17px;
+    height: 17px;
+    margin-top: 2px;
+    accent-color: #1769c2;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.observacion-item label {
+    color: #33445f;
+    font-size: 13px;
+    line-height: 1.6;
+    cursor: pointer;
+}
+
+.observacion-item input:checked + label {
+    color: #8492a6;
+    text-decoration: line-through;
+}
+
+.correccion-guardar {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #1769c2;
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.correccion-guardar:hover {
+    background: #12549c;
+}
+
+.reenvio-formulario {
+    padding: 16px;
+    margin-top: 18px;
+    background: #f8fafc;
+    border: 1px solid #e2eaf4;
+    border-radius: 9px;
+}
+
+.reenvio-formulario h4 {
+    margin: 0 0 8px;
+    color: #10284b;
+    font-size: 14px;
+}
+
+.reenvio-formulario label {
+    display: block;
+    margin: 13px 0 6px;
+    color: #33445f;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.reenvio-formulario input,
+.reenvio-formulario textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d5dfeb;
+    border-radius: 7px;
+    background: white;
+    color: #33445f;
+    font: inherit;
+    font-size: 12px;
+}
+
+.reenvio-formulario textarea {
+    min-height: 75px;
+    resize: vertical;
+}
+
+.reenvio-boton {
+    width: 100%;
+    margin-top: 15px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #15803d;
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.reenvio-boton:hover {
+    background: #166534;
+}
+
+.correccion-anterior {
+    padding: 15px;
+    margin-top: 12px;
+    background: #f8fafc;
+    border: 1px solid #e2eaf4;
+    border-radius: 9px;
+}
+
+.correccion-anterior strong {
+    display: block;
+    color: #33445f;
+    font-size: 13px;
+}
+
+.correccion-anterior p {
+    margin: 6px 0;
+    color: #718096;
+    font-size: 11px;
+}
+
+.observacion-anterior {
+    padding: 8px 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.correcciones-vacio {
+    padding: 25px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    color: #64748b;
+    text-align: center;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.correcciones-vacio strong {
+    display: block;
+    margin-bottom: 6px;
+    color: #33445f;
+}
+
+@media (max-width: 600px) {
+    .correcciones-hero {
+        padding: 20px;
+    }
+
+    .correcciones-hero h1 {
+        font-size: 22px;
+    }
+
+    .correcciones-seccion {
+        padding: 16px;
+    }
+
+    .correccion-superior {
+        flex-direction: column;
+    }
+}
+</style>
+
+<div class="correcciones-page">
+
+    <a
+        href="{{ url_for(
+            'detalle_investigacion',
+            investigacion_id=investigacion['id']
+        ) }}"
+        class="correcciones-volver"
+    >
+        ← Volver a la investigación
+    </a>
+
+    <header class="correcciones-hero">
+
+        <span class="correcciones-etiqueta">
+            TESIS LAB · SEGUIMIENTO ACADÉMICO
+        </span>
+
+        <h1>Guía para corregir trabajos</h1>
+
+        <p>
+            Tu tutor ha revisado tu investigación y ha registrado
+            observaciones específicas. Lee cada una, realiza los cambios
+            en tu documento y marca las que hayas corregido.
+            Cuando termines, podrás volver a enviar tu trabajo.
+        </p>
+
+    </header>
+
+    <!-- CORRECCIONES PENDIENTES -->
+
+    <section class="correcciones-seccion">
+
+        <h2>Por corregir</h2>
+
+        <p class="correcciones-descripcion">
+            Estas son las observaciones que debes atender antes de
+            volver a presentar tu documento.
+        </p>
+
+        {% if correcciones_pendientes %}
+
+            {% for elemento in correcciones_pendientes %}
+
+                {% set historial = elemento.historial %}
+                {% set observaciones = elemento.observaciones %}
+
+                {% set progreso = namespace(corregidas=0) %}
+
+                {% for observacion in observaciones %}
+                    {% if observacion['corregida'] %}
+                        {% set progreso.corregidas = progreso.corregidas + 1 %}
+                    {% endif %}
+                {% endfor %}
+
+                <article class="correccion-card">
+
+                    <div class="correccion-superior">
+
+                        <div>
+                            <h3>
+                                Nivel {{ historial['nivel'] }}
+                                · {{ historial['titulo'] or 'Trabajo de investigación' }}
+                            </h3>
+
+                            <p>
+                                Versión {{ historial['version'] }}
+                                · Revisado:
+                                {{ historial['revisado_en'] or 'Fecha no disponible' }}
+                            </p>
+                        </div>
+
+                        <span class="correccion-estado">
+                            Necesita correcciones
+                        </span>
+
+                    </div>
+
+                    <div class="correccion-progreso">
+                        {{ progreso.corregidas }}
+                        de
+                        {{ observaciones|length }}
+                        observaciones corregidas
+                    </div>
+
+                    <!-- FORMULARIO PARA GUARDAR CHECKBOXES -->
+
+                    <form
+                        method="POST"
+                        action="{{ url_for(
+                            'correcciones_estudiante',
+                            investigacion_id=investigacion['id']
+                        ) }}"
+                    >
+
+                        <input
+                            type="hidden"
+                            name="historial_id"
+                            value="{{ historial['id'] }}"
+                        >
+
+                        {% for observacion in observaciones %}
+
+                            <div class="observacion-item">
+
+                                <input
+                                    type="checkbox"
+                                    id="observacion-{{ observacion['id'] }}"
+                                    name="observaciones"
+                                    value="{{ observacion['id'] }}"
+                                    {% if observacion['corregida'] %}
+                                        checked
+                                    {% endif %}
+                                >
+
+                                <label for="observacion-{{ observacion['id'] }}">
+                                    {{ observacion['texto'] }}
+                                </label>
+
+                            </div>
+
+                        {% endfor %}
+
+                        <button
+                            type="submit"
+                            class="correccion-guardar"
+                        >
+                            Guardar mi progreso
+                        </button>
+
+                    </form>
+
+                    <!-- VOLVER A ENVIAR -->
+
+                    {% if historial['nivel'] == investigacion['nivel_actual']
+                        and not investigacion['finalizada'] %}
+
+                        <form
+                            class="reenvio-formulario"
+                            method="POST"
+                            enctype="multipart/form-data"
+                            action="{{ url_for(
+                                'entregar_nivel',
+                                investigacion_id=investigacion['id']
+                            ) }}"
+                        >
+
+                            <h4>📤 Volver a enviar trabajo</h4>
+
+                            <p class="correcciones-descripcion">
+                                Adjunta una nueva versión de tu documento
+                                con las correcciones realizadas.
+                            </p>
+
+                            <input
+                                type="hidden"
+                                name="nivel"
+                                value="{{ historial['nivel'] }}"
+                            >
+
+                            <label>Título de la nueva entrega</label>
+
+                            <input
+                                type="text"
+                                name="titulo"
+                                value="{{ historial['titulo'] or '' }}"
+                                maxlength="200"
+                                required
+                            >
+
+                            <label>Documento corregido</label>
+
+                            <input
+                                type="file"
+                                name="archivo"
+                                accept=".pdf,.doc,.docx,.odt,.txt,.png,.jpg,.jpeg"
+                                required
+                            >
+
+                            <label>Mensaje para el tutor (opcional)</label>
+
+                            <textarea
+                                name="nota_estudiante"
+                                placeholder="Explica brevemente qué cambios realizaste..."
+                            ></textarea>
+
+                            <button
+                                type="submit"
+                                class="reenvio-boton"
+                            >
+                                Volver a enviar
+                            </button>
+
+                        </form>
+
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="correcciones-vacio">
+
+                <strong>¡No tienes correcciones pendientes!</strong>
+
+                {% if correcciones_anteriores %}
+                    Tus observaciones anteriores están en el historial.
+                    Si acabas de reenviar tu trabajo, espera la revisión
+                    del tutor.
+                {% else %}
+                    Cuando tu tutor solicite correcciones,
+                    aparecerán aquí.
+                {% endif %}
+
+            </div>
+
+        {% endif %}
+
+    </section>
+
+    <!-- HISTORIAL DE CORRECCIONES -->
+
+    <section class="correcciones-seccion">
+
+        <h2>Ya corregidos</h2>
+
+        <p class="correcciones-descripcion">
+            Consulta las observaciones de versiones anteriores
+            y el estado de tus trabajos reenviados.
+        </p>
+
+        {% if correcciones_anteriores %}
+
+            {% for elemento in correcciones_anteriores %}
+
+                {% set historial = elemento.historial %}
+
+                <div class="correccion-anterior">
+
+                    <strong>
+                        Nivel {{ historial['nivel'] }}
+                        · {{ historial['titulo'] or 'Trabajo de investigación' }}
+                        · Versión {{ historial['version'] }}
+                    </strong>
+
+                    <p>
+                        Estado de esta versión:
+                        {{ historial['estado'] }}
+                    </p>
+
+                    {% if historial['enviado_en'] %}
+                        <p>
+                            Enviado:
+                            {{ historial['enviado_en'] }}
+                        </p>
+                    {% endif %}
+
+                    {% if historial['revisado_en'] %}
+                        <p>
+                            Revisado:
+                            {{ historial['revisado_en'] }}
+                        </p>
+                    {% endif %}
+
+                    {% for observacion in elemento.observaciones %}
+
+                        <div class="observacion-anterior">
+                            {% if observacion['corregida'] %}
+                                ✓
+                            {% else %}
+                                •
+                            {% endif %}
+
+                            {{ observacion['texto'] }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="correcciones-vacio">
+                Todavía no tienes un historial de correcciones anteriores.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,455 @@
+
+{% extends "base.html" %}
+
+{% block title %}Asistente de investigación · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+.asistente-page {
+    width: min(1050px, 94%);
+    margin: 30px auto;
+    color: #17243b;
+}
+
+.asistente-encabezado {
+    margin-bottom: 24px;
+}
+
+.asistente-encabezado h1 {
+    font-size: 27px;
+    margin-bottom: 7px;
+}
+
+.asistente-encabezado p {
+    color: #64748b;
+    margin: 0;
+}
+
+/* LISTA DE REVISION */
+
+.asistente-card {
+    background: white;
+    border: 1px solid #e5eaf1;
+    border-radius: 15px;
+    padding: 23px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.04);
+}
+
+.asistente-card h2 {
+    font-size: 19px;
+    margin: 0 0 8px;
+}
+
+.asistente-subtitulo {
+    color: #64748b;
+    font-size: 14px;
+    margin-bottom: 18px;
+}
+
+.revision-progreso {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+.revision-barra {
+    height: 9px;
+    background: #e8edf5;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.revision-barra div {
+    height: 100%;
+    background: #2563eb;
+    border-radius: 20px;
+    width: 25%;
+    transition: width .3s;
+}
+
+.revision-lista {
+    display: grid;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.revision-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid #e9edf3;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+.revision-item input {
+    width: 17px;
+    height: 17px;
+    accent-color: #2563eb;
+}
+
+.revision-aviso {
+    margin-top: 18px;
+    color: #b45309;
+    background: #fff7ed;
+    padding: 13px;
+    border-radius: 9px;
+    font-size: 14px;
+}
+
+/* CHAT */
+
+.chat-card {
+    background: white;
+    border: 1px solid #e5eaf1;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,.04);
+}
+
+.chat-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 20px 23px;
+    border-bottom: 1px solid #e9edf3;
+}
+
+.chat-icono {
+    width: 45px;
+    height: 45px;
+    background: #eaf1ff;
+    color: #2563eb;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+}
+
+.chat-cabecera h2 {
+    font-size: 18px;
+    margin: 0 0 4px;
+}
+
+.chat-cabecera p {
+    color: #64748b;
+    font-size: 13px;
+    margin: 0;
+}
+
+.chat-estado {
+    margin-left: auto;
+    color: #16a34a;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.chat-contenido {
+    padding: 22px;
+}
+
+.chat-capitulo {
+    margin-bottom: 18px;
+}
+
+.chat-capitulo label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.asistente-select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #dce3ed;
+    border-radius: 9px;
+    background: white;
+    color: #17243b;
+    font-size: 14px;
+}
+
+.chat-mensajes {
+    min-height: 260px;
+    max-height: 430px;
+    overflow-y: auto;
+    background: #f8fafc;
+    border: 1px solid #e9edf3;
+    border-radius: 13px;
+    padding: 18px;
+    margin-bottom: 20px;
+}
+
+.mensaje {
+    max-width: 85%;
+    padding: 13px 16px;
+    border-radius: 13px;
+    margin-bottom: 13px;
+    font-size: 14px;
+    line-height: 1.65;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+}
+
+.mensaje-asistente {
+    background: white;
+    border: 1px solid #e5eaf1;
+    border-bottom-left-radius: 4px;
+}
+
+.mensaje-usuario {
+    background: #2563eb;
+    color: white;
+    margin-left: auto;
+    border-bottom-right-radius: 4px;
+}
+
+.preguntas-disponibles {
+    border-top: 1px solid #e9edf3;
+    padding-top: 19px;
+}
+
+.preguntas-disponibles h3 {
+    font-size: 15px;
+    margin: 0 0 7px;
+}
+
+.preguntas-disponibles p {
+    font-size: 13px;
+    color: #64748b;
+    margin-bottom: 14px;
+}
+
+.respuestas-guiadas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.respuesta-boton {
+    border: 1px solid #dce5f5;
+    background: white;
+    color: #2453a6;
+    padding: 13px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: left;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.respuesta-boton:hover {
+    background: #eaf1ff;
+    border-color: #2563eb;
+}
+
+.respuesta-boton:active {
+    transform: scale(.98);
+}
+
+.chat-pie {
+    padding: 13px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #e9edf3;
+    color: #64748b;
+    font-size: 12px;
+    text-align: center;
+}
+
+@media(max-width: 600px) {
+    .asistente-card {
+        padding: 17px;
+    }
+
+    .chat-contenido {
+        padding: 14px;
+    }
+
+    .chat-cabecera {
+        padding: 16px;
+    }
+
+    .chat-estado {
+        display: none;
+    }
+
+    .respuestas-guiadas {
+        grid-template-columns: 1fr;
+    }
+
+    .mensaje {
+        max-width: 95%;
+    }
+}
+</style>
+
+
+<div class="asistente-page">
+
+    <div class="asistente-encabezado">
+        <h1>Asistente de investigación</h1>
+        <p>
+            Resuelve tus dudas académicas mediante una conversación guiada.
+        </p>
+    </div>
+
+
+    <!-- LISTA DE REVISION -->
+
+    <section class="asistente-card">
+
+        <h2>Lista de revisión · Nivel 3</h2>
+
+        <p class="asistente-subtitulo">
+            Metodología y resultados
+        </p>
+
+        <div class="revision-progreso">
+            <strong id="revision-contador">1 de 4</strong>
+            <span id="revision-porcentaje">25%</span>
+        </div>
+
+        <div class="revision-barra">
+            <div id="revision-barra-progreso"></div>
+        </div>
+
+        <div class="revision-lista">
+
+            <label class="revision-item">
+                <input type="checkbox" class="revision-check">
+                Instrumentos validados
+            </label>
+
+            <label class="revision-item">
+                <input type="checkbox" class="revision-check">
+                Datos recolectados
+            </label>
+
+            <label class="revision-item">
+                <input type="checkbox" class="revision-check">
+                Análisis de resultados
+            </label>
+
+            <label class="revision-item">
+                <input type="checkbox" class="revision-check">
+                Atender observaciones de «Cronograma de recolección de datos»
+            </label>
+
+        </div>
+
+        <div class="revision-aviso" id="revision-aviso">
+            Te faltan 3 puntos antes de enviar.
+        </div>
+
+    </section>
+
+
+    <!-- CHAT DEL ASISTENTE -->
+
+    <section class="chat-card">
+
+        <div class="chat-cabecera">
+
+            <div class="chat-icono">✦</div>
+
+            <div>
+                <h2>Asistente inteligente</h2>
+                <p>Orientación académica para tu monografía</p>
+            </div>
+
+            <span class="chat-estado">
+                ● Disponible
+            </span>
+
+        </div>
+
+
+        <div class="chat-contenido">
+
+            <div class="chat-capitulo">
+
+                <label for="capitulo-select">
+                    Selecciona el capítulo que estás desarrollando
+                </label>
+
+                <select id="capitulo-select" class="asistente-select">
+
+                    <option value="0">
+                        Nivel 1 · Presentación del tema
+                    </option>
+
+                    <option value="1">
+                        Nivel 2 · Capítulo I: Planteamiento del problema
+                    </option>
+
+                    <option value="2">
+                        Nivel 3 · Capítulo II: Marco teórico
+                    </option>
+
+                    <option value="3">
+                        Nivel 4 · Capítulo III: Marco metodológico
+                    </option>
+
+                    <option value="4">
+                        Nivel 5 · Capítulo IV: Análisis de resultados
+                    </option>
+
+                    <option value="5">
+                        Nivel 6 · Capítulo V: Conclusiones y recomendaciones
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- CONVERSACION -->
+
+            <div class="chat-mensajes" id="chat-mensajes">
+
+                <div class="mensaje mensaje-asistente">
+                    ¡Hola! 👋 Soy tu asistente de investigación.
+
+                    Estoy aquí para ayudarte a desarrollar tu monografía.
+
+                    Selecciona tu capítulo y elige una de las preguntas disponibles para comenzar.
+                </div>
+
+            </div>
+
+
+            <!-- PREGUNTAS PREDETERMINADAS -->
+
+            <div class="preguntas-disponibles">
+
+                <h3>Preguntas disponibles</h3>
+
+                <p>
+                    Selecciona una pregunta para conversar con el asistente.
+                </p>
+
+                <div class="respuestas-guiadas" id="preguntas-guiadas"></div>
+
+            </div>
+
+        </div>
+
+
+        <div class="chat-pie">
+            Asistente orientativo · No sustituye la revisión de tu tutor.
+        </div>
+
+    </section>
+
+</div>
+
+
+<script src="{{ url_for('static', filename='js/asistente_investigacion.js') }}"></script>
+
+{% endblock %}

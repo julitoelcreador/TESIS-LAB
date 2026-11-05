@@ -1,0 +1,531 @@
+
+{% extends "base.html" %}
+
+{% block title %}Cronograma · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+.cronograma-page {
+    max-width: 1250px;
+    width: 94%;
+    margin: 0 auto;
+    padding: 28px 0 45px;
+    color: #20314b;
+}
+
+.cronograma-encabezado {
+    margin-bottom: 25px;
+}
+
+.cronograma-etiqueta {
+    color: #2864b5;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.cronograma-encabezado h1 {
+    margin: 8px 0;
+    font-size: 30px;
+}
+
+.cronograma-encabezado p {
+    color: #718096;
+    font-size: 14px;
+    margin: 0;
+}
+
+.cronograma-columnas {
+    display: grid;
+    grid-template-columns: 1.85fr 1fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.cronograma-panel {
+    background: #fff;
+    border: 1px solid #e5eaf1;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.panel-encabezado {
+    padding: 20px;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.panel-encabezado h2 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.panel-encabezado p {
+    margin: 6px 0 0;
+    color: #8491a5;
+    font-size: 12px;
+}
+
+.cronograma-lista {
+    padding: 8px 20px;
+}
+
+.cronograma-evento {
+    display: grid;
+    grid-template-columns: 85px 1fr;
+    gap: 15px;
+    padding: 19px 0;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.cronograma-evento:last-child {
+    border-bottom: none;
+}
+
+.evento-fecha {
+    color: #2864b5;
+    font-size: 13px;
+    font-weight: 800;
+    padding-top: 3px;
+}
+
+.evento-hora {
+    display: block;
+    color: #8491a5;
+    font-size: 11px;
+    margin-top: 5px;
+}
+
+.evento-contenido h3 {
+    font-size: 14px;
+    margin: 0 0 8px;
+    line-height: 1.5;
+}
+
+.evento-tipo {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    font-weight: 800;
+    background: #edf2f8;
+    color: #52637a;
+}
+
+.tipo-entrega {
+    background: #e5efff;
+    color: #2459a6;
+}
+
+.tipo-reunion {
+    background: #f0eaff;
+    color: #7045a6;
+}
+
+.tipo-hito {
+    background: #e1f5eb;
+    color: #23764c;
+}
+
+.tipo-defensa {
+    background: #fff0df;
+    color: #a45a16;
+}
+
+.evento-descripcion {
+    color: #718096;
+    font-size: 12px;
+    margin: 7px 0 0;
+    line-height: 1.6;
+}
+
+.niveles-lista {
+    padding: 8px 18px;
+}
+
+.nivel-fecha-item {
+    padding: 17px 0;
+    border-bottom: 1px solid #edf0f5;
+}
+
+.nivel-fecha-item:last-child {
+    border-bottom: none;
+}
+
+.nivel-fecha-numero {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 800;
+    color: #2864b5;
+    margin-bottom: 6px;
+}
+
+.nivel-fecha-item h3 {
+    font-size: 14px;
+    margin: 0 0 7px;
+}
+
+.nivel-fecha-item p {
+    margin: 0;
+    color: #718096;
+    font-size: 12px;
+}
+
+.nivel-fecha-calendario {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 10px;
+    padding: 6px 9px;
+    border-radius: 7px;
+    background: #f1f5f9;
+    color: #46566d;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.cronograma-vacio {
+    padding: 35px 20px;
+    text-align: center;
+    color: #718096;
+    font-size: 13px;
+}
+
+.cronograma-vacio strong {
+    display: block;
+    color: #34445c;
+    margin-bottom: 7px;
+}
+
+@media (max-width: 750px) {
+    .cronograma-columnas {
+        grid-template-columns: 1fr;
+    }
+
+    .cronograma-encabezado h1 {
+        font-size: 25px;
+    }
+}
+
+@media (max-width: 430px) {
+    .cronograma-evento {
+        grid-template-columns: 65px 1fr;
+        gap: 10px;
+    }
+
+    .cronograma-lista {
+        padding-left: 13px;
+        padding-right: 13px;
+    }
+}
+</style>
+
+<div class="cronograma-page">
+
+    <header class="cronograma-encabezado">
+
+        <span class="cronograma-etiqueta">
+            GESTIÓN 2026
+        </span>
+
+        <h1>Cronograma</h1>
+
+        <p>
+            Fechas oficiales, entregas, actividades y etapas
+            del proceso de investigación académica.
+        </p>
+
+    </header>
+
+    <div class="cronograma-columnas">
+
+        <!-- CRONOGRAMA GENERAL -->
+
+        <section class="cronograma-panel">
+
+            <div class="panel-encabezado">
+
+                <h2>📅 Cronograma general</h2>
+
+                <p>
+                    Eventos institucionales y actividades de investigación.
+                </p>
+
+            </div>
+
+            <div class="cronograma-lista">
+
+                {% for evento in eventos_cronograma %}
+
+                    <article class="cronograma-evento">
+
+                        <div class="evento-fecha">
+
+                            {{ evento['fecha'][8:10] }}/{{ evento['fecha'][5:7] }}
+
+                            <span class="evento-hora">
+                                {{ evento['fecha'][0:4] }}
+                            </span>
+
+                        </div>
+
+                        <div class="evento-contenido">
+
+                            <h3>{{ evento['titulo'] }}</h3>
+
+                            {% if evento['tipo'] == 'Entrega' %}
+
+                                <span class="evento-tipo tipo-entrega">
+                                    Entrega
+                                </span>
+
+                            {% elif evento['tipo'] == 'Reunión' %}
+
+                                <span class="evento-tipo tipo-reunion">
+                                    Reunión
+                                </span>
+
+                            {% elif evento['tipo'] == 'Defensa' %}
+
+                                <span class="evento-tipo tipo-defensa">
+                                    Defensa
+                                </span>
+
+                            {% else %}
+
+                                <span class="evento-tipo tipo-hito">
+                                    {{ evento['tipo'] }}
+                                </span>
+
+                            {% endif %}
+
+                            {% if evento['hora_inicio'] %}
+
+                                <p class="evento-descripcion">
+                                    Hora:
+                                    {{ evento['hora_inicio'] }}
+
+                                    {% if evento['hora_fin'] %}
+                                        - {{ evento['hora_fin'] }}
+                                    {% endif %}
+                                </p>
+
+                            {% endif %}
+
+                            {% if evento['descripcion'] %}
+
+                                <p class="evento-descripcion">
+                                    {{ evento['descripcion'] }}
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+                {% for tarea in tareas %}
+
+                    <article class="cronograma-evento">
+
+                        <div class="evento-fecha">
+
+                            {% if tarea['fecha_limite'] %}
+
+                                {{ tarea['fecha_limite'][8:10] }}/{{ tarea['fecha_limite'][5:7] }}
+
+                                <span class="evento-hora">
+                                    {{ tarea['fecha_limite'][0:4] }}
+                                </span>
+
+                            {% else %}
+
+                                Por definir
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="evento-contenido">
+
+                            <h3>{{ tarea['titulo'] }}</h3>
+
+                            <span class="evento-tipo tipo-entrega">
+                                Tarea
+                            </span>
+
+                            {% if tarea['titulo'] and tarea['titulo'] != '' %}
+
+                                {% if tarea['completada'] == 1 %}
+
+                                    <p class="evento-descripcion">
+                                        Actividad completada.
+                                    </p>
+
+                                {% else %}
+
+                                    <p class="evento-descripcion">
+                                        Actividad pendiente.
+                                    </p>
+
+                                {% endif %}
+
+                            {% endif %}
+
+                            {% if tarea['descripcion'] %}
+
+                                <p class="evento-descripcion">
+                                    {{ tarea['descripcion'] }}
+                                </p>
+
+                            {% endif %}
+
+                            {% if tarea['titulo'] and tarea['titulo'] != '' %}
+
+                                {% if tarea['titulo'] and 'titulo' in tarea.keys() %}
+
+                                    {% if tarea['investigacion_id'] is defined and tarea['investigacion_id'] %}
+
+                                        <p class="evento-descripcion">
+                                            Investigación: {{ tarea['titulo'] }}
+                                        </p>
+
+                                    {% endif %}
+
+                                {% endif %}
+
+                            {% endif %}
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+                {% if not eventos_cronograma and not tareas %}
+
+                    <div class="cronograma-vacio">
+
+                        <strong>No hay actividades programadas</strong>
+
+                        Todavía no se han registrado eventos ni tareas.
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+        <!-- FECHAS POR NIVEL -->
+
+        <section class="cronograma-panel">
+
+            <div class="panel-encabezado">
+
+                <h2>🗓️ Fechas por nivel</h2>
+
+                <p>
+                    Fechas oficiales establecidas para la monografía.
+                </p>
+
+            </div>
+
+            <div class="niveles-lista">
+
+                <article class="nivel-fecha-item">
+
+                    <span class="nivel-fecha-numero">NIVEL 1</span>
+
+                    <h3>Presentación del tema</h3>
+
+                    <p>Presentación de la propuesta de investigación.</p>
+
+                    <div class="nivel-fecha-calendario">
+                        📅 18 Ago 2026 · 12:00
+                    </div>
+
+                </article>
+
+                <article class="nivel-fecha-item">
+
+                    <span class="nivel-fecha-numero">NIVEL 2</span>
+
+                    <h3>Capítulo I</h3>
+
+                    <p>Primera presentación del desarrollo de la monografía.</p>
+
+                    <div class="nivel-fecha-calendario">
+                        📅 01 Sep 2026 · 12:00
+                    </div>
+
+                </article>
+
+                <article class="nivel-fecha-item">
+
+                    <span class="nivel-fecha-numero">NIVEL 3</span>
+
+                    <h3>Capítulo II</h3>
+
+                    <p>Segunda presentación de la investigación.</p>
+
+                    <div class="nivel-fecha-calendario">
+                        📅 22 Sep 2026 · 12:00
+                    </div>
+
+                </article>
+
+                <article class="nivel-fecha-item">
+
+                    <span class="nivel-fecha-numero">NIVEL 4</span>
+
+                    <h3>Capítulo III</h3>
+
+                    <p>Tercera presentación de la investigación.</p>
+
+                    <div class="nivel-fecha-calendario">
+                        📅 13 Oct 2026 · 12:00
+                    </div>
+
+                </article>
+
+                <article class="nivel-fecha-item">
+
+                    <span class="nivel-fecha-numero">NIVEL 5</span>
+
+                    <h3>Capítulo IV</h3>
+
+                    <p>Cuarta presentación de la investigación.</p>
+
+                    <div class="nivel-fecha-calendario">
+                        📅 27 Oct 2026 · 12:00
+                    </div>
+
+                </article>
+
+                <article class="nivel-fecha-item">
+
+                    <span class="nivel-fecha-numero">NIVEL 6</span>
+
+                    <h3>Capítulo V</h3>
+
+                    <p>Quinta presentación de la investigación.</p>
+
+                    <div class="nivel-fecha-calendario">
+                        📅 10 Nov 2026 · 12:00
+                    </div>
+
+                </article>
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+{% endblock %}

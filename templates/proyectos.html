@@ -1,0 +1,432 @@
+
+{% extends "base.html" %}
+
+{% block title %}Mis investigaciones · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+/* =========================================
+   TESIS LAB - MIS INVESTIGACIONES
+   ========================================= */
+
+.investigaciones-page {
+    width: min(1240px, 94%);
+    margin: 0 auto;
+    padding: 8px 0 35px;
+    color: #10213e;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.investigaciones-page *,
+.investigaciones-page *::before,
+.investigaciones-page *::after {
+    box-sizing: border-box;
+}
+
+.investigaciones-page h1,
+.investigaciones-page h2,
+.investigaciones-page h3,
+.investigaciones-page p {
+    overflow-wrap: anywhere;
+}
+
+/* ENCABEZADO */
+.investigaciones-hero {
+    margin: 0 0 24px;
+    padding: 0;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0;
+    box-shadow: none !important;
+}
+
+.investigaciones-hero h1 {
+    margin: 0 0 6px;
+    padding: 0;
+    color: #10213e !important;
+    font-size: 25px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.investigaciones-hero p {
+    margin: 0;
+    color: #64748b !important;
+    font-size: 13px;
+    line-height: 1.6;
+}
+/* CUADRÍCULA */
+
+.investigaciones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 310px), 1fr));
+    align-items: stretch;
+    gap: 15px;
+    margin-top: 17px;
+}
+
+/* TARJETAS */
+
+.investigacion-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 250px;
+    padding: 17px;
+    border: 1px solid #dce6f3;
+    border-top: 3px solid #0878ed;
+    border-radius: 13px;
+    background: #ffffff;
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 3px 12px rgba(8, 21, 45, .045);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+
+.investigacion-card:hover {
+    transform: translateY(-3px);
+    border-color: #b6d4fa;
+    box-shadow: 0 9px 22px rgba(8, 40, 95, .10);
+}
+
+.investigacion-card:focus-visible {
+    outline: 3px solid #60a5fa;
+    outline-offset: 3px;
+}
+
+/* PARTE SUPERIOR */
+
+.investigacion-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 13px;
+}
+
+.investigacion-icon {
+    display: grid;
+    place-items: center;
+    flex: 0 0 39px;
+    width: 39px;
+    height: 39px;
+    border-radius: 10px;
+    background: #e8f2ff;
+    font-size: 20px;
+}
+
+.investigacion-nivel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 8px;
+    border: 1px solid #dbeafe;
+    border-radius: 7px;
+    background: #f0f6ff;
+    color: #1754a0;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* TÍTULO DE INVESTIGACIÓN */
+
+.investigacion-titulo {
+    margin: 0 0 14px;
+    color: #10213e;
+    font-size: 17px;
+    font-weight: 850;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+/* INFORMACIÓN */
+
+.investigacion-datos {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 16px;
+}
+
+.investigacion-dato {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    min-width: 0;
+    color: #64748b;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.investigacion-dato > span:first-child {
+    flex: 0 0 19px;
+}
+
+.investigacion-dato > span:last-child {
+    min-width: 0;
+}
+
+.investigacion-dato strong {
+    color: #33445f;
+    font-weight: 750;
+}
+
+/* PARTE INFERIOR */
+
+.investigacion-card-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid #e9eff7;
+}
+
+.investigacion-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+    padding: 5px 9px;
+    border: 1px solid #ccebd9;
+    border-radius: 7px;
+    background: #edfaf2;
+    color: #187444;
+    font-size: 10px;
+    font-weight: 800;
+    overflow-wrap: anywhere;
+}
+
+.investigacion-estado::before {
+    content: "";
+    flex: 0 0 6px;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #22a45a;
+}
+
+.investigacion-abrir {
+    color: #0878ed;
+    font-size: 11px;
+    font-weight: 850;
+    white-space: nowrap;
+}
+
+/* ESTADO VACÍO */
+
+.investigaciones-vacio {
+    padding: 30px 18px;
+    border: 1px dashed #cbd9eb;
+    border-radius: 13px;
+    background: #f8fbff;
+    text-align: center;
+}
+
+.investigaciones-vacio-icono {
+    display: grid;
+    place-items: center;
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 12px;
+    border-radius: 15px;
+    background: #e8f2ff;
+    font-size: 26px;
+}
+
+.investigaciones-vacio h3 {
+    margin: 0 0 6px;
+    color: #10213e;
+    font-size: 17px;
+}
+
+.investigaciones-vacio p {
+    max-width: 450px;
+    margin: 0 auto;
+    color: #6b7b93;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+/* TABLET */
+
+@media (max-width: 760px) {
+    .investigaciones-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* CELULAR */
+
+@media (max-width: 560px) {
+    .investigaciones-page {
+        width: calc(100% - 22px);
+        padding-top: 5px;
+    }
+
+    .investigaciones-page .investigaciones-hero {
+        padding: 0 !important;
+        margin-bottom: 20px;
+    }
+
+    .investigaciones-page .investigaciones-hero h1 {
+        font-size: 22px;
+    }
+
+    .investigaciones-page .investigaciones-hero p {
+        font-size: 11px;
+    }
+
+    .investigaciones-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 11px;
+    }
+
+    .investigacion-card {
+        min-height: 0;
+        padding: 15px;
+    }
+
+    .investigacion-titulo {
+        font-size: 16px;
+    }
+}
+
+/* REDUCIR MOVIMIENTO */
+
+@media (prefers-reduced-motion: reduce) {
+    .investigacion-card {
+        transition: none;
+    }
+
+    .investigacion-card:hover {
+        transform: none;
+    }
+}
+</style>
+
+
+<div class="investigaciones-page">
+
+    <section class="investigaciones-hero">
+        <h1>🔬 Mis investigaciones</h1>
+        <p>
+            Consulta todas las investigaciones asignadas a tu tutoría
+            y revisa el progreso de cada grupo.
+        </p>
+    </section>
+
+    <section class="investigaciones-seccion">
+        <h2>Listado de investigaciones</h2>
+        <p>Accede a los detalles y consulta el progreso de cada proyecto.</p>
+
+        {% if investigaciones %}
+            <div class="investigaciones-contador">
+                📂 {{ investigaciones|length }}
+                {% if investigaciones|length == 1 %}
+                    investigación asignada
+                {% else %}
+                    investigaciones asignadas
+                {% endif %}
+            </div>
+        {% endif %}
+    </section>
+
+    {% if investigaciones %}
+
+        <div class="investigaciones-grid">
+
+            {% for proyecto in investigaciones %}
+
+                <a
+                    href="{{ url_for('detalle_investigacion', investigacion_id=proyecto.id) }}"
+                    class="investigacion-card"
+                    aria-label="Ver investigación: {{ proyecto.titulo }}"
+                >
+
+                    <div class="investigacion-card-top">
+                        <div class="investigacion-icon" aria-hidden="true">
+                            🔬
+                        </div>
+
+                        <span class="investigacion-nivel">
+                            Nivel {{ proyecto.nivel_actual or 1 }} de 6
+                        </span>
+                    </div>
+
+                    <h3 class="investigacion-titulo">
+                        {{ proyecto.titulo }}
+                    </h3>
+
+                    <div class="investigacion-datos">
+
+                        <div class="investigacion-dato">
+                            <span>👥</span>
+                            <span>
+                                <strong>Grupo:</strong>
+                                {{ proyecto.grupo_nombre or 'Sin grupo asignado' }}
+                            </span>
+                        </div>
+
+                        <div class="investigacion-dato">
+                            <span>📚</span>
+                            <span>
+                                <strong>Área:</strong>
+                                {{ proyecto.area_principal or 'No especificada' }}
+                            </span>
+                        </div>
+
+                        <div class="investigacion-dato">
+                            <span>🧪</span>
+                            <span>
+                                <strong>Subárea:</strong>
+                                {{ proyecto.subarea or 'No especificada' }}
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <div class="investigacion-card-bottom">
+
+                        <span class="investigacion-estado">
+                            {{ proyecto.estado or 'Sin estado' }}
+                        </span>
+
+                        <span class="investigacion-abrir">
+                            Ver investigación →
+                        </span>
+
+                    </div>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="investigaciones-vacio">
+
+            <div class="investigaciones-vacio-icono">🔬</div>
+
+            <h3>No tienes investigaciones asignadas</h3>
+
+            <p>
+                Cuando se te asigne una investigación, aparecerá aquí
+                junto con su grupo, área temática y nivel de avance.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+
+{% endblock %}

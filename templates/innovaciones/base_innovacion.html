@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}TESIS LAB{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/innovaciones.css') }}">
+</head>
+
+<body>
+
+    <header class="encabezado">
+        <div class="encabezado-contenido">
+
+            <div class="logo">
+                TESIS LAB
+                <span>Centro de innovación académica</span>
+            </div>
+
+            <nav class="menu">
+                <a href="{{ url_for('panel') }}">Panel principal</a>
+                <a href="{{ url_for('innovaciones_inicio') }}">Innovaciones</a>
+                <a href="{{ url_for('biblioteca') }}">Biblioteca</a>
+                <a href="{{ url_for('logout') }}">Salir</a>
+            </nav>
+
+        </div>
+    </header>
+
+    <main class="contenedor">
+
+        <section class="titulo-pagina">
+            <h1>{% block heading %}TESIS LAB{% endblock %}</h1>
+            <p>{% block subtitle %}Centro de innovación académica{% endblock %}</p>
+        </section>
+
+        {% with mensajes = get_flashed_messages(with_categories=true) %}
+            {% if mensajes %}
+                {% for categoria, mensaje in mensajes %}
+                    <div class="mensaje {{ categoria }}">
+                        {{ mensaje }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+
+    </main>
+
+    <footer class="pie">
+        TESIS LAB · Unidad Educativa Particular La Salle
+    </footer>
+
+</body>
+</html>

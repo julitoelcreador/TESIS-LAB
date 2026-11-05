@@ -1,0 +1,537 @@
+
+{% extends "base.html" %}
+
+{% block title %}Centro de revisiones · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<div class="centro-revisiones">
+
+    <header class="centro-header">
+        <div>
+            <span class="centro-kicker">GESTIÓN ACADÉMICA</span>
+            <h1>Centro de revisiones</h1>
+            <p>Administra las entregas y solicitudes de tutoría.</p>
+        </div>
+
+        <a href="{{ url_for('panel') }}" class="btn-volver">
+            ← Volver al panel
+        </a>
+    </header>
+
+    <section class="centro-resumen">
+
+        <article class="resumen-card">
+            <span>📄</span>
+            <div>
+                <small>Entregas por revisar</small>
+                <strong>{{ entregas|length }}</strong>
+            </div>
+        </article>
+
+        <article class="resumen-card">
+            <span>📅</span>
+            <div>
+                <small>Solicitudes de tutoría</small>
+                <strong>{{ reuniones|length }}</strong>
+            </div>
+        </article>
+
+    </section>
+
+    <div class="centro-columnas">
+
+        <!-- ENTREGAS -->
+        <section class="centro-panel">
+
+            <div class="panel-titulo">
+                <div>
+                    <span class="panel-kicker">REVISIÓN ACADÉMICA</span>
+                    <h2>📄 Entregas pendientes</h2>
+                    <p>Documentos enviados por los estudiantes.</p>
+                </div>
+                <span class="contador">{{ entregas|length }}</span>
+            </div>
+
+            <div class="lista-entregas">
+
+                {% for entrega in entregas %}
+
+                <article class="entrega-card">
+
+                    <div class="entrega-info">
+
+                        <span class="estado-entrega
+                            {% if entrega.estado == 'Necesita correcciones' %}
+                                estado-correccion
+                            {% elif entrega.estado == 'Pendiente de revisión' %}
+                                estado-revision
+                            {% else %}
+                                estado-pendiente
+                            {% endif %}">
+                            {{ entrega.estado }}
+                        </span>
+
+                        <h3>{{ entrega.titulo }}</h3>
+
+                        <p>
+                            <strong>Grupo:</strong>
+                            {{ entrega.grupo }}
+                        </p>
+
+                        <p>
+                            <strong>Nivel:</strong>
+                            {{ entrega.nivel }}
+                        </p>
+
+                        {% if entrega.enviado_en %}
+                        <p>
+                            <strong>Enviado:</strong>
+                            {{ entrega.enviado_en }}
+                        </p>
+                        {% endif %}
+
+                    </div>
+                    <div class="acciones-entrega">
+
+                    <a href="{{ url_for(
+                    'detalle_investigacion',
+                    investigacion_id=entrega.investigacion_id
+                    ) }}" class="btn-revisar">
+                    Revisar entrega →
+                    </a>
+
+                    {% if entrega.total_versiones and entrega.total_versiones > 1
+                    and entrega.historial_actual_id
+                    and entrega.estado == 'Pendiente de revisión' %}
+
+                    <a href="{{ url_for(
+                    'comparador_correcciones',
+                    investigacion_id=entrega.investigacion_id,
+                    historial_id=entrega.historial_actual_id
+                    ) }}" class="btn-comparar">
+                    ⇄ Comparar versiones
+                    </a>
+
+                   {% endif %}
+
+                    </div>
+
+                </article>
+
+                {% else %}
+
+                <div class="centro-vacio">
+                    <span>✓</span>
+                    <strong>¡Todo al día!</strong>
+                    <p>No hay entregas pendientes.</p>
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </section>
+
+        <!-- REUNIONES -->
+        <section class="centro-panel">
+
+            <div class="panel-titulo">
+                <div>
+                    <span class="panel-kicker">ORIENTACIÓN ACADÉMICA</span>
+                    <h2>📅 Solicitudes de tutoría</h2>
+                    <p>Solicitudes que necesitan atención.</p>
+                </div>
+                <span class="contador">{{ reuniones|length }}</span>
+            </div>
+
+            <div class="lista-reuniones">
+
+                {% for reunion in reuniones %}
+
+                <article class="reunion-card">
+
+                    <span class="estado-entrega estado-revision">
+                        Pendiente
+                    </span>
+
+                    <h3>{{ reunion.titulo }}</h3>
+
+                    <p>
+                        <strong>Grupo:</strong>
+                        {{ reunion.grupo }}
+                    </p>
+
+                    <p>
+                        <strong>Fecha:</strong>
+                        {{ reunion.fecha_solicitada }}
+                    </p>
+
+                    <p>
+                        <strong>Hora:</strong>
+                        {{ reunion.hora_solicitada }}
+                    </p>
+
+                    <p>
+                        <strong>Motivo:</strong>
+                        {{ reunion.motivo }}
+                    </p>
+
+                    <a href="{{ url_for(
+                        'detalle_investigacion',
+                        investigacion_id=reunion.investigacion_id
+                    ) }}" class="btn-revisar btn-reunion">
+                        Ver investigación →
+                    </a>
+
+                </article>
+
+                {% else %}
+
+                <div class="centro-vacio">
+                    <span>📅</span>
+                    <strong>No hay solicitudes pendientes</strong>
+                    <p>Las nuevas solicitudes aparecerán aquí.</p>
+                </div>
+
+                {% endfor %}
+
+            </div>
+        </section>
+
+    </div>
+
+</div>
+
+<style>
+
+.acciones-entrega {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.acciones-entrega .btn-revisar {
+    margin-top: 0;
+}
+
+.btn-comparar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px 13px;
+    border: 1px solid #b8d5f5;
+    border-radius: 8px;
+    background: #edf5ff;
+    color: #1756a0;
+    font-size: 11px;
+    font-weight: 750;
+    text-decoration: none;
+    transition: background .2s ease;
+}
+
+.btn-comparar:hover {
+    background: #dcecff;
+}
+
+@media (max-width: 600px) {
+    .acciones-entrega {
+        flex-direction: column;
+    }
+
+    .acciones-entrega a {
+        width: 100%;
+    }
+}
+
+.centro-revisiones {
+    width: min(1400px, 94%);
+    margin: 30px auto 45px;
+    color: #24344b;
+}
+
+.centro-revisiones * {
+    box-sizing: border-box;
+}
+
+.centro-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 22px;
+}
+
+.centro-kicker,
+.panel-kicker {
+    color: #2472c6;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.centro-header h1 {
+    margin: 5px 0;
+    color: #10284c;
+    font-size: 28px;
+}
+
+.centro-header p {
+    margin: 0;
+    color: #718096;
+    font-size: 13px;
+}
+
+.btn-volver {
+    padding: 10px 14px;
+    border: 1px solid #d8e3f0;
+    border-radius: 9px;
+    color: #245486;
+    background: white;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.centro-resumen {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.resumen-card {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 16px;
+    border: 1px solid #e2eaf4;
+    border-radius: 12px;
+    background: white;
+}
+
+.resumen-card > span {
+    font-size: 25px;
+}
+
+.resumen-card div {
+    display: flex;
+    flex-direction: column;
+}
+
+.resumen-card small {
+    color: #718096;
+    font-size: 11px;
+}
+
+.resumen-card strong {
+    color: #10284c;
+    font-size: 24px;
+}
+
+.centro-columnas {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 18px;
+}
+
+.centro-panel {
+    min-width: 0;
+    padding: 19px;
+    border: 1px solid #e2eaf4;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(15, 45, 85, .04);
+}
+
+.panel-titulo {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.panel-titulo h2 {
+    margin: 5px 0;
+    color: #10284c;
+    font-size: 18px;
+}
+
+.panel-titulo p {
+    margin: 0;
+    color: #718096;
+    font-size: 11px;
+}
+
+.contador {
+    display: grid;
+    place-items: center;
+    min-width: 29px;
+    height: 29px;
+    border-radius: 9px;
+    background: #edf4ff;
+    color: #1756a0;
+    font-weight: 800;
+    font-size: 12px;
+}
+
+.lista-entregas,
+.lista-reuniones {
+    display: grid;
+    gap: 12px;
+}
+
+.entrega-card,
+.reunion-card {
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid #e5ebf3;
+    border-radius: 11px;
+    background: #fbfdff;
+}
+
+.entrega-card h3,
+.reunion-card h3 {
+    margin: 9px 0;
+    color: #1b3150;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+.entrega-card p,
+.reunion-card p {
+    margin: 5px 0;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.entrega-card p strong,
+.reunion-card p strong {
+    color: #40536b;
+}
+
+.estado-entrega {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.estado-pendiente {
+    background: #fff3df;
+    color: #a85a08;
+}
+
+.estado-revision {
+    background: #e6f0ff;
+    color: #1756a0;
+}
+
+.estado-correccion {
+    background: #fff0f0;
+    color: #b42318;
+}
+
+.btn-revisar {
+    display: inline-flex;
+    justify-content: center;
+    margin-top: 12px;
+    padding: 9px 13px;
+    border-radius: 8px;
+    background: #1756a0;
+    color: white;
+    font-size: 11px;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.btn-revisar:hover {
+    background: #10447f;
+}
+
+.btn-reunion {
+    background: #fff;
+    border: 1px solid #cbd9e9;
+    color: #245486;
+}
+
+.btn-reunion:hover {
+    background: #f0f6ff;
+}
+
+.centro-vacio {
+    padding: 30px 12px;
+    border: 1px dashed #d6e2f0;
+    border-radius: 11px;
+    text-align: center;
+    background: #f9fbfe;
+}
+
+.centro-vacio span {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 25px;
+}
+
+.centro-vacio strong {
+    color: #24405f;
+    font-size: 13px;
+}
+
+.centro-vacio p {
+    margin: 5px 0 0;
+    color: #718096;
+    font-size: 11px;
+}
+
+@media (max-width: 850px) {
+    .centro-columnas {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .centro-revisiones {
+        width: calc(100% - 24px);
+        margin-top: 20px;
+    }
+
+    .centro-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .centro-header h1 {
+        font-size: 23px;
+    }
+
+    .centro-resumen {
+        gap: 8px;
+    }
+
+    .resumen-card {
+        padding: 11px;
+        gap: 8px;
+    }
+
+    .resumen-card > span {
+        font-size: 20px;
+    }
+
+    .resumen-card strong {
+        font-size: 20px;
+    }
+
+    .centro-panel {
+        padding: 13px;
+    }
+}
+
+</style>
+
+{% endblock %}

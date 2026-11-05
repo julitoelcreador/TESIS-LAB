@@ -1,0 +1,943 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section id="resumen-institucional" class="admin-section">
+
+    <!-- ENCABEZADO -->
+    <div class="control-header">
+        <div>
+            <span class="control-eyebrow">CENTRO DE CONTROL</span>
+            <h1>Centro de control institucional</h1>
+            <h2>
+                Hola, {{ usuario.nombre }} {{ usuario.apellido }}
+            </h2>            <p>
+                Visión completa de la institución: avance,
+                alertas y herramientas de control.
+            </p>
+        </div>
+    </div>
+
+
+        <div class="control-metrics-four">
+
+        <article class="control-card">
+            <span class="control-card-label">Usuarios activos</span>
+            <strong>{{ estadisticas.usuarios }}</strong>
+            <span class="control-card-icon">👥</span>
+        </article>
+
+        <article class="control-card">
+            <span class="control-card-label">Grupos</span>
+            <strong>{{ estadisticas.grupos }}</strong>
+            <span class="control-card-icon">🤝</span>
+        </article>
+
+        <article class="control-card">
+            <span class="control-card-label">Investigaciones</span>
+            <strong>{{ estadisticas.investigaciones }}</strong>
+            <span class="control-card-icon">📚</span>
+        </article>
+
+        <article class="control-card control-card-warning">
+            <span class="control-card-label">Con alertas</span>
+            <strong>{{ total_alertas }}</strong>
+            <a href="#alertas-academicas">Ver mapa de riesgos →</a>
+            <span class="control-card-icon">⚠️</span>
+        </article>
+
+    </div>
+
+    <div class="control-metrics-three">
+
+    <article class="control-card">
+        <span class="control-card-label">Entregas en revisión</span>
+        <strong>{{ total_entregas_revision }}</strong>
+        <span class="control-card-icon">📄</span>
+    </article>
+
+    <article class="control-card">
+        <span class="control-card-label">Último comunicado</span>
+
+        {% if ultimo_comunicado %}
+            <strong>{{ ultimo_comunicado.publicado_en[:10] }}</strong>
+            <span class="control-card-description">
+                {{ ultimo_comunicado.titulo }}
+            </span>
+        {% else %}
+            <strong>—</strong>
+            <span class="control-card-description">
+                Sin comunicados publicados
+            </span>
+        {% endif %}
+
+        <span class="control-card-icon">📢</span>
+    </article>
+
+    <article class="control-card">
+        <span class="control-card-label">Última copia</span>
+
+        {% if ultima_copia %}
+            <strong>{{ ultima_copia.creado_en[:10] }}</strong>
+            <span class="control-card-description">
+                {{ ultima_copia.detalle }}
+            </span>
+        {% else %}
+            <strong>—</strong>
+            <span class="control-card-description">
+                Sin respaldos registrados
+            </span>
+        {% endif %}
+
+        <span class="control-card-icon">💾</span>
+    </article>
+
+</div>
+
+</section>
+
+<!-- =========================================
+     ALERTAS ACADÉMICAS
+========================================= -->
+
+<section class="admin-alerts" id="alertas-academicas">
+
+    <div class="admin-block-heading">
+        <div>
+            <h2>Alertas académicas</h2>
+            <p>Investigaciones que necesitan atención prioritaria.</p>
+        </div>
+
+        <a href="#seguimiento-investigaciones" class="risk-link">
+            Ver mapa de riesgos →
+        </a>
+    </div>
+
+        <div class="alert-cards">
+
+        {% for alerta in alertas_academicas %}
+
+            <a href="{{ url_for('investigaciones') }}"
+            class="alert-card">
+
+                <div class="alert-card-top">
+                    <span class="priority-label">
+                        ● Atención requerida
+                    </span>
+
+                    <span class="alert-arrow">↗</span>
+                </div>
+
+                <h3>
+                    {{ alerta.grupo_nombre }}
+                    ·
+                    {% if alerta.profesor_nombre %}
+                        {{ alerta.profesor_nombre }}
+                        {{ alerta.profesor_apellido or '' }}
+                    {% else %}
+                        Sin tutor asignado
+                    {% endif %}
+                </h3>
+
+                <p>
+                    {{ alerta.titulo }}
+                </p>
+
+                <p>
+                    {{ alerta.tipo_alerta }}
+
+                    {% if alerta.cantidad_correcciones > 0 %}
+                        · {{ alerta.cantidad_correcciones }}
+                        entrega(s) con correcciones
+                    {% endif %}
+
+                    {% if alerta.cantidad_revision > 0 %}
+                        · {{ alerta.cantidad_revision }}
+                        en revisión
+                    {% endif %}
+                </p>
+
+            </a>
+
+        {% else %}
+
+            <div class="alert-card">
+                <h3>¡Todo en orden!</h3>
+                <p>
+                    No hay investigaciones con alertas registradas.
+                </p>
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- =========================================
+     ACCESOS RÁPIDOS Y AVANCE
+========================================= -->
+
+<div class="admin-bottom-grid">
+
+    <!-- COLUMNA IZQUIERDA -->
+
+    <section class="admin-access-panel">
+
+        <div class="admin-block-heading">
+            <div>
+                <h2>Accesos rápidos</h2>
+                <p>Herramientas de administración.</p>
+            </div>
+        </div>
+
+        <div class="admin-access-list">
+
+            <a href="{{ url_for('gestionar_usuarios') }}" class="admin-access-item">
+                <div class="admin-access-icon">👥</div>
+
+                <div class="admin-access-content">
+                    <h3>Usuarios</h3>
+                    <p>Crear y gestionar cuentas</p>
+                </div>
+
+                <span class="admin-access-arrow">→</span>
+            </a>
+
+            <a href="{{ url_for('grupos') }}" class="admin-access-item">
+            <div class="admin-access-icon">👥</div>
+            <div class="admin-access-content">
+                <h3>Grupos</h3>
+                <p>Consultar todos los grupos</p>
+            </div>
+            <span class="admin-access-arrow">→</span>
+            </a>
+
+            <a href="{{ url_for('investigaciones') }}" class="admin-access-item">
+                <span class="access-icon">📚</span>
+                <span>
+                    <strong>Investigaciones</strong>
+                    <small>Seguimiento general</small>
+                </span>
+                <span class="access-arrow">→</span>
+            </a>
+
+            <a href="{{ url_for('admin_historial_progreso') }}" class="admin-access-item">
+                <span class="access-icon">📊</span>
+                <span>
+                    <strong>Historial de progreso</strong>
+                    <small>Reportes por niveles</small>
+                </span>
+                <span class="access-arrow">→</span>
+            </a>
+
+           <a href="{{ url_for('permisos_biblioteca_admin') }}" class="admin-access-item">
+                <span class="access-icon">📖</span>
+                <span>
+                    <strong>Biblioteca</strong>
+                    <small>Permisos de tutores</small>
+                </span>
+                <span class="access-arrow">→</span>
+            </a>
+            <a href="{{ url_for('admin_carga_tutores') }}" class="admin-access-item">
+                <span class="access-icon">👨‍🏫</span>
+                <span>
+                    <strong>Carga de tutores</strong>
+                    <small>Reparto equilibrado</small>
+                </span>
+                <span class="access-arrow">→</span>
+            </a>
+
+          <a href="{{ url_for('admin_informes') }}" class="admin-access-item">
+                    <span class="admin-access-icon">📄</span>
+
+                    <div class="admin-access-info">
+                        <strong>Informes</strong>
+                        <small>Reportes para descargar</small>
+                    </div>
+
+                    <span class="admin-access-arrow">→</span>
+
+            </a>
+
+            <a href="{{ url_for('registro_auditoria') }}" class="btn">
+                <span class="access-icon">📋</span>
+                <span>
+                    <strong>Registro de actividad</strong>
+                    <small>Quién hizo qué y cuándo</small>
+                </span>
+                <span class="access-arrow">→</span>
+            </a>
+
+            <a href="{{ url_for('cronograma') }}" class="admin-access-item">
+                <span class="access-icon">📢</span>
+                <span>
+                    <strong>Comunicados</strong>
+                    <small>Avisos oficiales</small>
+                </span>
+                <span class="access-arrow">→</span>
+            </a>
+
+            <a href="#" class="admin-access-item">
+                <span class="access-icon">💾</span>
+                <span>
+                    <strong>Copias de respaldo</strong>
+                    <small>Seguridad de documentos</small>
+                </span>
+                <span class="access-arrow">→</span>
+            </a>
+
+            <a href="#herramientas-gestion" class="admin-access-item">
+                <span class="access-icon">⚙️</span>
+                <span>
+                    <strong>Configuración</strong>
+                    <small>Opciones administrativas</small>
+                </span>
+                <span class="access-arrow">→</span>
+            </a>
+
+        </div>
+
+    </section>
+
+
+        <!-- COLUMNA DERECHA -->
+
+        <section class="admin-progress-panel"
+                id="seguimiento-investigaciones">
+
+            <div class="admin-block-heading">
+                <div>
+                    <h2>Avance de investigaciones</h2>
+                    <p>Progreso general de los trabajos académicos.</p>
+                </div>
+
+                <a href="{{ url_for('investigaciones') }}"
+                class="view-all-link">
+                    Ver todas →
+                </a>
+            </div>
+
+        <div class="admin-progress-list">
+
+        {% for investigacion in investigaciones %}
+
+            <div class="admin-progress-item">
+
+                <div class="progress-info">
+                    <strong>
+                        {{ investigacion.titulo }}
+                    </strong>
+
+                    <span>
+                        {{ investigacion.progreso or 0 }}%
+                    </span>
+                </div>
+
+                <div class="progress-track">
+                    <div class="progress-value"
+                        style="width: {{ investigacion.progreso or 0 }}%;">
+                    </div>
+                </div>
+
+                <small>
+                    {{ investigacion.grupo_nombre }}
+                    · Nivel {{ investigacion.nivel_actual or 1 }}
+                    ·
+
+                    {% if investigacion.profesor_nombre %}
+                        {{ investigacion.profesor_nombre }}
+                        {{ investigacion.profesor_apellido or '' }}
+                    {% else %}
+                        Sin tutor asignado
+                    {% endif %}
+
+                    · {{ investigacion.niveles_aprobados }}/6 niveles aprobados
+                </small>
+
+            </div>
+
+        {% else %}
+
+            <p>
+                Todavía no hay investigaciones registradas.
+            </p>
+
+        {% endfor %}
+
+    </div>
+        </section>
+
+    </div>
+
+        <style>
+        /* =====================================
+        CENTRO DE CONTROL INSTITUCIONAL
+        ===================================== */
+
+        .control-header {
+            margin-bottom: 25px;
+        }
+
+        .control-eyebrow {
+            display: inline-block;
+            margin-bottom: 8px;
+            color: #2876d2;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.5px;
+        }
+
+        .control-header h1 {
+            margin: 0 0 12px;
+            color: #192d49;
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .control-header h2 {
+            margin: 0 0 6px;
+            color: #263b58;
+            font-size: 19px;
+            font-weight: 700;
+        }
+
+        .control-header p {
+            margin: 0;
+            color: #8491a5;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+
+        /* 4 TARJETAS SUPERIORES */
+        .control-metrics-four {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        /* 3 TARJETAS INFERIORES */
+        .control-metrics-three {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* TARJETAS COMPACTAS */
+        .control-card {
+            position: relative;
+            min-width: 0;
+            min-height: 75px;
+            padding: 10px 13px;
+            overflow: hidden;
+            border: 1px solid #e5ebf3;
+            border-radius: 12px;
+            background: #fff;
+            box-shadow: 0 3px 12px rgba(25, 45, 73, 0.04);
+        }
+
+        .control-card-label {
+            display: block;
+            margin-bottom: 6px;
+            color: #718198;
+            font-size: 10px;
+            font-weight: 650;
+        }
+
+        .control-card strong {
+            display: block;
+            color: #1d3555;
+            font-size: 21px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .control-card-icon {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: grid;
+            place-items: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            background: #edf4ff;
+            font-size: 14px;
+        }
+
+        .control-card-description {
+            display: block;
+            margin-top: 4px;
+            color: #8996a9;
+            font-size: 9px;
+        }
+
+        .control-card-warning {
+            border-color: #f1dfbd;
+            background: #fffdf9;
+        }
+
+        .control-card-warning .control-card-icon {
+            background: #fff1d8;
+        }
+
+        .control-card-warning strong {
+            color: #d28a20;
+        }
+
+        .control-card-warning a {
+            display: inline-block;
+            margin-top: 3px;
+            color: #2876d2;
+            font-size: 9px;
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+        .control-card-label {
+            display: block;
+            margin-bottom: 13px;
+            color: #718198;
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .control-card strong {
+            display: block;
+            color: #1d3555;
+            font-size: 29px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .control-card-icon {
+            position: absolute;
+            top: 17px;
+            right: 17px;
+            display: grid;
+            place-items: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 11px;
+            background: #edf4ff;
+            font-size: 18px;
+        }
+
+        .control-card-description {
+            display: block;
+            margin-top: 8px;
+            color: #8996a9;
+            font-size: 11px;
+        }
+
+        .control-card-warning {
+            border-color: #f1dfbd;
+            background: #fffdf9;
+        }
+
+        .control-card-warning .control-card-icon {
+            background: #fff1d8;
+        }
+
+        .control-card-warning strong {
+            color: #d28a20;
+        }
+
+        .control-card-warning a {
+            display: inline-block;
+            margin-top: 7px;
+            color: #2876d2;
+            font-size: 11px;
+            font-weight: 750;
+            text-decoration: none;
+        }
+
+
+        /* ADAPTACIÓN A TABLETS */
+
+        @media (max-width: 900px) {
+            .control-metrics-four {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .control-metrics-three {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+
+        /* ADAPTACIÓN A CELULARES */
+
+        @media (max-width: 550px) {
+            .control-header h1 {
+                font-size: 22px;
+            }
+
+            .control-metrics-four,
+            .control-metrics-three {
+                grid-template-columns: 1fr;
+                gap: 11px;
+            }
+
+            .control-card {
+                min-height: 110px;
+            }
+        }
+
+
+        /* =====================================
+        ALERTAS ACADÉMICAS
+        ===================================== */
+
+        .admin-alerts {
+            margin-top: 28px;
+            margin-bottom: 25px;
+        }
+
+        .admin-block-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 17px;
+        }
+
+        .admin-block-heading h2 {
+            margin: 0;
+            color: #1d3452;
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .admin-block-heading p {
+            margin: 6px 0 0;
+            color: #8996a9;
+            font-size: 12px;
+        }
+
+        .risk-link,
+        .view-all-link {
+            color: #2876d2;
+            font-size: 12px;
+            font-weight: 750;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .alert-cards {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .alert-card {
+            display: block;
+            padding: 19px;
+            border: 1px solid #f0dfc5;
+            border-left: 4px solid #e6a13b;
+            border-radius: 13px;
+            background: #fffdfa;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .alert-card:hover {
+            border-color: #e6a13b;
+            transform: translateY(-2px);
+        }
+
+        .alert-card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 13px;
+        }
+
+        .priority-label {
+            color: #bd791d;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .alert-arrow {
+            color: #a7b0bd;
+            font-size: 18px;
+        }
+
+        .alert-card h3 {
+            margin: 0 0 8px;
+            color: #263c59;
+            font-size: 14px;
+        }
+
+        .alert-card p {
+            margin: 0;
+            color: #7e8b9e;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+
+        /* =====================================
+        COLUMNAS INFERIORES
+        ===================================== */
+
+        .admin-access-panel {
+            min-width: 0;
+            padding: 14px;
+            border: 1px solid #e5ebf3;
+            border-radius: 13px;
+            background: #fff;
+            box-shadow: 0 3px 12px rgba(25, 45, 73, 0.04);
+        }
+
+        .admin-access-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-access-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 0;
+            border-bottom: 1px solid #edf1f6;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .admin-access-item:last-child {
+            border-bottom: 0;
+        }
+
+        .admin-access-item:hover strong {
+            color: #2876d2;
+        }
+
+        .access-icon {
+            display: grid;
+            place-items: center;
+            flex: 0 0 29px;
+            width: 29px;
+            height: 29px;
+            border-radius: 8px;
+            background: #edf4ff;
+            font-size: 14px;
+        }
+
+        .admin-access-item strong {
+            display: block;
+            color: #30445f;
+            font-size: 10px;
+        }
+
+        .admin-access-item small {
+            display: block;
+            margin-top: 2px;
+            color: #8b98aa;
+            font-size: 9px;
+        }
+
+        .access-arrow {
+            margin-left: auto;
+            color: #a0adbd;
+            font-size: 14px;
+        }
+
+        /* =====================================
+        ACCESOS RÁPIDOS
+        ===================================== */
+
+        .admin-access-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-access-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 13px 0;
+            border-bottom: 1px solid #edf1f6;
+            text-decoration: none;
+            transition: 0.2s ease;
+        }
+
+        .admin-access-item:last-child {
+            border-bottom: 0;
+        }
+
+        .admin-access-item:hover strong {
+            color: #2876d2;
+        }
+
+        .access-icon {
+            display: grid;
+            place-items: center;
+            flex: 0 0 36px;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: #edf4ff;
+            font-size: 17px;
+        }
+
+        .admin-access-item strong,
+        .admin-access-item small {
+            display: block;
+        }
+
+        .admin-access-item strong {
+            color: #30445f;
+            font-size: 12px;
+        }
+
+        .admin-access-item small {
+            margin-top: 4px;
+            color: #8b98aa;
+            font-size: 10px;
+        }
+
+        .access-arrow {
+            margin-left: auto;
+            color: #a0adbd;
+            font-size: 16px;
+        }
+
+
+        /* =====================================
+        AVANCE DE INVESTIGACIONES
+        ===================================== */
+
+        .admin-progress-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-progress-item {
+            padding: 17px 0;
+            border-bottom: 1px solid #edf1f6;
+        }
+
+        .admin-progress-item:last-child {
+            border-bottom: 0;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .progress-info strong {
+            color: #30445f;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .progress-info span {
+            flex-shrink: 0;
+            color: #2876d2;
+            font-size: 16px;
+            font-weight: 850;
+        }
+
+        .progress-track {
+            height: 8px;
+            margin: 11px 0 9px;
+            overflow: hidden;
+            border-radius: 20px;
+            background: #edf1f6;
+        }
+
+        .progress-value {
+            height: 100%;
+            border-radius: 20px;
+            background: linear-gradient(90deg, #2876d2, #58a4f5);
+        }
+
+        .admin-progress-item small {
+            color: #8996a9;
+            font-size: 10px;
+        }
+
+
+        /* =====================================
+        RESPONSIVE
+        ===================================== */
+
+        @media (max-width: 900px) {
+            .admin-bottom-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .alert-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-block-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+
+        .admin-access-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 15px;
+            background: #ffffff;
+            border: 1px solid #e5eaf2;
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .admin-access-item:hover {
+            border-color: #2563eb;
+            background: #f8faff;
+            transform: translateY(-2px);
+        }
+
+        .admin-access-icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #eff6ff;
+            border-radius: 10px;
+            font-size: 19px;
+            flex-shrink: 0;
+        }
+
+        .admin-access-content {
+            flex: 1;
+        }
+
+        .admin-access-content h3 {
+            margin: 0 0 4px;
+            color: #1e293b;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .admin-access-content p {
+            margin: 0;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .admin-access-arrow {
+            color: #94a3b8;
+            font-size: 19px;
+        }
+        </style>
+
+        {% endblock %}

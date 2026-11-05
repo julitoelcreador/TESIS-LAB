@@ -1,0 +1,1139 @@
+
+{% extends "base.html" %}
+
+{% block title %}Detalle de investigación · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+.detalle-page {
+    width: min(1200px, 94%);
+    margin: 0 auto;
+    padding: 15px 0 40px;
+    color: #172b4d;
+}
+
+.detalle-page * {
+    box-sizing: border-box;
+}
+
+.detalle-volver {
+    display: inline-block;
+    margin-bottom: 20px;
+    color: #60a5fa;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.detalle-hero {
+    padding: 25px;
+    margin-bottom: 22px;
+    background: #10284b;
+    border-radius: 15px;
+    color: white;
+}
+
+.detalle-etiqueta {
+    color: #93c5fd;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.detalle-hero h1 {
+    margin: 10px 0;
+    font-size: 26px;
+    overflow-wrap: anywhere;
+}
+
+.detalle-hero p {
+    color: #d0dded;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.detalle-estado {
+    display: inline-block;
+    padding: 6px 11px;
+    margin-top: 8px;
+    border-radius: 7px;
+    background: #d9fbe7;
+    color: #166534;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.detalle-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.detalle-card {
+    min-width: 0;
+    padding: 20px;
+    background: white;
+    border: 1px solid #e2eaf4;
+    border-radius: 13px;
+}
+
+.detalle-card h2 {
+    margin: 0 0 16px;
+    font-size: 17px;
+    color: #10284b;
+}
+
+.detalle-dato {
+    margin-bottom: 13px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.detalle-dato strong {
+    display: block;
+    margin-bottom: 3px;
+    color: #33445f;
+}
+
+.detalle-seccion {
+    padding: 21px;
+    margin-bottom: 20px;
+    background: white;
+    border: 1px solid #e2eaf4;
+    border-radius: 13px;
+}
+
+.detalle-seccion h2 {
+    margin: 0 0 7px;
+    color: #10284b;
+    font-size: 18px;
+}
+
+.detalle-descripcion {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.miembro {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.miembro:last-child {
+    border-bottom: none;
+}
+
+.miembro-nombre {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.miembro-usuario {
+    color: #8492a6;
+    font-size: 11px;
+}
+
+.miembro-etiqueta {
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: #eaf3ff;
+    color: #1769c2;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.niveles-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+}
+
+.nivel-card {
+    padding: 16px;
+    border: 1px solid #e1e9f3;
+    border-radius: 11px;
+    background: #f8fafc;
+}
+
+.nivel-numero {
+    color: #1769c2;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.nivel-card h3 {
+    margin: 7px 0;
+    font-size: 14px;
+    color: #243b5b;
+}
+
+.nivel-estado {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 6px;
+    background: #edf2f7;
+    color: #52647c;
+    font-size: 10px;
+    font-weight: 800;
+}
+
+.nivel-estado.aprobado {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.nivel-estado.pendiente {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.nivel-estado.bloqueado {
+    background: #e9edf3;
+    color: #64748b;
+}
+
+.nivel-observacion {
+    margin-top: 10px;
+    color: #64748b;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.detalle-vacio {
+    padding: 18px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 10px;
+    color: #718096;
+    font-size: 12px;
+    text-align: center;
+}
+
+/* ========================================
+   ENTREGAS Y REVISIONES
+======================================== */
+
+.entregas-encabezado {
+    margin-bottom: 15px;
+}
+
+.entregas-etiqueta {
+    display: block;
+    margin-bottom: 7px;
+    color: #1769c2;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.entregas-encabezado h2 {
+    margin: 0;
+    color: #10284b;
+    font-size: 25px;
+}
+
+.entregas-subtitulo {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 13px;
+}
+
+/* HISTORIAL COMPACTO */
+
+.historial-resumen {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 16px;
+    margin-bottom: 18px;
+    background: white;
+    border: 1px solid #e2eaf4;
+    border-radius: 11px;
+}
+
+.historial-resumen strong {
+    display: block;
+    color: #243b5b;
+    font-size: 13px;
+}
+
+.historial-resumen small {
+    display: block;
+    margin-top: 4px;
+    color: #8492a6;
+    font-size: 11px;
+}
+
+.historial-resumen a {
+    color: #1769c2;
+    font-size: 12px;
+    font-weight: 800;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.historial-resumen a:hover {
+    text-decoration: underline;
+}
+
+/* DOS COLUMNAS */
+
+.entregas-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 18px;
+    align-items: start;
+}
+
+.entregas-panel {
+    min-width: 0;
+    padding: 21px;
+    background: white;
+    border: 1px solid #e2eaf4;
+    border-radius: 13px;
+}
+
+.entregas-panel h3 {
+    margin: 0 0 7px;
+    color: #10284b;
+    font-size: 17px;
+}
+
+.entregas-panel-descripcion {
+    margin-bottom: 18px;
+    color: #718096;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* FORMULARIO */
+
+.entrega-formulario label {
+    display: block;
+    margin: 15px 0 7px;
+    color: #33445f;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.entrega-formulario input[type="text"],
+.entrega-formulario select,
+.entrega-formulario textarea,
+.entrega-formulario input[type="file"] {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d5dfeb;
+    border-radius: 8px;
+    background: white;
+    color: #33445f;
+    font: inherit;
+    font-size: 13px;
+}
+
+.entrega-formulario textarea {
+    min-height: 115px;
+    resize: vertical;
+}
+
+.entrega-formulario input:focus,
+.entrega-formulario select:focus,
+.entrega-formulario textarea:focus {
+    outline: none;
+    border-color: #1769c2;
+    box-shadow: 0 0 0 3px rgba(23, 105, 194, 0.10);
+}
+
+.entrega-ayuda {
+    margin-top: 6px;
+    color: #8492a6;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.entrega-boton {
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #1769c2;
+    color: white;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.entrega-boton:hover {
+    background: #12549c;
+}
+
+/* SEMÁFORO */
+
+.semaforo-leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: #f8fafc;
+    border-radius: 9px;
+}
+
+.semaforo-leyenda span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #64748b;
+    font-size: 10px;
+}
+
+.semaforo-punto {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.punto-verde {
+    background: #16a34a;
+}
+
+.punto-amarillo {
+    background: #eab308;
+}
+
+.punto-rojo {
+    background: #dc2626;
+}
+
+.punto-gris {
+    background: #94a3b8;
+}
+
+.semaforo-item {
+    padding: 14px 0;
+    border-bottom: 1px solid #edf1f6;
+}
+
+.semaforo-item:last-child {
+    border-bottom: none;
+}
+
+.semaforo-item-superior {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+}
+
+.semaforo-item strong {
+    display: block;
+    color: #33445f;
+    font-size: 13px;
+}
+
+.semaforo-item small {
+    display: block;
+    margin-top: 5px;
+    color: #8492a6;
+    font-size: 11px;
+}
+
+.semaforo-estado {
+    display: inline-block;
+    padding: 5px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+.semaforo-estado.verde {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.semaforo-estado.amarillo {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.semaforo-estado.rojo {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.semaforo-estado.gris {
+    background: #edf2f7;
+    color: #64748b;
+}
+
+.semaforo-observacion {
+    padding: 10px;
+    margin-top: 10px;
+    background: #fff8e6;
+    border-radius: 7px;
+    color: #805b16;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.semaforo-archivo {
+    display: inline-block;
+    margin-top: 9px;
+    color: #1769c2;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* FORMULARIO DE REVISIÓN DEL TUTOR */
+
+.revision-formulario {
+    margin-top: 14px;
+    padding: 14px;
+    background: #f8fafc;
+    border: 1px solid #dce6f1;
+    border-radius: 9px;
+}
+
+.revision-formulario label {
+    display: block;
+    margin: 12px 0 6px;
+    color: #33445f;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.revision-formulario select,
+.revision-formulario textarea,
+.revision-formulario input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #d5dfeb;
+    border-radius: 7px;
+    background: white;
+    color: #33445f;
+    font: inherit;
+    font-size: 12px;
+}
+
+.revision-formulario textarea {
+    min-height: 110px;
+    resize: vertical;
+}
+
+.revision-formulario button {
+    width: 100%;
+    margin-top: 13px;
+    padding: 11px;
+    border: none;
+    border-radius: 7px;
+    background: #1769c2;
+    color: white;
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.revision-formulario button:hover {
+    background: #12549c;
+}
+
+/* HISTORIAL DESPLEGABLE */
+
+.historial-completo {
+    margin-top: 20px;
+}
+
+.historial-completo details {
+    border: 1px solid #e2eaf4;
+    border-radius: 11px;
+    background: white;
+}
+
+.historial-completo summary {
+    padding: 15px 18px;
+    color: #243b5b;
+    font-size: 13px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.historial-contenido {
+    padding: 0 18px 15px;
+}
+
+.historial-version {
+    padding: 13px 0;
+    border-top: 1px solid #edf1f6;
+}
+
+.historial-version strong {
+    display: block;
+    color: #33445f;
+    font-size: 12px;
+}
+
+.historial-version span {
+    display: block;
+    margin-top: 5px;
+    color: #718096;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.historial-version a {
+    display: inline-block;
+    margin-top: 7px;
+    color: #1769c2;
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 850px) {
+    .entregas-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 750px) {
+    .niveles-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 550px) {
+    .detalle-grid,
+    .niveles-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detalle-hero {
+        padding: 19px;
+    }
+
+    .detalle-hero h1 {
+        font-size: 21px;
+    }
+
+    .detalle-seccion,
+    .detalle-card,
+    .entregas-panel {
+        padding: 16px;
+    }
+
+    .historial-resumen {
+        align-items: flex-start;
+    }
+
+    .entregas-encabezado h2 {
+        font-size: 22px;
+    }
+}
+</style>
+
+<div class="detalle-page">
+
+    <a href="{{ url_for('investigaciones') }}" class="detalle-volver">
+        ← Volver a mis investigaciones
+    </a>
+
+    <!-- ========================================
+         ENTREGAS Y REVISIONES
+    ========================================= -->
+
+    <section id="entregas-revisiones">
+
+        <div class="entregas-encabezado">
+
+            <span class="entregas-etiqueta">
+                MÓDULO DE INVESTIGACIÓN
+            </span>
+
+            <h2>Entregas y revisiones</h2>
+
+            <div class="entregas-subtitulo">
+                <strong>Entregas</strong>
+                <span>
+                    · Nivel actual: {{ investigacion['nivel_actual'] }}
+                    · {{ investigacion['grupo_nombre'] }}
+                </span>
+            </div>
+
+        </div>
+
+        <!-- HISTORIAL COMPACTO -->
+
+        <div class="historial-resumen">
+
+            <div>
+                <strong>🕘 Historial de versiones</strong>
+                <small>
+                    Consulta los documentos enviados anteriormente.
+                </small>
+            </div>
+
+            <a href="#historial-versiones">
+                Ver historial →
+            </a>
+
+        </div>
+
+        <!-- DOS COLUMNAS -->
+
+        <div class="entregas-layout">
+
+            <!-- COLUMNA IZQUIERDA: SUBIR TRABAJO -->
+
+            <section class="entregas-panel" id="formulario-entrega">
+
+                <h3>📤 Subir trabajo</h3>
+
+                <p class="entregas-panel-descripcion">
+                    Presenta el documento correspondiente al nivel
+                    habilitado de tu investigación.
+                </p>
+
+                {% if usuario['rol'] != 'estudiante' %}
+
+                    <div class="detalle-vacio">
+                        El envío de trabajos está disponible únicamente
+                        para los estudiantes del grupo.
+                    </div>
+
+                {% elif investigacion['finalizada'] %}
+
+                    <div class="detalle-vacio">
+                        Esta investigación ya fue finalizada.
+                    </div>
+
+                {% else %}
+
+                    {% set nivel_habilitado = namespace(encontrado=false) %}
+
+                    {% for nivel in niveles %}
+                        {% if nivel['nivel'] == investigacion['nivel_actual']
+                            and nivel['estado'] not in [
+                                'Bloqueado',
+                                'Aprobado',
+                                'Pendiente de revisión'
+                            ] %}
+                            {% set nivel_habilitado.encontrado = true %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if nivel_habilitado.encontrado %}
+
+                        <form
+                            class="entrega-formulario"
+                            method="POST"
+                            action="{{ url_for(
+                                'entregar_nivel',
+                                investigacion_id=investigacion['id']
+                            ) }}"
+                            enctype="multipart/form-data"
+                        >
+
+                            <label for="titulo">
+                                Título de la entrega
+                            </label>
+
+                            <input
+                                type="text"
+                                name="titulo"
+                                id="titulo"
+                                placeholder="Ej. Análisis de resultados"
+                                maxlength="200"
+                                required
+                            >
+
+                            <label for="nivel">
+                                Nivel de investigación
+                            </label>
+
+                            <select name="nivel" id="nivel" required>
+
+                                {% for nivel in niveles %}
+
+                                    {% if nivel['nivel'] == investigacion['nivel_actual']
+                                        and nivel['estado'] not in [
+                                            'Bloqueado',
+                                            'Aprobado',
+                                            'Pendiente de revisión'
+                                        ] %}
+
+                                        <option
+                                            value="{{ nivel['nivel'] }}"
+                                            selected
+                                        >
+                                            Nivel {{ nivel['nivel'] }}
+                                        </option>
+
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </select>
+
+                            <div class="entrega-ayuda">
+                                Solo puedes presentar el nivel actualmente habilitado.
+                            </div>
+
+                            <label for="archivo">
+                                Archivo (PDF o Word)
+                            </label>
+
+                            <input
+                                type="file"
+                                name="archivo"
+                                id="archivo"
+                                accept=".pdf,.doc,.docx,.odt,.txt,.png,.jpg,.jpeg"
+                            >
+
+                            <div class="entrega-ayuda">
+                                Formatos permitidos: PDF, DOC, DOCX,
+                                ODT, TXT, PNG y JPG.
+                            </div>
+
+                            <label for="texto">
+                                Contenido del trabajo
+                            </label>
+
+                            <textarea
+                                name="texto"
+                                id="texto"
+                                placeholder="Escribe aquí el contenido de tu investigación..."
+                            ></textarea>
+
+                            <label for="nota_estudiante">
+                                Nota para el tutor (opcional)
+                            </label>
+
+                            <textarea
+                                name="nota_estudiante"
+                                id="nota_estudiante"
+                                placeholder="Puedes escribir un mensaje para tu tutor..."
+                                style="min-height: 85px;"
+                            ></textarea>
+
+                            <button type="submit" class="entrega-boton">
+                                Enviar entrega
+                            </button>
+
+                        </form>
+
+                    {% else %}
+
+                        <div class="detalle-vacio">
+                            No hay un nivel disponible para entregar
+                            en este momento. Revisa el estado de tu
+                            investigación y espera la respuesta del tutor.
+                        </div>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </section>
+
+            <!-- COLUMNA DERECHA: SEMÁFORO -->
+
+            <section class="entregas-panel">
+
+                <h3>🚦 Semáforo de entregas</h3>
+
+                <p class="entregas-panel-descripcion">
+                    Consulta el estado de cada nivel y las observaciones
+                    realizadas por tu tutor.
+                </p>
+
+                <div class="semaforo-leyenda">
+
+                    <span>
+                        <i class="semaforo-punto punto-verde"></i>
+                        Aprobado
+                    </span>
+
+                    <span>
+                        <i class="semaforo-punto punto-amarillo"></i>
+                        En revisión
+                    </span>
+
+                    <span>
+                        <i class="semaforo-punto punto-rojo"></i>
+                        Correcciones
+                    </span>
+
+                    <span>
+                        <i class="semaforo-punto punto-gris"></i>
+                        Bloqueado
+                    </span>
+
+                </div>
+
+                {% for nivel in niveles %}
+
+                    {% set estado = nivel['estado'] or 'Pendiente' %}
+
+                    {% if estado == 'Aprobado' %}
+                        {% set color_estado = 'verde' %}
+                    {% elif estado == 'Pendiente de revisión' %}
+                        {% set color_estado = 'amarillo' %}
+                    {% elif estado == 'Necesita correcciones' %}
+                        {% set color_estado = 'rojo' %}
+                    {% elif estado == 'Bloqueado' %}
+                        {% set color_estado = 'gris' %}
+                    {% else %}
+                        {% set color_estado = 'gris' %}
+                    {% endif %}
+
+                    {% set entrega_encontrada = namespace(valor=none) %}
+
+                    {% for entrega in entregas %}
+                        {% if entrega['nivel'] == nivel['nivel'] %}
+                            {% set entrega_encontrada.valor = entrega %}
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="semaforo-item">
+
+                        <div class="semaforo-item-superior">
+
+                            <div>
+                                <strong>
+                                    {% if nivel['nivel'] == 1 %}
+                                        Presentación del tema
+                                    {% else %}
+                                        Capítulo {{ nivel['nivel'] - 1 }}
+                                    {% endif %}
+                                </strong>
+
+                                <small>
+                                    Nivel {{ nivel['nivel'] }}
+                                </small>
+                            </div>
+
+                            <span class="semaforo-estado {{ color_estado }}">
+                                {{ estado }}
+                            </span>
+
+                        </div>
+
+                        {% if entrega_encontrada.valor %}
+
+                            {% if entrega_encontrada.valor['titulo'] %}
+                                <small>
+                                    Trabajo:
+                                    {{ entrega_encontrada.valor['titulo'] }}
+                                </small>
+                            {% endif %}
+
+                            {% if entrega_encontrada.valor['enviado_en'] %}
+                                <small>
+                                    Enviado:
+                                    {{ entrega_encontrada.valor['enviado_en'] }}
+                                </small>
+                            {% endif %}
+{% if entrega_encontrada.valor['comentario_profesor'] %}
+    <div class="semaforo-observacion">
+        <strong>Observaciones del tutor:</strong>
+        {{ entrega_encontrada.valor['comentario_profesor'] }}
+    </div>
+{% endif %}
+
+{% if usuario['rol'] in ['admin', 'tutor']
+    and entrega_encontrada.valor['estado'] in [
+        'Pendiente',
+        'Pendiente de revisión',
+        'En revisión'
+    ]
+    and not investigacion['finalizada'] %}
+
+    <form
+        class="revision-formulario"
+        method="POST"
+        action="{{ url_for(
+            'revisar_nivel',
+            entrega_id=entrega_encontrada.valor['id']
+        ) }}"
+    >
+
+        <strong style="color:#10284b; font-size:13px;">
+            📝 Evaluar entrega
+        </strong>
+
+        <label>Estado de la revisión</label>
+
+        <select name="estado" required>
+            <option value="">Seleccionar estado</option>
+            <option value="Aprobado">Aprobado</option>
+            <option value="Pendiente de revisión">
+                Pendiente de revisión
+            </option>
+            <option value="Necesita correcciones">
+                Necesita correcciones
+            </option>
+                </select>
+
+                    <label>Observaciones individuales</label>
+
+                    <textarea
+                        name="observaciones_lista"
+                        placeholder="Escribe una observación por línea:
+
+                        Las fechas del cronograma deben corregirse.
+                        Agregar responsables a cada actividad.
+                        Incluir las fuentes bibliográficas en APA 7."
+                        ></textarea>
+
+                        <small style="color:#8492a6; font-size:10px;">
+                        Escribe cada observación en una línea diferente.
+                        El estudiante podrá marcarlas individualmente como corregidas.
+                        </small>
+
+                        <label>Nota (0 a 100)</label>
+
+                        <input
+                        type="number"
+                        name="nota"
+                        min="0"
+                        max="100"
+                        step="0.1"
+                        placeholder="Ej. 85"
+                        >
+
+                        <button type="submit">
+                        Guardar revisión
+                        </button>
+
+                        </form>
+
+                        {% endif %}
+
+                        {% else %}
+
+                            <small>
+                                Todavía no hay una entrega registrada.
+                            </small>
+
+                        {% endif %}
+
+                        {% if nivel['observaciones'] %}
+                            <div class="semaforo-observacion">
+                                <strong>Observaciones:</strong>
+                                {{ nivel['observaciones'] }}
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                {% else %}
+
+                    <div class="detalle-vacio">
+                        No hay niveles registrados.
+                    </div>
+
+                {% endfor %}
+
+            </section>
+
+        </div>
+
+        <!-- HISTORIAL COMPLETO -->
+
+        <section class="historial-completo" id="historial-versiones">
+
+            <details>
+
+                <summary>
+                    🕘 Historial completo de versiones
+                    ({{ historial_entregas|length }} registros)
+                </summary>
+
+                <div class="historial-contenido">
+
+                    {% for historial in historial_entregas %}
+
+                        <div class="historial-version">
+
+                            <strong>
+                                {{ historial['titulo'] or 'Entrega sin título' }}
+                                · Nivel {{ historial['nivel'] }}
+                                · Versión {{ historial['version'] }}
+                            </strong>
+
+                            <span>
+                                Estado:
+                                {{ historial['estado'] or 'Sin estado' }}
+                            </span>
+
+                            {% if historial['enviado_en'] %}
+                                <span>
+                                    Fecha de envío:
+                                    {{ historial['enviado_en'] }}
+                                </span>
+                            {% endif %}
+
+                            {% if historial['archivo'] %}
+
+                                <a
+                                    href="{{ url_for(
+                                        'abrir_archivo_historial',
+                                        historial_id=historial['id']
+                                    ) }}"
+                                    target="_blank"
+                                >
+                                    Abrir documento
+                                </a>
+
+                            {% endif %}
+
+                            {% if historial['nota_estudiante'] %}
+                                <span>
+                                    Nota del estudiante:
+                                    {{ historial['nota_estudiante'] }}
+                                </span>
+                            {% endif %}
+
+                            {% if historial['observaciones'] %}
+                                <span>
+                                    Observaciones del tutor:
+                                    {{ historial['observaciones'] }}
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="detalle-vacio">
+                            Todavía no hay versiones de documentos registradas.
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </details>
+
+        </section>
+
+    </section>
+
+</div>
+
+{% endblock %}

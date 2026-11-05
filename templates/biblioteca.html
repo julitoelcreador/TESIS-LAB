@@ -1,0 +1,1015 @@
+
+{% extends "base.html" %}
+
+{% block title %}Biblioteca Virtual | TESIS LAB{% endblock %}
+
+{% block content %}
+
+{% set es_admin = usuario["rol"] == "admin" %}
+{% set gestionar = es_admin or permisos_biblioteca.get("puede_gestionar", 0) %}
+{% set publicar_guias = es_admin or gestionar or permisos_biblioteca.get("puede_publicar_guias", 0) %}
+{% set publicar_videos = es_admin or gestionar or permisos_biblioteca.get("puede_publicar_videos", 0) %}
+{% set publicar_ejemplos = es_admin or gestionar or permisos_biblioteca.get("puede_publicar_ejemplos", 0) %}
+{% set publicar_general = es_admin or gestionar or permisos_biblioteca.get("puede_publicar", 0) %}
+{% set puede_publicar = publicar_guias or publicar_videos or publicar_ejemplos or publicar_general %}
+{% set puede_editar = es_admin or gestionar or permisos_biblioteca.get("puede_editar", 0) %}
+{% set puede_eliminar = es_admin or gestionar or permisos_biblioteca.get("puede_eliminar", 0) %}
+
+<style>
+.biblioteca-page {
+    max-width: 1250px;
+    margin: 0 auto;
+    padding: 25px 20px 45px;
+    color: #172b4d;
+}
+
+.biblioteca-encabezado {
+    background: linear-gradient(120deg, #0b1d3a, #174b83);
+    color: white;
+    padding: 30px;
+    border-radius: 18px;
+    margin-bottom: 25px;
+}
+
+.biblioteca-etiqueta {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #a9d4ff;
+    text-transform: uppercase;
+}
+
+.biblioteca-encabezado h1 {
+    margin: 10px 0;
+    font-size: 30px;
+}
+
+.biblioteca-encabezado p {
+    margin: 0;
+    color: #d8e8fa;
+    line-height: 1.6;
+}
+
+.biblioteca-tarjeta {
+    background: white;
+    border: 1px solid #e4eaf2;
+    border-radius: 15px;
+    padding: 23px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 16px rgba(15,35,65,.04);
+}
+
+.biblioteca-titulo-seccion {
+    font-size: 19px;
+    font-weight: 750;
+    margin: 0 0 18px;
+    color: #102746;
+}
+
+.biblioteca-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr auto;
+    gap: 13px;
+    align-items: end;
+}
+
+.biblioteca-formulario {
+    display: grid;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    gap: 15px;
+}
+
+.biblioteca-campo {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    min-width: 0;
+}
+
+.biblioteca-campo label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #40536d;
+}
+
+.biblioteca-campo input,
+.biblioteca-campo select,
+.biblioteca-campo textarea {
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #d8e1ec;
+    border-radius: 9px;
+    padding: 11px 12px;
+    background: #fff;
+    color: #24364d;
+    font-size: 14px;
+    outline: none;
+}
+
+.biblioteca-campo input:focus,
+.biblioteca-campo select:focus,
+.biblioteca-campo textarea:focus {
+    border-color: #2875c7;
+    box-shadow: 0 0 0 3px rgba(40,117,199,.10);
+}
+
+.biblioteca-boton {
+    border: none;
+    border-radius: 9px;
+    padding: 12px 17px;
+    background: #155a9e;
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+}
+
+.biblioteca-boton:hover {
+    background: #0c4279;
+}
+
+.biblioteca-boton-secundario {
+    background: #edf4fb;
+    color: #155a9e;
+}
+
+.biblioteca-boton-secundario:hover {
+    background: #dceafa;
+}
+
+.biblioteca-boton-peligro {
+    background: #fff0f0;
+    color: #b42332;
+}
+
+.biblioteca-boton-peligro:hover {
+    background: #ffe0e0;
+}
+
+.biblioteca-completo {
+    grid-column: 1 / -1;
+}
+
+.biblioteca-ayuda {
+    font-size: 12px;
+    color: #75849a;
+    line-height: 1.5;
+}
+
+.biblioteca-admin {
+    border-left: 4px solid #2473ba;
+}
+
+.biblioteca-admin-etiqueta {
+    display: inline-block;
+    margin-bottom: 12px;
+    padding: 5px 9px;
+    border-radius: 6px;
+    background: #edf4fb;
+    color: #155a9e;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.biblioteca-resultados-cabecera {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 17px;
+}
+
+.biblioteca-resultados-cabecera h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.biblioteca-contador {
+    background: #edf4fb;
+    color: #155a9e;
+    border-radius: 20px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.biblioteca-lista {
+    display: grid;
+    grid-template-columns: repeat(3,minmax(0,1fr));
+    gap: 18px;
+    align-items: stretch;
+}
+
+.biblioteca-recurso {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    box-sizing: border-box;
+    border: 1px solid #e4eaf2;
+    border-radius: 13px;
+    padding: 19px;
+    background: #fff;
+}
+
+.biblioteca-recurso-superior {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.biblioteca-recurso h3 {
+    font-size: 17px;
+    margin: 0 0 9px;
+    color: #15365c;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.biblioteca-recurso p {
+    color: #607087;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 8px 0;
+    overflow-wrap: anywhere;
+}
+
+.biblioteca-tipo {
+    display: inline-block;
+    background: #eaf3fc;
+    color: #155a9e;
+    border-radius: 20px;
+    padding: 5px 10px;
+    font-size: 11px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.biblioteca-metadatos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+}
+
+.biblioteca-metadatos span {
+    font-size: 11px;
+    color: #65758a;
+    background: #f2f5f8;
+    padding: 5px 8px;
+    border-radius: 6px;
+}
+
+.biblioteca-acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 15px;
+}
+
+.biblioteca-apa {
+    background: #f6f8fb;
+    border: 1px solid #e7edf4;
+    padding: 12px;
+    border-radius: 9px;
+    margin-top: 13px;
+    font-size: 12px;
+    color: #43536a;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+}
+
+.biblioteca-vacio {
+    text-align: center;
+    padding: 45px 20px;
+    color: #718096;
+    background: #f8fafc;
+    border: 1px dashed #d5dfeb;
+    border-radius: 12px;
+    grid-column: 1 / -1;
+}
+
+.biblioteca-vacio .icono {
+    font-size: 38px;
+    margin-bottom: 10px;
+}
+
+.biblioteca-flash {
+    padding: 12px 15px;
+    border-radius: 9px;
+    margin-bottom: 13px;
+    font-size: 13px;
+    background: #edf7ef;
+    color: #236b36;
+}
+
+.biblioteca-separador {
+    border: none;
+    border-top: 1px solid #edf0f4;
+    margin: 18px 0;
+}
+
+.biblioteca-detalle {
+    margin-top: 14px;
+}
+
+.biblioteca-detalle summary {
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: #155a9e;
+}
+
+.biblioteca-formulario-administracion {
+    margin-top: 15px;
+}
+
+@media(max-width:1000px) {
+    .biblioteca-lista {
+        grid-template-columns: repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:850px) {
+    .biblioteca-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media(max-width:550px) {
+    .biblioteca-page {
+        padding: 15px 10px 30px;
+    }
+
+    .biblioteca-encabezado {
+        padding: 22px;
+    }
+
+    .biblioteca-encabezado h1 {
+        font-size: 24px;
+    }
+
+    .biblioteca-lista,
+    .biblioteca-grid,
+    .biblioteca-formulario {
+        grid-template-columns: 1fr;
+    }
+
+    .biblioteca-completo {
+        grid-column: auto;
+    }
+}
+</style>
+
+<div class="biblioteca-page">
+
+    <!-- ENCABEZADO -->
+
+    <section class="biblioteca-encabezado">
+        <div class="biblioteca-etiqueta">
+            BUSCADOR DE FUENTES ACADÉMICAS
+        </div>
+
+        <h1>📚 Biblioteca virtual</h1>
+
+        <p>
+            Encuentra materiales académicos, consulta fuentes
+            y utiliza referencias bibliográficas en formato APA 7.
+        </p>
+    </section>
+
+    <!-- MENSAJES -->
+
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensaje in mensajes %}
+            <div class="biblioteca-flash">
+                {{ mensaje }}
+            </div>
+        {% endfor %}
+    {% endwith %}
+
+    <!-- BUSCADOR -->
+
+    <section class="biblioteca-tarjeta">
+
+        <form method="GET" action="{{ url_for('biblioteca') }}">
+
+            <div class="biblioteca-grid">
+
+                <div class="biblioteca-campo">
+                    <label for="buscar">Buscar recursos</label>
+
+                    <input
+                        type="text"
+                        id="buscar"
+                        name="q"
+                        placeholder="Tema, palabra clave o autor..."
+                        value="{{ busqueda }}"
+                    >
+                </div>
+
+                <div class="biblioteca-campo">
+                    <label for="area">Área</label>
+
+                    <select id="area" name="area">
+                        <option value="">Todas las áreas</option>
+
+                        {% for opcion in [
+                            "General",
+                            "Ciencias sociales",
+                            "Matemática",
+                            "Ciencias naturales",
+                            "Lenguaje",
+                            "Psicología"
+                        ] %}
+                            <option value="{{ opcion }}"
+                                {% if area_filtro == opcion %}selected{% endif %}>
+                                {{ opcion }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="biblioteca-campo">
+                    <label for="tipo_filtro">Tipo de recurso</label>
+
+                    <select id="tipo_filtro" name="tipo">
+                        <option value="">Todos</option>
+
+                        {% for opcion in [
+                            "Guía",
+                            "Video",
+                            "Ejemplo",
+                            "Artículo",
+                            "Tesis"
+                        ] %}
+                            <option value="{{ opcion }}"
+                                {% if tipo_filtro == opcion %}selected{% endif %}>
+                                {{ opcion }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="biblioteca-boton">
+                    🔎 Buscar
+                </button>
+
+            </div>
+
+            <div style="margin-top:14px;">
+                <a href="{{ url_for('biblioteca') }}"
+                   class="biblioteca-boton biblioteca-boton-secundario">
+                    Limpiar filtros
+                </a>
+            </div>
+
+        </form>
+
+    </section>
+
+    <!-- PUBLICACIÓN -->
+
+    {% if puede_publicar %}
+
+    <section class="biblioteca-tarjeta biblioteca-admin">
+
+        <span class="biblioteca-admin-etiqueta">
+            PANEL DE PUBLICACIÓN
+        </span>
+
+        <h2 class="biblioteca-titulo-seccion">
+            ➕ Agregar recurso académico
+        </h2>
+
+        <p class="biblioteca-ayuda">
+            Comparte materiales académicos con los estudiantes
+            y tutores de la institución.
+        </p>
+
+        <form method="POST"
+              action="{{ url_for('biblioteca') }}"
+              enctype="multipart/form-data">
+
+            <div class="biblioteca-formulario">
+
+                <div class="biblioteca-campo biblioteca-completo">
+                    <label for="titulo">Título del recurso *</label>
+
+                    <input type="text"
+                           id="titulo"
+                           name="titulo"
+                           placeholder="Ej. Introducción a la metodología de investigación"
+                           required>
+                </div>
+
+                <div class="biblioteca-campo">
+                    <label for="autor">Autor</label>
+
+                    <input type="text"
+                           id="autor"
+                           name="autor"
+                           placeholder="Nombre del autor">
+                </div>
+
+                <div class="biblioteca-campo">
+                    <label for="anio_publicacion">Año de publicación</label>
+
+                    <input type="text"
+                           id="anio_publicacion"
+                           name="anio_publicacion"
+                           placeholder="Ej. 2026">
+                </div>
+
+                <div class="biblioteca-campo">
+                    <label for="tipo_recurso">Tipo de recurso *</label>
+
+                    <select id="tipo_recurso" name="tipo" required>
+                        <option value="">Seleccionar tipo</option>
+
+                        {% if publicar_guias %}
+                            <option value="Guía">Guía</option>
+                        {% endif %}
+
+                        {% if publicar_videos %}
+                            <option value="Video">Video</option>
+                        {% endif %}
+
+                        {% if publicar_ejemplos %}
+                            <option value="Ejemplo">Ejemplo</option>
+                        {% endif %}
+
+                        {% if publicar_general %}
+                            <option value="Artículo">Artículo</option>
+                            <option value="Tesis">Tesis</option>
+                        {% endif %}
+                    </select>
+                </div>
+
+                <div class="biblioteca-campo">
+                    <label for="area_principal">Área *</label>
+
+                    <select id="area_principal"
+                            name="area_principal"
+                            required>
+
+                        <option value="">Seleccionar área</option>
+
+                        {% for opcion in [
+                            "General",
+                            "Ciencias sociales",
+                            "Matemática",
+                            "Ciencias naturales",
+                            "Lenguaje",
+                            "Psicología"
+                        ] %}
+                            <option value="{{ opcion }}">{{ opcion }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="biblioteca-campo">
+                    <label for="gestion">Gestión</label>
+
+                    <input type="text"
+                           id="gestion"
+                           name="gestion"
+                           placeholder="Ej. 2026">
+                </div>
+
+                <div class="biblioteca-campo">
+                    <label for="nivel">Nivel de investigación</label>
+
+                    <select id="nivel" name="nivel">
+                        <option value="">Todos los niveles</option>
+
+                        {% for numero in range(1,7) %}
+                            <option value="{{ numero }}">
+                                Nivel {{ numero }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="biblioteca-campo biblioteca-completo">
+                    <label for="descripcion">Descripción</label>
+
+                    <textarea id="descripcion"
+                              name="descripcion"
+                              rows="3"
+                              placeholder="Explica brevemente de qué trata el recurso."></textarea>
+                </div>
+
+                <div class="biblioteca-campo biblioteca-completo">
+                    <label for="palabras_clave">Palabras clave</label>
+
+                    <input type="text"
+                           id="palabras_clave"
+                           name="palabras_clave"
+                           placeholder="Ej. investigación, metodología, educación">
+                </div>
+
+                <div class="biblioteca-campo biblioteca-completo">
+                    <label for="cita_apa">Referencia bibliográfica APA 7</label>
+
+                    <textarea id="cita_apa"
+                              name="cita_apa"
+                              rows="3"
+                              placeholder="Introduce la referencia bibliográfica completa en APA 7."></textarea>
+                </div>
+
+                <div class="biblioteca-campo biblioteca-completo">
+                    <label for="archivo">Adjuntar archivo</label>
+
+                    <input type="file"
+                           id="archivo"
+                           name="archivo"
+                           accept=".pdf,.doc,.docx,.odt,.txt,.png,.jpg,.jpeg">
+
+                    <span class="biblioteca-ayuda">
+                        Formatos permitidos: PDF, Word, ODT,
+                        imágenes y archivos de texto.
+                    </span>
+                </div>
+
+                <div class="biblioteca-campo biblioteca-completo">
+                    <label for="url">Enlace externo (opcional)</label>
+
+                    <input type="url"
+                           id="url"
+                           name="url"
+                           placeholder="https://...">
+                </div>
+
+                <div class="biblioteca-completo">
+                    <button type="submit" class="biblioteca-boton">
+                        📤 Publicar recurso
+                    </button>
+                </div>
+
+            </div>
+
+        </form>
+
+    </section>
+
+    {% endif %}
+
+    <!-- LISTADO DE RECURSOS -->
+
+    <section class="biblioteca-tarjeta">
+
+        <div class="biblioteca-resultados-cabecera">
+
+            <h2>Recursos académicos</h2>
+
+            <span class="biblioteca-contador">
+                {{ recursos|length }} recursos
+            </span>
+
+        </div>
+
+        <div class="biblioteca-lista">
+
+            {% for recurso in recursos %}
+
+            <article class="biblioteca-recurso">
+
+                <div class="biblioteca-recurso-superior">
+
+                    <h3>{{ recurso["titulo"] }}</h3>
+
+                    <span class="biblioteca-tipo">
+                        {{ recurso["tipo"] or "Recurso" }}
+                    </span>
+
+                </div>
+
+                {% if recurso["descripcion"] %}
+                    <p>{{ recurso["descripcion"] }}</p>
+                {% endif %}
+
+                <div class="biblioteca-metadatos">
+
+                    {% if recurso["area_principal"] %}
+                        <span>📚 {{ recurso["area_principal"] }}</span>
+                    {% endif %}
+
+                    {% if recurso["autor"] %}
+                        <span>✍️ {{ recurso["autor"] }}</span>
+                    {% endif %}
+
+                    {% if recurso["anio_publicacion"] %}
+                        <span>📅 {{ recurso["anio_publicacion"] }}</span>
+                    {% endif %}
+
+                    {% if recurso["nivel"] %}
+                        <span>🎓 Nivel {{ recurso["nivel"] }}</span>
+                    {% endif %}
+
+                </div>
+
+                {% if recurso["palabras_clave"] %}
+                    <p>
+                        <strong>Palabras clave:</strong>
+                        {{ recurso["palabras_clave"] }}
+                    </p>
+                {% endif %}
+
+                {% if recurso["cita_apa"] %}
+
+                    <div class="biblioteca-apa">
+
+                        <strong>Referencia APA 7</strong>
+
+                        <p id="apa-{{ recurso['id'] }}">
+                            {{ recurso["cita_apa"] }}
+                        </p>
+
+                        <button type="button"
+                                class="biblioteca-boton biblioteca-boton-secundario"
+                                onclick="copiarCita('apa-{{ recurso['id'] }}')">
+                            📋 Copiar cita
+                        </button>
+
+                    </div>
+
+                {% endif %}
+
+                <div class="biblioteca-acciones">
+
+                    {% if recurso["archivo"] %}
+                        <a class="biblioteca-boton"
+                           href="{{ url_for('static', filename='uploads/' ~ recurso['archivo']) }}"
+                           target="_blank"
+                           rel="noopener">
+                            📄 Abrir archivo
+                        </a>
+                    {% endif %}
+
+                    {% if recurso["url"] %}
+                        <a class="biblioteca-boton biblioteca-boton-secundario"
+                           href="{{ recurso['url'] }}"
+                           target="_blank"
+                           rel="noopener">
+                            🔗 Abrir enlace
+                        </a>
+                    {% endif %}
+
+                </div>
+
+                <!-- ADMINISTRACIÓN -->
+
+                {% if puede_editar or puede_eliminar %}
+
+                <hr class="biblioteca-separador">
+
+                <details class="biblioteca-detalle">
+
+                    <summary>
+                        ⚙️ Administrar recurso
+                    </summary>
+
+                    <!-- EDITAR -->
+
+                    {% if puede_editar %}
+
+                    <form method="POST"
+                          action="{{ url_for('editar_recurso_biblioteca', recurso_id=recurso['id']) }}"
+                          enctype="multipart/form-data"
+                          class="biblioteca-formulario-administracion">
+
+                        <div class="biblioteca-formulario">
+
+                            <div class="biblioteca-campo biblioteca-completo">
+                                <label>Título</label>
+
+                                <input type="text"
+                                       name="titulo"
+                                       value="{{ recurso['titulo'] }}"
+                                       required>
+                            </div>
+
+                            <div class="biblioteca-campo biblioteca-completo">
+                                <label>Descripción</label>
+
+                                <textarea name="descripcion"
+                                          rows="2">{{ recurso['descripcion'] or '' }}</textarea>
+                            </div>
+
+                            <div class="biblioteca-campo">
+                                <label>Autor</label>
+
+                                <input type="text"
+                                       name="autor"
+                                       value="{{ recurso['autor'] or '' }}">
+                            </div>
+
+                            <div class="biblioteca-campo">
+                                <label>Año de publicación</label>
+
+                                <input type="text"
+                                       name="anio_publicacion"
+                                       value="{{ recurso['anio_publicacion'] or '' }}">
+                            </div>
+
+                            <div class="biblioteca-campo">
+                                <label>Tipo</label>
+
+                                <select name="tipo" required>
+                                    {% for opcion in [
+                                        "Guía",
+                                        "Video",
+                                        "Ejemplo",
+                                        "Artículo",
+                                        "Tesis"
+                                    ] %}
+                                        <option value="{{ opcion }}"
+                                            {% if recurso["tipo"] == opcion %}selected{% endif %}>
+                                            {{ opcion }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="biblioteca-campo">
+                                <label>Área</label>
+
+                                <select name="area_principal" required>
+                                    {% for opcion in [
+                                        "General",
+                                        "Ciencias sociales",
+                                        "Matemática",
+                                        "Ciencias naturales",
+                                        "Lenguaje",
+                                        "Psicología"
+                                    ] %}
+                                        <option value="{{ opcion }}"
+                                            {% if recurso["area_principal"] == opcion %}selected{% endif %}>
+                                            {{ opcion }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="biblioteca-campo">
+                                <label>Enlace</label>
+
+                                <input type="url"
+                                       name="url"
+                                       value="{{ recurso['url'] or '' }}">
+                            </div>
+
+                            <div class="biblioteca-campo biblioteca-completo">
+                                <label>Palabras clave</label>
+
+                                <input type="text"
+                                       name="palabras_clave"
+                                       value="{{ recurso['palabras_clave'] or '' }}">
+                            </div>
+
+                            <div class="biblioteca-campo biblioteca-completo">
+                                <label>Referencia APA 7</label>
+
+                                <textarea name="cita_apa"
+                                          rows="3">{{ recurso['cita_apa'] or '' }}</textarea>
+                            </div>
+
+                            <div class="biblioteca-campo biblioteca-completo">
+                                <label>Reemplazar archivo (opcional)</label>
+
+                                <input type="file"
+                                       name="archivo"
+                                       accept=".pdf,.doc,.docx,.odt,.txt,.png,.jpg,.jpeg">
+                            </div>
+
+                            <div class="biblioteca-campo biblioteca-completo">
+                                <label>Gestión</label>
+
+                                <input type="text"
+                                       name="gestion"
+                                       value="{{ recurso['gestion'] or '' }}">
+                            </div>
+
+                            <div class="biblioteca-completo">
+                                <button type="submit" class="biblioteca-boton">
+                                    💾 Guardar cambios
+                                </button>
+                            </div>
+
+                        </div>
+
+                    </form>
+
+                    {% endif %}
+
+                    <!-- ELIMINAR -->
+
+                    {% if puede_eliminar %}
+
+                    <form method="POST"
+                          action="{{ url_for('eliminar_recurso_biblioteca', recurso_id=recurso['id']) }}"
+                          onsubmit="return confirm('¿Estás seguro de eliminar este recurso?');"
+                          style="margin-top:12px;">
+
+                        <button type="submit"
+                                class="biblioteca-boton biblioteca-boton-peligro">
+                            🗑️ Eliminar recurso
+                        </button>
+
+                    </form>
+
+                    {% endif %}
+
+                </details>
+
+                {% endif %}
+
+            </article>
+
+            {% else %}
+
+            <div class="biblioteca-vacio">
+
+                <div class="icono">📚</div>
+
+                <strong>No hay recursos disponibles</strong>
+
+                <p>
+                    Cuando se publiquen materiales académicos,
+                    aparecerán aquí.
+                </p>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+</div>
+
+<script>
+function copiarCita(id) {
+
+    const elemento = document.getElementById(id);
+
+    if (!elemento) {
+        alert("No se encontró la referencia.");
+        return;
+    }
+
+    const texto = elemento.innerText;
+
+    if (navigator.clipboard && window.isSecureContext) {
+
+        navigator.clipboard.writeText(texto)
+            .then(() => {
+                alert("¡Cita APA 7 copiada correctamente!");
+            })
+            .catch(() => {
+                copiarAlternativo(texto);
+            });
+
+    } else {
+
+        copiarAlternativo(texto);
+
+    }
+}
+
+function copiarAlternativo(texto) {
+
+    const campo = document.createElement("textarea");
+
+    campo.value = texto;
+
+    document.body.appendChild(campo);
+
+    campo.select();
+
+    try {
+
+        document.execCommand("copy");
+
+        alert("¡Cita APA 7 copiada correctamente!");
+
+    } catch (error) {
+
+        alert("No se pudo copiar la cita.");
+
+    }
+
+    campo.remove();
+}
+</script>
+
+{% endblock %}

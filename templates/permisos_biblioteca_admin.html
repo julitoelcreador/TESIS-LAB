@@ -1,0 +1,269 @@
+
+{% extends "base.html" %}
+
+{% block title %}Permisos de biblioteca | TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+    .permisos-container {
+        max-width: 1150px;
+        margin: auto;
+        padding: 25px;
+    }
+
+    .permisos-migas {
+        font-size: 13px;
+        color: #718096;
+        margin-bottom: 10px;
+    }
+
+    .permisos-titulo {
+        color: #172b4d;
+        font-size: 27px;
+        font-weight: 750;
+        margin-bottom: 8px;
+    }
+
+    .permisos-descripcion {
+        color: #718096;
+        font-size: 14px;
+        margin-bottom: 22px;
+    }
+
+    .biblioteca-superior {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 25px;
+    }
+
+    .btn-ver-biblioteca {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 11px 17px;
+        border-radius: 8px;
+        background: #2876d2;
+        color: white;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 650;
+    }
+
+    .btn-ver-biblioteca:hover {
+        background: #1d5eac;
+        color: white;
+    }
+
+    .tutores-lista {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .tutor-card {
+        background: white;
+        border: 1px solid #e5eaf1;
+        border-radius: 13px;
+        padding: 21px;
+    }
+
+    .tutor-nombre {
+        color: #172b4d;
+        font-size: 16px;
+        font-weight: 750;
+        margin-bottom: 5px;
+    }
+
+    .tutor-correo {
+        color: #718096;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    .tutor-permisos {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px 25px;
+        align-items: center;
+    }
+
+    .permiso-opcion {
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        color: #43536a;
+        font-size: 13px;
+        cursor: pointer;
+    }
+
+    .permiso-opcion input {
+        width: 17px;
+        height: 17px;
+        accent-color: #2876d2;
+        cursor: pointer;
+    }
+
+    .tutor-acciones {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 19px;
+        padding-top: 15px;
+        border-top: 1px solid #edf0f5;
+    }
+
+    .btn-guardar-permisos {
+        border: none;
+        background: #2876d2;
+        color: white;
+        padding: 9px 16px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 650;
+        cursor: pointer;
+    }
+
+    .btn-guardar-permisos:hover {
+        background: #1d5eac;
+    }
+
+    .sin-tutores {
+        padding: 35px;
+        background: white;
+        border: 1px dashed #cbd5e0;
+        border-radius: 12px;
+        color: #718096;
+        text-align: center;
+    }
+
+    @media(max-width: 600px) {
+        .permisos-container {
+            padding: 15px;
+        }
+
+        .tutor-card {
+            padding: 16px;
+        }
+
+        .tutor-permisos {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 13px;
+        }
+
+        .tutor-acciones {
+            justify-content: stretch;
+        }
+
+        .btn-guardar-permisos {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="permisos-container">
+
+    <div class="permisos-migas">
+        Administración · Biblioteca
+    </div>
+
+    <h1 class="permisos-titulo">
+        Permisos de biblioteca
+    </h1>
+
+    <p class="permisos-descripcion">
+        Administra qué tipos de recursos puede publicar cada tutor.
+    </p>
+
+    <div class="biblioteca-superior">
+        <a href="{{ url_for('biblioteca') }}" class="btn-ver-biblioteca">
+            Ver biblioteca →
+        </a>
+    </div>
+
+    {% if tutores %}
+
+        <div class="tutores-lista">
+
+            {% for tutor in tutores %}
+
+                <form
+                    method="POST"
+                    action="{{ url_for('permisos_biblioteca_admin') }}"
+                    class="tutor-card"
+                >
+
+                    <input
+                        type="hidden"
+                        name="tutor_id"
+                        value="{{ tutor.id }}"
+                    >
+
+                    <div class="tutor-nombre">
+                        {{ tutor.nombre }} {{ tutor.apellido }}
+                    </div>
+
+                    <div class="tutor-correo">
+                        {{ tutor.correo or 'Sin correo registrado' }}
+                    </div>
+
+                    <div class="tutor-permisos">
+
+                        <label class="permiso-opcion">
+                            <input
+                                type="checkbox"
+                                name="puede_publicar_guias"
+                                value="1"
+                                {% if tutor.puede_publicar_guias %}checked{% endif %}
+                            >
+                            Publicar guías
+                        </label>
+
+                        <label class="permiso-opcion">
+                            <input
+                                type="checkbox"
+                                name="puede_publicar_videos"
+                                value="1"
+                                {% if tutor.puede_publicar_videos %}checked{% endif %}
+                            >
+                            Publicar videos
+                        </label>
+
+                        <label class="permiso-opcion">
+                            <input
+                                type="checkbox"
+                                name="puede_publicar_ejemplos"
+                                value="1"
+                                {% if tutor.puede_publicar_ejemplos %}checked{% endif %}
+                            >
+                            Publicar ejemplos
+                        </label>
+
+                    </div>
+
+                    <div class="tutor-acciones">
+                        <button
+                            type="submit"
+                            class="btn-guardar-permisos"
+                        >
+                            Guardar permisos
+                        </button>
+                    </div>
+
+                </form>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="sin-tutores">
+            No hay tutores activos registrados.
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

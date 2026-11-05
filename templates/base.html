@@ -1,0 +1,1470 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}TESIS LAB{% endblock %}</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #f4f7fc;
+            color: #172b4d;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* BARRA LATERAL */
+
+        .sidebar {
+            width: 250px;
+            min-width: 250px;
+            min-height: 100vh;
+            padding: 24px 15px;
+            display: flex;
+            flex-direction: column;
+            background: #0b1730;
+            color: #ffffff;
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 9px 24px;
+            color: #ffffff;
+            text-decoration: none;
+            border-bottom: 1px solid rgba(255,255,255,.10);
+        }
+
+        .brand-mark {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 43px;
+            height: 43px;
+            flex-shrink: 0;
+            border-radius: 13px;
+            background: linear-gradient(135deg, #2584ff, #0754c7);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 900;
+        }
+
+        .brand-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .brand-name {
+            font-size: 19px;
+            font-weight: 850;
+            letter-spacing: -.5px;
+        }
+
+        .brand-caption {
+            color: #a8bad5;
+            font-size: 10px;
+        }
+
+        .sidebar-section,
+        .nav-section-title {
+            margin: 25px 10px 10px;
+            color: #8499ba;
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .sidebar-nav a,
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-height: 44px;
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            color: #c8d4e7;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background .18s ease, color .18s ease;
+        }
+
+        .sidebar-nav a:hover,
+        .nav-link:hover {
+            background: rgba(255,255,255,.07);
+            color: #ffffff;
+        }
+
+        .sidebar-nav a.active {
+            background: #173b70;
+            border-color: rgba(112,169,255,.22);
+            color: #ffffff;
+        }
+
+        .nav-icon {
+            width: 21px;
+            flex-shrink: 0;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-label {
+            flex: 1;
+        }
+
+        .sidebar-footer {
+            margin-top: auto;
+            padding-top: 20px;
+        }
+
+        .sidebar-divider {
+            height: 1px;
+            margin-bottom: 14px;
+            background: rgba(255,255,255,.10);
+        }
+
+        .sidebar-footer a {
+            color: #ffb9bf;
+        }
+
+        .sidebar-footer a:hover {
+            background: rgba(220,53,69,.15);
+            color: #ffffff;
+        }
+
+        .opcion-pendiente {
+            cursor: pointer;
+        }
+
+        .opcion-pendiente:focus-visible,
+        .sidebar-nav a:focus-visible {
+            outline: 2px solid #70a9ff;
+            outline-offset: 2px;
+        }
+
+        /* CONTENIDO PRINCIPAL */
+
+        .app-main {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            min-width: 0;
+        }
+
+        .main-topbar {
+            min-height: 58px;
+            padding: 13px 30px;
+            background: #ffffff;
+            border-bottom: 1px solid #e8edf5;
+        }
+
+        .topbar-context {
+            color: #718096;
+            font-size: 12px;
+        }
+
+        .topbar-context strong {
+            display: block;
+            margin-top: 3px;
+            color: #172b4d;
+            font-size: 15px;
+        }
+
+        .topbar-link {
+            color: #2563b8;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .topbar-link:hover {
+            color: #0878ed;
+        }
+
+        .main-content {
+            flex: 1;
+            width: 100%;
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        /* MENSAJES */
+
+        .flash-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .flash-messages .alert {
+            padding: 13px 16px;
+            border: 1px solid #dce5f2;
+            border-radius: 10px;
+            background: #ffffff;
+            color: #263c5b;
+            font-size: 13px;
+        }
+
+        .flash-messages .alert.success,
+        .flash-messages .alert.exito {
+            border-color: #b8e5cc;
+            background: #f0fbf4;
+            color: #17663a;
+        }
+
+        .flash-messages .alert.error,
+        .flash-messages .alert.danger {
+            border-color: #f1c2c7;
+            background: #fff4f4;
+            color: #a12635;
+        }
+
+        .flash-messages .alert.warning {
+            border-color: #f1dba4;
+            background: #fffaf0;
+            color: #875d0b;
+        }
+
+        /* PIE DE PÁGINA */
+
+        .app-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 18px 30px;
+            border-top: 1px solid #e8edf5;
+            background: #ffffff;
+            color: #8491a5;
+            font-size: 11px;
+        }
+
+        .app-footer p {
+            margin: 0;
+        }
+
+        /* TESSI - ASISTENTE VIRTUAL */
+
+        .tessi-widget {
+            position: fixed;
+            right: 24px;
+            bottom: 22px;
+            z-index: 9999;
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .tessi-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            min-height: 54px;
+            padding: 10px 17px;
+            border: none;
+            border-radius: 30px;
+            background: linear-gradient(135deg, #2584ff, #0754c7);
+            color: white;
+            font-size: 13px;
+            font-weight: 750;
+            cursor: pointer;
+            box-shadow: 0 7px 24px rgba(15, 66, 130, .28);
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .tessi-toggle:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 28px rgba(15, 66, 130, .35);
+        }
+
+        .tessi-toggle-icon {
+            font-size: 23px;
+        }
+
+        .tessi-window {
+            position: absolute;
+            right: 0;
+            bottom: 68px;
+            display: none;
+            flex-direction: column;
+            width: 365px;
+            max-width: calc(100vw - 28px);
+            height: 490px;
+            max-height: min(650px, calc(100vh - 110px));
+            overflow: hidden;
+            border: 1px solid #dce6f3;
+            border-radius: 17px;
+            background: #ffffff;
+            box-shadow: 0 12px 45px rgba(15, 35, 65, .22);
+        }
+
+        .tessi-window.open {
+            display: flex;
+        }
+
+        .tessi-header {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 15px;
+            background: linear-gradient(120deg, #102b50, #1756a0);
+            color: #ffffff;
+        }
+
+        .tessi-avatar {
+            display: grid;
+            place-items: center;
+            flex: 0 0 42px;
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: rgba(255,255,255,.15);
+            font-size: 24px;
+        }
+
+        .tessi-header-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .tessi-header-info strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .tessi-header-info span {
+            display: block;
+            margin-top: 3px;
+            color: #d8e8ff;
+            font-size: 10px;
+        }
+
+        .tessi-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,.13);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .tessi-messages {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            gap: 12px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f6f9fd;
+        }
+
+        .tessi-message {
+            max-width: 88%;
+            padding: 11px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            line-height: 1.55;
+            overflow-wrap: anywhere;
+            white-space: pre-line;
+        }
+
+        .tessi-message.bot {
+            align-self: flex-start;
+            border: 1px solid #e1e9f3;
+            border-bottom-left-radius: 3px;
+            background: #ffffff;
+            color: #34465e;
+        }
+
+        .tessi-message.user {
+            align-self: flex-end;
+            border-bottom-right-radius: 3px;
+            background: #1756a0;
+            color: #ffffff;
+        }
+
+        .tessi-quick-title {
+            padding: 10px 14px 4px;
+            background: #ffffff;
+            color: #8190a4;
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .7px;
+        }
+
+        .tessi-quick-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            padding: 7px 13px 12px;
+            background: #ffffff;
+        }
+
+        .tessi-quick-options button {
+            padding: 7px 9px;
+            border: 1px solid #d7e5f6;
+            border-radius: 20px;
+            background: #f5f9ff;
+            color: #245486;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 650;
+            cursor: pointer;
+        }
+
+        .tessi-quick-options button:hover {
+            background: #e6f0ff;
+            border-color: #9fc4f2;
+        }
+
+        .tessi-input-area {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 11px;
+            border-top: 1px solid #e7edf5;
+            background: #ffffff;
+        }
+
+        .tessi-input-area input {
+            flex: 1;
+            min-width: 0;
+            height: 39px;
+            padding: 9px 12px;
+            border: 1px solid #dce5f0;
+            border-radius: 9px;
+            outline: none;
+            color: #24344b;
+            font-family: inherit;
+            font-size: 12px;
+        }
+
+        .tessi-input-area input:focus {
+            border-color: #5595e8;
+            box-shadow: 0 0 0 2px #e4efff;
+        }
+
+        .tessi-send {
+            display: grid;
+            place-items: center;
+            flex: 0 0 39px;
+            width: 39px;
+            height: 39px;
+            border: none;
+            border-radius: 9px;
+            background: #1756a0;
+            color: white;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .tessi-send:hover {
+            background: #10447f;
+        }
+
+        .tessi-footer {
+            padding: 6px;
+            background: #ffffff;
+            color: #9aa6b7;
+            font-size: 9px;
+            text-align: center;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 900px) {
+            .sidebar {
+                width: 215px;
+                min-width: 215px;
+                padding: 20px 11px;
+            }
+
+            .main-content {
+                padding: 22px;
+            }
+
+            .main-topbar {
+                padding: 13px 22px;
+            }
+        }
+
+        @media (max-width: 650px) {
+            .app-layout {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                min-width: 0;
+                min-height: auto;
+                max-height: none;
+                padding: 14px;
+            }
+
+            .sidebar-brand {
+                padding: 0 5px 13px;
+            }
+
+            .sidebar-section,
+            .nav-section-title {
+                margin: 14px 5px 8px;
+            }
+
+            .sidebar-nav {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 5px;
+            }
+
+            .sidebar-nav a,
+            .nav-link {
+                min-height: 40px;
+                padding: 9px 8px;
+                font-size: 11px;
+            }
+
+            .nav-icon {
+                font-size: 14px;
+            }
+
+            .sidebar-footer {
+                margin-top: 12px;
+                padding-top: 0;
+            }
+
+            .main-topbar {
+                min-height: 54px;
+                padding: 12px 16px;
+            }
+
+            .main-content {
+                padding: 17px 13px;
+            }
+
+            .app-footer {
+                padding: 14px;
+                font-size: 10px;
+            }
+
+            .tessi-widget {
+                right: 13px;
+                bottom: 14px;
+            }
+
+            .tessi-window {
+                position: fixed;
+                right: 10px;
+                bottom: 80px;
+                width: calc(100vw - 20px);
+                height: min(500px, calc(100dvh - 105px));
+                max-width: none;
+            }
+
+            .tessi-toggle {
+                min-height: 49px;
+                padding: 8px 14px;
+            }
+        }
+
+
+        
+        /* IDENTIDAD DEL ADMINISTRADOR */
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            margin: 20px 5px 5px;
+            padding: 13px 10px;
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 12px;
+            background: rgba(255,255,255,.05);
+        }
+
+        .sidebar-user-avatar {
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            width: 39px;
+            height: 39px;
+            border-radius: 50%;
+            background: #2876d2;
+            color: white;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .sidebar-user-info {
+            min-width: 0;
+        }
+
+        .sidebar-user-info strong {
+            display: block;
+            color: white;
+            font-size: 11px;
+            line-height: 1.5;
+            overflow-wrap: anywhere;
+        }
+
+        .sidebar-user-info span {
+            display: block;
+            margin-top: 3px;
+            color: #a8bad5;
+            font-size: 10px;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="app-layout">
+
+    {% if session.get('usuario_id') %}
+
+    <aside class="sidebar">
+
+        <!-- IDENTIDAD DE LA PLATAFORMA -->
+
+        <div class="sidebar-brand">
+            <div class="brand-mark">TL</div>
+
+            <div class="brand-info">
+                <span class="brand-name">TESIS LAB</span>
+                <span class="brand-caption">Plataforma educativa</span>
+            </div>
+        </div>
+
+        <nav class="sidebar-nav">
+
+            <!-- =====================================
+                 MENÚ DEL ESTUDIANTE
+            ====================================== -->
+
+            {% if session.get('rol') == 'estudiante' or session.get('rol') == 'alumno' %}
+
+                <p class="sidebar-section">PROGRESO ACADÉMICO</p>
+
+                <a href="{{ url_for('panel') }}">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Mi progreso</span>
+                </a>
+
+                <a href="{{ url_for('investigaciones') }}">
+                    <span class="nav-icon">🔬</span>
+                    <span class="nav-label">Mis investigaciones</span>
+                </a>
+
+                <a href="{{ url_for('mis_entregas') }}">
+                    <span class="nav-icon">📤</span>
+                    <span class="nav-label">Entregas</span>
+                </a>
+
+                <a href="{{ url_for('cronograma') }}">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Cronograma</span>
+                </a>
+
+                <a href="{{ url_for('elegir_tema') }}"
+                   class="{% if request.endpoint == 'elegir_tema' %}active{% endif %}">
+                    <span class="nav-icon">💡</span>
+                    <span class="nav-label">Elegir tema</span>
+                </a>
+
+                <a href="{{ url_for('biblioteca') }}">
+                    <span class="nav-icon">🔎</span>
+                    <span class="nav-label">Buscar fuentes</span>
+                </a>
+
+                <a href="{{ url_for('catalogo_academico') }}">
+                    <span class="nav-icon">📚</span>
+                    <span class="nav-label">Catálogo académico</span>
+                </a>
+
+                <a href="{{ url_for('perfil') }}">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Perfil</span>
+                </a>
+
+                <p class="sidebar-section">HERRAMIENTAS</p>
+
+                <a href="#" class="opcion-pendiente"
+                data-seccion="Corregir trabajos">
+                <span class="nav-icon">✏️</span>
+                <span class="nav-label">Corregir trabajos</span>
+                </a>
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Tareas del grupo">
+                    <span class="nav-icon">📝</span>
+                    <span class="nav-label">Tareas del grupo</span>
+                </a>
+
+                <a href="#" id="tessiSidebarLink">
+                    <span class="nav-icon">🤖</span>
+                    <span class="nav-label">Asistente TESSI</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Mapa de conocimientos">
+                    <span class="nav-icon">🧠</span>
+                    <span class="nav-label">Mapa de conocimientos</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Historial de versiones">
+                    <span class="nav-icon">🕘</span>
+                    <span class="nav-label">Historial de versiones</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Trazabilidad">
+                    <span class="nav-icon">🔍</span>
+                    <span class="nav-label">Trazabilidad</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Logros">
+                    <span class="nav-icon">🏆</span>
+                    <span class="nav-label">Logros</span>
+                </a>
+
+                <p class="sidebar-section">COMUNIDAD</p>
+
+                <a href="{{ url_for('notificaciones') }}">
+                    <span class="nav-icon">🔔</span>
+                    <span class="nav-label">Notificaciones</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Comunicados">
+                    <span class="nav-icon">📢</span>
+                    <span class="nav-label">Comunicados</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Feria digital">
+                    <span class="nav-icon">🎓</span>
+                    <span class="nav-label">Feria digital</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Archivo histórico">
+                    <span class="nav-icon">🏛️</span>
+                    <span class="nav-label">Archivo histórico</span>
+                </a>
+
+
+            <!-- =====================================
+                 MENÚ DEL TUTOR
+            ====================================== -->
+
+            {% elif session.get('rol') == 'tutor' %}
+
+                <div style="padding: 15px 10px 5px;">
+                    <div style="display:flex; align-items:center; gap:10px;">
+
+                        <div style="width:36px;height:36px;border-radius:50%;background:#244b7d;display:flex;align-items:center;justify-content:center;font-weight:800;color:white;">
+                            {{ session.get('nombre', 'T')[0] | upper }}
+                        </div>
+
+                        <div>
+                            <div style="font-size:13px;font-weight:750;color:white;">
+                                {{ session.get('nombre', 'Tutor') }}
+                            </div>
+
+                            <div style="font-size:10px;color:#a8bad5;">
+                                Tutor (Profesor)
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <p class="sidebar-section">PRINCIPAL</p>
+
+                <a href="{{ url_for('centro_tareas_tutor') }}">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">Centro de pendientes</span>
+                </a>
+
+                <a href="{{ url_for('investigaciones') }}">
+                    <span class="nav-icon">🔬</span>
+                    <span class="nav-label">Mis investigaciones</span>
+                </a>
+
+                <a href="{{ url_for('centro_tareas_tutor') }}">
+                    <span class="nav-icon">📤</span>
+                    <span class="nav-label">Revisar entregas</span>
+                </a>
+
+                <a href="{{ url_for('cronograma') }}">
+                    <span class="nav-icon">📅</span>
+                    <span class="nav-label">Cronograma</span>
+                </a>
+
+                <a href="{{ url_for('grupos_a_cargo') }}">
+                    <span class="nav-icon">👥</span>
+                    <span class="nav-label">Grupos</span>
+                </a>
+
+                <a href="{{ url_for('agenda_tutorias') }}">
+                    <span class="nav-icon">🤝</span>
+                    <span class="nav-label">Agenda de tutorías</span>
+                </a>
+
+                <a href="{{ url_for('biblioteca') }}">
+                    <span class="nav-icon">📚</span>
+                    <span class="nav-label">Biblioteca</span>
+                </a>
+
+                <a href="{{ url_for('perfil') }}">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">Perfil</span>
+                </a>
+
+                <p class="sidebar-section">EVALUACIÓN</p>
+
+                <a href="{{ url_for('evaluacion_rubricas') }}">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Rúbricas</span>
+                </a>
+
+                
+                <a href="{{ url_for('seleccionar_investigacion_revisor') }}">
+                <span class="nav-icon">📝</span>
+                <span class="nav-label">Revisor de estructura</span>
+                </a>
+
+
+                <a href="{{ url_for('seguimiento_grupos') }}">
+                <span class="nav-icon">📈</span>
+                <span class="nav-label">Seguimiento de grupos</span>
+                </a>
+
+                <a href="{{ url_for('mis_estadisticas') }}">
+                <span class="nav-icon">📉</span>
+                <span class="nav-label">Mis estadísticas</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Mapa de conocimientos">
+                    <span class="nav-icon">🧠</span>
+                    <span class="nav-label">Mapa de conocimientos</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Trazabilidad">
+                    <span class="nav-icon">🔍</span>
+                    <span class="nav-label">Trazabilidad</span>
+                </a>
+
+                <p class="sidebar-section">COMUNIDAD</p>
+
+                <a href="{{ url_for('notificaciones') }}">
+                    <span class="nav-icon">🔔</span>
+                    <span class="nav-label">Notificaciones</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Comunicados">
+                    <span class="nav-icon">📢</span>
+                    <span class="nav-label">Comunicados</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Feria digital">
+                    <span class="nav-icon">🎓</span>
+                    <span class="nav-label">Feria digital</span>
+                </a>
+
+                <a href="#" class="opcion-pendiente"
+                   data-seccion="Archivo histórico">
+                    <span class="nav-icon">🏛️</span>
+                    <span class="nav-label">Archivo histórico</span>
+                </a>
+
+
+            
+{% elif session.get('rol') == 'admin' %}
+
+    <!-- IDENTIDAD DEL ADMINISTRADOR -->
+
+    <div class="sidebar-user">
+
+        <div class="sidebar-user-avatar">
+            {{ session.get('nombre', 'C')[0] | upper }}
+        </div>
+
+        <div class="sidebar-user-info">
+            <strong>
+                Lic. {{ session.get('nombre', 'Administrador') }}
+            </strong>
+            <span>Administrador</span>
+        </div>
+
+    </div>
+
+
+    <!-- PRINCIPAL -->
+
+    <p class="sidebar-section">PRINCIPAL</p>
+
+    <a href="{{ url_for('panel') }}">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Centro de control</span>
+    </a>
+
+    <a href="{{ url_for('investigaciones') }}">
+        <span class="nav-icon">🔬</span>
+        <span class="nav-label">Investigaciones</span>
+    </a>
+
+    <a href="{{ url_for('grupos') }}">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Grupos</span>
+    </a>
+
+    <a href="{{ url_for('cronograma') }}">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Cronograma</span>
+    </a>
+
+    <a href="{{ url_for('usuarios') }}">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Usuarios</span>
+    </a>
+
+    <a href="{{ url_for('admin_historial_progreso') }}">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Historial de progreso</span>
+    </a>
+
+    <a href="{{ url_for('biblioteca') }}">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Biblioteca</span>
+    </a>
+
+    <a href="{{ url_for('gestionar_permisos_biblioteca') }}">
+        <span class="nav-icon">🔐</span>
+        <span class="nav-label">Permisos de biblioteca</span>
+    </a>
+
+    <a href="{{ url_for('panel') }}#herramientas-gestion">
+        <span class="nav-icon">⚙️</span>
+        <span class="nav-label">Gestión</span>
+    </a>
+
+
+    <!-- CONTROL INSTITUCIONAL -->
+
+    <p class="sidebar-section">CONTROL INSTITUCIONAL</p>
+
+    <a href="{{ url_for('panel') }}#solicitudes-asignacion">
+        <span class="nav-icon">👨‍🏫</span>
+        <span class="nav-label">Carga de tutores</span>
+    </a>
+
+    <a href="{{ url_for('panel') }}#alertas-academicas">
+        <span class="nav-icon">⚠️</span>
+        <span class="nav-label">Mapa de riesgos</span>
+    </a>
+
+    <a href="{{ url_for('seguimiento_grupos') }}">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Seguimiento de grupos</span>
+    </a>
+
+    <a href="#" class="opcion-pendiente"
+       data-seccion="Informes">
+        <span class="nav-icon">📄</span>
+        <span class="nav-label">Informes</span>
+    </a>
+
+    <a href="#" class="opcion-pendiente"
+       data-seccion="Registro de actividad">
+        <span class="nav-icon">📋</span>
+        <span class="nav-label">Registro de actividad</span>
+    </a>
+
+    <a href="#" class="opcion-pendiente"
+       data-seccion="Trazabilidad">
+        <span class="nav-icon">🔍</span>
+        <span class="nav-label">Trazabilidad</span>
+    </a>
+
+    <a href="#" class="opcion-pendiente"
+       data-seccion="Copias de respaldo">
+        <span class="nav-icon">💾</span>
+        <span class="nav-label">Copias de respaldo</span>
+    </a>
+
+
+    <!-- COMUNIDAD -->
+
+    <p class="sidebar-section">COMUNIDAD</p>
+
+    <a href="#" class="opcion-pendiente"
+       data-seccion="Comunicados">
+        <span class="nav-icon">📢</span>
+        <span class="nav-label">Comunicados</span>
+    </a>
+
+        <a href="#" class="opcion-pendiente"
+        data-seccion="Feria digital">
+            <span class="nav-icon">🎓</span>
+            <span class="nav-label">Feria digital</span>
+        </a>
+
+        <a href="#" class="opcion-pendiente"
+        data-seccion="Archivo histórico">
+            <span class="nav-icon">🏛️</span>
+            <span class="nav-label">Archivo histórico</span>
+        </a>
+
+        {% endif %}
+
+        </nav>
+
+        <!-- CERRAR SESIÓN -->
+
+        <div class="sidebar-footer">
+
+            <div class="sidebar-divider"></div>
+
+            <a href="{{ url_for('logout') }}" class="nav-link">
+                <span class="nav-icon">🚪</span>
+                <span class="nav-label">
+                {% if session.get('rol') == 'admin' %}
+                Salir
+                {% else %}
+                Cerrar sesión
+                {% endif %}
+                </span>            
+            </a>
+
+        </div>
+
+    </aside>
+
+    {% endif %}
+
+
+    <!-- =====================================
+         CONTENIDO PRINCIPAL
+    ====================================== -->
+
+    <div class="app-main">
+
+
+        <main class="main-content container">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+
+                {% if messages %}
+
+                    <div class="flash-messages">
+
+                        {% for category, message in messages %}
+
+                            <div class="alert {{ category }}">
+                                {{ message }}
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            {% endwith %}
+
+            {% block content %}
+            {% endblock %}
+
+        </main>
+
+        <footer class="app-footer">
+            <p>© 2026 TESIS LAB · Recurso Educativo Digital</p>
+            <p>La Salle</p>
+        </footer>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================
+     ASISTENTE VIRTUAL TESSI
+====================================== -->
+
+{% if session.get('usuario_id') %}
+
+<div class="tessi-widget"
+     id="tessiWidget"
+     data-rol="{{ session.get('rol', 'usuario') }}"
+     data-nombre="{{ session.get('nombre', 'Usuario') }}">
+
+    <section class="tessi-window"
+             id="tessiWindow"
+             aria-label="Asistente virtual TESSI"
+             aria-hidden="true">
+
+        <header class="tessi-header">
+
+            <div class="tessi-avatar">🤖</div>
+
+            <div class="tessi-header-info">
+                <strong>TESSI · TESIS LAB</strong>
+                <span>● Asistente virtual de soporte</span>
+            </div>
+
+            <button type="button"
+                    class="tessi-close"
+                    id="tessiClose"
+                    aria-label="Cerrar chat">
+                ×
+            </button>
+
+        </header>
+
+        <div class="tessi-messages"
+             id="tessiMessages"
+             aria-live="polite">
+        </div>
+
+        <div class="tessi-quick-title">
+            CONSULTAS FRECUENTES
+        </div>
+
+        <div class="tessi-quick-options">
+
+            {% if session.get('rol') == 'estudiante' or session.get('rol') == 'alumno' %}
+
+                <button type="button" data-question="entregas">
+                    📋 Mis entregas
+                </button>
+
+                <button type="button"
+                        data-question="investigaciones"
+                        data-url="{{ url_for('investigaciones') }}">
+                    🔬 Mis investigaciones
+                </button>
+
+                <button type="button" data-question="grupos">
+                    👥 Mi grupo
+                </button>
+
+                <button type="button"
+                        data-question="reuniones"
+                        data-url="{{ url_for('cronograma') }}">
+                    📅 Reuniones
+                </button>
+
+                <button type="button"
+                        data-question="biblioteca"
+                        data-url="{{ url_for('biblioteca') }}">
+                    📚 Biblioteca
+                </button>
+
+                <button type="button" data-question="ayuda">
+                    ❓ Ayuda
+                </button>
+
+
+            {% elif session.get('rol') == 'tutor' %}
+
+                <button type="button"
+                        data-question="entregas"
+                        data-url="{{ url_for('centro_tareas_tutor') }}">
+                    📋 Revisar entregas
+                </button>
+
+                <button type="button"
+                        data-question="investigaciones"
+                        data-url="{{ url_for('investigaciones') }}">
+                    🔬 Investigaciones
+                </button>
+
+                <button type="button" data-question="grupos">
+                    👥 Grupos a cargo
+                </button>
+
+                <button type="button"
+                        data-question="reuniones"
+                        data-url="{{ url_for('cronograma') }}">
+                    📅 Reuniones
+                </button>
+
+                <button type="button"
+                        data-question="biblioteca"
+                        data-url="{{ url_for('biblioteca') }}">
+                    📚 Biblioteca
+                </button>
+
+                <button type="button" data-question="ayuda">
+                    ❓ Ayuda
+                </button>
+
+
+            {% elif session.get('rol') == 'admin' %}
+
+            <!-- IDENTIDAD DEL ADMINISTRADOR -->
+            <div class="sidebar-user">
+
+                <div class="sidebar-user-avatar">
+                    {{ session.get('nombre', 'C')[0] | upper }}
+                </div>
+
+                <div class="sidebar-user-info">
+                    <strong>
+                        {{ session.get('nombre', 'Carla Vargas') }}
+                    </strong>
+                    <span>Administrador</span>
+                </div>
+
+            </div>
+
+
+            <!-- ==============================
+                PRINCIPAL
+            =============================== -->
+
+            <p class="sidebar-section">PRINCIPAL</p>
+
+            <a href="{{ url_for('panel') }}"
+            class="{% if request.endpoint == 'panel' %}active{% endif %}">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-label">Centro de control</span>
+            </a>
+
+            <a href="{{ url_for('investigaciones') }}"
+            class="{% if request.endpoint == 'investigaciones' %}active{% endif %}">
+                <span class="nav-icon">🔬</span>
+                <span class="nav-label">Investigaciones</span>
+            </a>
+
+            <a href="{{ url_for('grupos') }}"
+            class="{% if request.endpoint == 'grupos' %}active{% endif %}">
+                <span class="nav-icon">👥</span>
+                <span class="nav-label">Grupos</span>
+            </a>
+
+            <a href="{{ url_for('cronograma') }}"
+            class="{% if request.endpoint == 'cronograma' %}active{% endif %}">
+                <span class="nav-icon">📅</span>
+                <span class="nav-label">Cronograma</span>
+            </a>
+
+            <a href="{{ url_for('usuarios') }}"
+            class="{% if request.endpoint == 'usuarios' %}active{% endif %}">
+                <span class="nav-icon">👤</span>
+                <span class="nav-label">Usuarios</span>
+            </a>
+
+            <a href="{{ url_for('admin_historial_progreso') }}"
+            class="{% if request.endpoint == 'admin_historial_progreso' %}active{% endif %}">
+                <span class="nav-icon">📊</span>
+                <span class="nav-label">Historial de progreso</span>
+            </a>
+
+            <a href="{{ url_for('biblioteca') }}"
+            class="{% if request.endpoint == 'biblioteca' %}active{% endif %}">
+                <span class="nav-icon">📚</span>
+                <span class="nav-label">Biblioteca</span>
+            </a>
+
+            <a href="#" class="opcion-pendiente"
+            data-seccion="Permisos de biblioteca">
+                <span class="nav-icon">🔐</span>
+                <span class="nav-label">Permisos de biblioteca</span>
+            </a>
+
+            <a href="{{ url_for('perfil') }}"
+            class="{% if request.endpoint == 'perfil' %}active{% endif %}">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-label">Mi perfil</span>
+            </a>
+
+
+            <!-- ==============================
+                CONTROL INSTITUCIONAL
+            =============================== -->
+
+            <p class="sidebar-section">CONTROL INSTITUCIONAL</p>
+
+            <a href="{{ url_for('panel') }}#solicitudes-asignacion">
+                <span class="nav-icon">👨‍🏫</span>
+                <span class="nav-label">Carga de tutores</span>
+            </a>
+
+            <a href="{{ url_for('panel') }}#alertas-academicas">
+                <span class="nav-icon">⚠️</span>
+                <span class="nav-label">Mapa de riesgos</span>
+            </a>
+
+            <a href="{{ url_for('seguimiento_grupos') }}"
+            class="{% if request.endpoint == 'seguimiento_grupos' %}active{% endif %}">
+                <span class="nav-icon">📈</span>
+                <span class="nav-label">Seguimiento de grupos</span>
+            </a>
+
+            <a href="#" class="opcion-pendiente"
+            data-seccion="Informes">
+                <span class="nav-icon">📄</span>
+                <span class="nav-label">Informes</span>
+            </a>
+
+            <a href="#" class="opcion-pendiente"
+                data-seccion="Registro de actividad">
+                <span class="nav-icon">📋</span>
+                <span class="nav-label">Registro de actividad</span>
+            </a>
+
+            <a href="#" class="opcion-pendiente"
+                data-seccion="Trazabilidad">
+                <span class="nav-icon">🔍</span>
+                <span class="nav-label">Trazabilidad</span>
+            </a>
+
+            <a href="#" class="opcion-pendiente"
+            data-seccion="Copias de respaldo">
+                <span class="nav-icon">💾</span>
+                <span class="nav-label">Copias de respaldo</span>
+            </a>
+
+
+            <!-- ==============================
+                COMUNIDAD
+                =============================== -->
+
+            <p class="sidebar-section">COMUNIDAD</p>
+
+            <a href="#" class="opcion-pendiente"
+                data-seccion="Comunicados">
+                <span class="nav-icon">📢</span>
+                <span class="nav-label">Comunicados</span>
+            </a>
+
+            <a href="#" class="opcion-pendiente"
+                data-seccion="Feria digital">
+                <span class="nav-icon">🎓</span>
+                <span class="nav-label">Feria digital</span>
+            </a>
+
+            <a href="#" class="opcion-pendiente"
+             data-seccion="Archivo histórico">
+                <span class="nav-icon">🏛️</span>
+                <span class="nav-label">Archivo histórico</span>
+            </a>
+
+            {% endif %}
+        </div>
+
+        <form class="tessi-input-area" id="tessiForm">
+
+            <input type="text"
+                   id="tessiInput"
+                   placeholder="Escribe tu consulta..."
+                   autocomplete="off"
+                   maxlength="300">
+
+            <button type="submit"
+                    class="tessi-send"
+                    aria-label="Enviar mensaje">
+                ➤
+            </button>
+
+        </form>
+
+        <div class="tessi-footer">
+            TESSI · Asistente virtual de TESIS LAB
+        </div>
+
+    </section>
+
+    <button type="button"
+            class="tessi-toggle"
+            id="tessiToggle"
+            aria-label="Abrir asistente virtual"
+            aria-expanded="false">
+
+        <span class="tessi-toggle-icon">🤖</span>
+        <span>¿Necesitas ayuda?</span>
+
+    </button>
+
+</div>
+
+{% endif %}
+
+
+{% block scripts %}
+{% endblock %}
+
+
+{% if session.get('usuario_id') %}
+
+    <script src="{{ url_for('static', filename='js/tessi.js') }}"></script>
+
+    <script>
+        document.querySelectorAll(".opcion-pendiente").forEach(function (enlace) {
+
+            enlace.addEventListener("click", function (evento) {
+
+                evento.preventDefault();
+
+                const seccion = enlace.dataset.seccion || "Esta sección";
+
+                alert(
+                    seccion +
+                    ": próximamente conectaremos esta función en TESIS LAB."
+                );
+
+            });
+
+        });
+
+        const enlaceTessi = document.getElementById("tessiSidebarLink");
+        const botonTessi = document.getElementById("tessiToggle");
+
+        if (enlaceTessi && botonTessi) {
+            enlaceTessi.addEventListener("click", function (evento) {
+                evento.preventDefault();
+                botonTessi.click();
+            });
+        }
+    </script>
+
+{% endif %}
+
+</body>
+</html>

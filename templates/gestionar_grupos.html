@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block title %}Grupos | TESIS LAB{% endblock %}
+
+{% block content %}
+
+<div class="pagina-grupos">
+
+    <div class="grupos-encabezado">
+        <div>
+            <span class="grupos-etiqueta">ADMINISTRACIÓN</span>
+            <h1>Grupos de investigación</h1>
+            <p>Directorio general de los grupos registrados en TESIS LAB.</p>
+        </div>
+
+        <div class="total-grupos">
+            <strong>{{ grupos|length }}</strong>
+            <span>Grupos registrados</span>
+        </div>
+    </div>
+
+    {% if grupos %}
+
+    <div class="grupos-grid">
+
+        {% for grupo in grupos %}
+
+        <article class="grupo-card">
+
+            <div class="grupo-card-cabecera">
+                <div class="grupo-icono">👥</div>
+
+                <div class="grupo-identificacion">
+                    <h2>{{ grupo.nombre }}</h2>
+                    <span>Grupo de investigación</span>
+                </div>
+
+                <span class="grupo-contador">
+                    {{ grupo.cantidad_miembros }} miembros
+                </span>
+            </div>
+
+            <div class="grupo-tutor">
+                <span class="grupo-label">TUTOR ASIGNADO</span>
+                <p>
+                    {% if grupo.tutor_nombre and grupo.tutor_nombre.strip() %}
+                        {{ grupo.tutor_nombre }}
+                    {% else %}
+                        Sin tutor asignado
+                    {% endif %}
+                </p>
+            </div>
+
+            <div class="grupo-investigacion">
+                <span class="grupo-label">INVESTIGACIÓN</span>
+
+                {% if grupo.investigacion_titulo %}
+                    <p>{{ grupo.investigacion_titulo }}</p>
+                {% else %}
+                    <p class="sin-investigacion">Investigación pendiente</p>
+                {% endif %}
+            </div>
+
+            <div class="grupo-integrantes">
+                <span class="grupo-label">INTEGRANTES</span>
+
+                {% if grupo.integrantes %}
+
+                    {% for integrante in grupo.integrantes.split('|') %}
+                        <div class="integrante-item">
+                            <span class="integrante-punto"></span>
+                            {{ integrante }}
+                        </div>
+                    {% endfor %}
+
+                {% else %}
+                    <p class="sin-investigacion">Sin integrantes activos</p>
+                {% endif %}
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+
+    <div class="grupos-vacio">
+        <span>👥</span>
+        <h2>No hay grupos registrados</h2>
+        <p>Cuando se creen grupos, aparecerán en este directorio.</p>
+    </div>
+
+    {% endif %}
+
+</div>
+
+<style>
+
+.pagina-grupos {
+    max-width: 1450px;
+    margin: auto;
+    padding: 26px;
+    color: #1e293b;
+}
+
+.grupos-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.grupos-etiqueta {
+    color: #2563eb;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+}
+
+.grupos-encabezado h1 {
+    margin: 7px 0;
+    font-size: 27px;
+}
+
+.grupos-encabezado p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.total-grupos {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    border: 1px solid #e5eaf1;
+    border-radius: 12px;
+    background: white;
+    min-width: 125px;
+}
+
+.total-grupos strong {
+    color: #2563eb;
+    font-size: 23px;
+}
+
+.total-grupos span {
+    color: #64748b;
+    font-size: 10px;
+}
+
+/* TRES TARJETAS POR FILA */
+
+.grupos-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 17px;
+    align-items: stretch;
+}
+
+.grupo-card {
+    min-width: 0;
+    padding: 19px;
+    background: white;
+    border: 1px solid #e5eaf1;
+    border-radius: 13px;
+    box-shadow: 0 3px 12px rgba(15, 23, 42, .025);
+    transition: .2s ease;
+}
+
+.grupo-card:hover {
+    border-color: #bfdbfe;
+    transform: translateY(-2px);
+    box-shadow: 0 7px 18px rgba(15, 23, 42, .06);
+}
+
+.grupo-card-cabecera {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 19px;
+}
+
+.grupo-icono {
+    width: 39px;
+    height: 39px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 11px;
+    background: #eff6ff;
+    font-size: 18px;
+}
+
+.grupo-identificacion {
+    flex: 1;
+    min-width: 0;
+}
+
+.grupo-identificacion h2 {
+    margin: 0 0 4px;
+    font-size: 15px;
+}
+
+.grupo-identificacion span {
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.grupo-contador {
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 6px 8px;
+    border-radius: 20px;
+    font-size: 9px;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.grupo-label {
+    display: block;
+    margin-bottom: 7px;
+    color: #94a3b8;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .7px;
+}
+
+.grupo-tutor,
+.grupo-investigacion {
+    padding: 12px 0;
+    border-top: 1px solid #edf0f5;
+}
+
+.grupo-tutor p,
+.grupo-investigacion p {
+    margin: 0;
+    color: #334155;
+    font-size: 12px;
+    font-weight: 650;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.grupo-integrantes {
+    padding-top: 12px;
+    border-top: 1px solid #edf0f5;
+}
+
+.integrante-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    color: #475569;
+    font-size: 11px;
+}
+
+.integrante-punto {
+    width: 6px;
+    height: 6px;
+    flex-shrink: 0;
+    background: #3b82f6;
+    border-radius: 50%;
+}
+
+.sin-investigacion {
+    color: #94a3b8 !important;
+    font-weight: 400 !important;
+    font-style: italic;
+}
+
+.grupos-vacio {
+    background: white;
+    border: 1px solid #e5eaf1;
+    border-radius: 14px;
+    text-align: center;
+    padding: 55px 20px;
+}
+
+.grupos-vacio span {
+    font-size: 35px;
+}
+
+.grupos-vacio h2 {
+    font-size: 17px;
+}
+
+.grupos-vacio p {
+    color: #64748b;
+    font-size: 12px;
+}
+
+@media (max-width: 1050px) {
+    .grupos-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 650px) {
+    .pagina-grupos {
+        padding: 16px;
+    }
+
+    .grupos-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .grupos-encabezado {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+</style>
+
+{% endblock %}

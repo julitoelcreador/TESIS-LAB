@@ -1,0 +1,513 @@
+
+{% extends "base.html" %}
+
+{% block title %}Comparador de correcciones | TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+.comparador {
+    max-width: 1250px;
+    margin: 30px auto;
+    padding: 20px;
+    color: #17233b;
+}
+
+.comp-encabezado {
+    margin-bottom: 25px;
+}
+
+.comp-encabezado h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.comp-encabezado p {
+    color: #64748b;
+}
+
+.comp-info {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 25px;
+}
+
+.comp-info-card {
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.comp-info-card small {
+    display: block;
+    color: #64748b;
+    margin-bottom: 7px;
+}
+
+.comp-info-card strong {
+    font-size: 20px;
+}
+
+.comp-panel {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 22px;
+}
+
+.comp-panel h2 {
+    font-size: 19px;
+    margin: 0 0 17px;
+}
+
+.comp-columnas {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.comp-columna {
+    min-width: 0;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.comp-columna-titulo {
+    padding: 15px;
+    font-weight: bold;
+    background: #f1f5f9;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.comp-contenido {
+    padding: 17px;
+    min-height: 180px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.8;
+    font-size: 14px;
+}
+
+.comp-igual {
+    color: #334155;
+}
+
+.comp-agregado {
+    background: #dcfce7;
+    color: #166534;
+    border-radius: 3px;
+}
+
+.comp-eliminado {
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 3px;
+    text-decoration: line-through;
+}
+
+.comp-leyenda {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+    font-size: 13px;
+}
+
+.comp-leyenda span {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.comp-color {
+    width: 13px;
+    height: 13px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.comp-observacion {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 12px;
+    cursor: pointer;
+}
+
+.comp-observacion input {
+    margin-top: 5px;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #174ea6;
+    flex-shrink: 0;
+}
+
+.comp-observacion-texto {
+    flex: 1;
+    line-height: 1.6;
+}
+
+.comp-estado {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    margin-top: 7px;
+}
+
+.comp-atendida {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.comp-pendiente {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.comp-resumen {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 15px 0;
+}
+
+.comp-resumen-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 12px 17px;
+}
+
+.comp-boton {
+    display: inline-block;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 9px;
+    background: #174ea6;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.comp-boton:hover {
+    background: #123d85;
+}
+
+.comp-boton-secundario {
+    background: #e2e8f0;
+    color: #334155;
+}
+
+.comp-boton-secundario:hover {
+    background: #cbd5e1;
+}
+
+.comp-acciones {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.comp-vacio {
+    padding: 20px;
+    text-align: center;
+    color: #64748b;
+}
+
+@media (max-width: 800px) {
+    .comp-info {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .comp-columnas {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .comparador {
+        padding: 10px;
+    }
+
+    .comp-info {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="comparador">
+
+    <div class="comp-encabezado">
+
+        <h1>Comparador de correcciones</h1>
+
+        <p>
+            Revisa los cambios realizados por el estudiante
+            y verifica el cumplimiento de las observaciones.
+        </p>
+
+        <strong>{{ investigacion["titulo"] }}</strong>
+
+    </div>
+
+    <!-- INFORMACIÓN DE VERSIONES -->
+
+    <div class="comp-info">
+
+        <div class="comp-info-card">
+            <small>Nivel</small>
+            <strong>{{ version_actual["nivel"] }}</strong>
+        </div>
+
+        <div class="comp-info-card">
+            <small>Versión anterior</small>
+            <strong>v{{ version_anterior["version"] }}</strong>
+        </div>
+
+        <div class="comp-info-card">
+            <small>Versión actual</small>
+            <strong>v{{ version_actual["version"] }}</strong>
+        </div>
+
+        <div class="comp-info-card">
+            <small>Observaciones atendidas</small>
+            <strong>{{ atendidas }} / {{ observaciones|length }}</strong>
+        </div>
+
+    </div>
+
+    <!-- FORMULARIO DE REVISIÓN -->
+
+    <form
+        method="POST"
+        action="{{ url_for(
+            'registrar_revision_correcciones',
+            investigacion_id=investigacion['id'],
+            historial_id=version_actual['id']
+        ) }}"
+    >
+
+        <!-- OBSERVACIONES -->
+
+        <div class="comp-panel">
+
+            <h2>Observaciones de la revisión anterior</h2>
+
+            <p>
+                Marca las observaciones que consideras atendidas.
+                Las que no marques permanecerán como pendientes.
+            </p>
+
+            <div class="comp-resumen">
+
+                <div class="comp-resumen-item">
+                    <strong>{{ atendidas }}</strong>
+                    <small>Atendidas anteriormente</small>
+                </div>
+
+                <div class="comp-resumen-item">
+                    <strong>{{ pendientes }}</strong>
+                    <small>Pendientes anteriormente</small>
+                </div>
+
+            </div>
+
+            {% for observacion in observaciones %}
+
+                <label class="comp-observacion">
+
+                    <input
+                        type="checkbox"
+                        name="atendidas"
+                        value="{{ observacion['id'] }}"
+                        {% if observacion["estado_revision"] == "Atendida" %}
+                            checked
+                        {% endif %}
+                    >
+
+                    <span class="comp-observacion-texto">
+
+                        {{ observacion["texto"] }}
+
+                        <br>
+
+                        {% if observacion["estado_revision"] == "Atendida" %}
+
+                            <span class="comp-estado comp-atendida">
+                                Atendida
+                            </span>
+
+                        {% else %}
+
+                            <span class="comp-estado comp-pendiente">
+                                Pendiente
+                            </span>
+
+                        {% endif %}
+
+                    </span>
+
+                </label>
+
+            {% else %}
+
+                <div class="comp-vacio">
+                    No existen observaciones registradas.
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- COMPARACIÓN DE TEXTOS -->
+
+        <div class="comp-panel">
+
+            <h2>Comparación de versiones</h2>
+
+            <div class="comp-resumen">
+
+                <div class="comp-resumen-item">
+                    <strong style="color:#15803d;">
+                        +{{ comparacion["agregadas"] }}
+                    </strong>
+                    <small>Palabras agregadas</small>
+                </div>
+
+                <div class="comp-resumen-item">
+                    <strong style="color:#b91c1c;">
+                        -{{ comparacion["eliminadas"] }}
+                    </strong>
+                    <small>Palabras eliminadas</small>
+                </div>
+
+            </div>
+
+            <div class="comp-columnas">
+
+                <!-- TEXTO ANTERIOR -->
+
+                <div class="comp-columna">
+
+                    <div class="comp-columna-titulo">
+                        Versión anterior — v{{ version_anterior["version"] }}
+                    </div>
+
+                    <div class="comp-contenido">
+
+                        {% for fragmento in comparacion["anterior"] %}
+
+                            {% if fragmento["tipo"] == "eliminado" %}
+
+                                <span class="comp-eliminado">{{ fragmento["texto"] }}</span>
+
+                            {% else %}
+
+                                <span class="comp-igual">{{ fragmento["texto"] }}</span>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if not version_anterior["texto"] %}
+                            No se registró contenido de texto en esta versión.
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+                <!-- TEXTO ACTUAL -->
+
+                <div class="comp-columna">
+
+                    <div class="comp-columna-titulo">
+                        Versión actual — v{{ version_actual["version"] }}
+                    </div>
+
+                    <div class="comp-contenido">
+
+                        {% for fragmento in comparacion["actual"] %}
+
+                            {% if fragmento["tipo"] == "agregado" %}
+
+                                <span class="comp-agregado">{{ fragmento["texto"] }}</span>
+
+                            {% else %}
+
+                                <span class="comp-igual">{{ fragmento["texto"] }}</span>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                        {% if not version_actual["texto"] %}
+                            No se registró contenido de texto en esta versión.
+                        {% endif %}
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="comp-leyenda">
+
+                <span>
+                    <i class="comp-color" style="background:#dcfce7;"></i>
+                    Texto agregado
+                </span>
+
+                <span>
+                    <i class="comp-color" style="background:#fee2e2;"></i>
+                    Texto eliminado
+                </span>
+
+                <span>
+                    <i class="comp-color" style="background:#e2e8f0;"></i>
+                    Texto sin cambios
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- REGISTRAR REVISIÓN -->
+
+        <div class="comp-acciones">
+
+            <a
+                href="{{ url_for(
+                    'detalle_investigacion',
+                    investigacion_id=investigacion['id']
+                ) }}"
+                class="comp-boton comp-boton-secundario"
+            >
+                Volver a la investigación
+            </a>
+
+            <button type="submit" class="comp-boton">
+                Registrar revisión
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

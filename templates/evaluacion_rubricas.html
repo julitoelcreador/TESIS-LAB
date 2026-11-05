@@ -1,0 +1,283 @@
+
+{% extends "base.html" %}
+
+{% block title %}Rúbricas de evaluación{% endblock %}
+
+{% block content %}
+
+<style>
+.rubrica-contenedor {
+    max-width: 1450px;
+    margin: 25px auto;
+    padding: 20px;
+    color: #17243a;
+}
+
+.rubrica-encabezado {
+    margin-bottom: 25px;
+}
+
+.rubrica-encabezado h1 {
+    margin: 5px 0;
+    font-size: 28px;
+}
+
+.rubrica-encabezado p {
+    color: #718096;
+}
+
+.rubrica-columnas {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.rubrica-panel {
+    background: white;
+    border: 1px solid #e5eaf1;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 4px 15px rgba(20, 40, 70, .04);
+}
+
+.rubrica-panel h2 {
+    font-size: 19px;
+    margin: 0 0 8px;
+}
+
+.rubrica-descripcion {
+    color: #718096;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.rubrica-criterio {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 14px;
+    border: 1px solid #e8edf3;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.rubrica-criterio strong {
+    font-size: 14px;
+}
+
+.rubrica-puntos {
+    color: #2458a6;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.rubrica-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    margin-top: 18px;
+    background: #edf4ff;
+    border-radius: 10px;
+    font-weight: 700;
+}
+
+.rubrica-form {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid #e5eaf1;
+}
+
+.rubrica-form label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin: 12px 0 6px;
+}
+
+.rubrica-form input {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #dce3ec;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.rubrica-boton {
+    border: none;
+    background: #174b91;
+    color: white;
+    padding: 11px 17px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.rubrica-boton:hover {
+    background: #10396f;
+}
+
+.rubrica-eliminar {
+    background: #fff0f0;
+    color: #c03939;
+    border: none;
+    padding: 7px 10px;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.rubrica-nota {
+    font-size: 30px;
+    font-weight: 750;
+    color: #174b91;
+}
+
+.rubrica-aviso {
+    background: #fff8e8;
+    padding: 12px;
+    border-radius: 8px;
+    color: #8a641d;
+    font-size: 13px;
+    margin-top: 15px;
+}
+
+@media(max-width: 850px) {
+    .rubrica-columnas {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="rubrica-contenedor">
+
+    <div class="rubrica-encabezado">
+        <div style="color:#2458a6;font-size:13px;font-weight:700;">
+            EVALUACIÓN
+        </div>
+        <h1>Rúbricas de evaluación</h1>
+        <p>Define los criterios, asigna puntajes y prepara la evaluación de las entregas.</p>
+    </div>
+
+    <div class="rubrica-columnas">
+
+        <!-- COLUMNA IZQUIERDA -->
+        <section class="rubrica-panel">
+
+            <h2>Criterios de evaluación</h2>
+            <div class="rubrica-descripcion">
+                Administra los criterios y distribuye los 100 puntos.
+            </div>
+
+            {% for criterio in criterios %}
+            <div class="rubrica-criterio">
+
+                <div>
+                    <strong>{{ criterio.nombre }}</strong>
+                    <div class="rubrica-puntos">
+                        {{ criterio.puntaje_maximo|int if criterio.puntaje_maximo == criterio.puntaje_maximo|int else criterio.puntaje_maximo }} puntos
+                    </div>
+                </div>
+
+                <form method="POST"
+                      action="{{ url_for('eliminar_criterio_rubrica', criterio_id=criterio.id) }}"
+                      onsubmit="return confirm('¿Eliminar este criterio?');">
+
+                    <button class="rubrica-eliminar" type="submit">
+                        Eliminar
+                    </button>
+                </form>
+
+            </div>
+            {% else %}
+            <p>No hay criterios registrados.</p>
+            {% endfor %}
+
+            <div class="rubrica-total">
+                <span>Total asignado</span>
+                <span>{{ total_puntos|round(2) }}/100 pts</span>
+            </div>
+
+            {% if total_puntos != 100 %}
+            <div class="rubrica-aviso">
+                La rúbrica debe sumar exactamente 100 puntos para poder utilizarse.
+            </div>
+            {% endif %}
+
+            <div class="rubrica-form">
+                <h2>Agregar criterio</h2>
+
+                <form method="POST"
+                      action="{{ url_for('agregar_criterio_rubrica') }}">
+
+                    <label>Nombre del criterio</label>
+                    <input type="text"
+                           name="nombre"
+                           placeholder="Ej. Calidad de investigación"
+                           maxlength="150"
+                           required>
+
+                    <label>Puntaje máximo</label>
+                    <input type="number"
+                           name="puntaje_maximo"
+                           min="0.01"
+                           max="100"
+                           step="0.01"
+                           placeholder="Ej. 15"
+                           required>
+
+                    <button type="submit"
+                            class="rubrica-boton"
+                            style="margin-top:15px;">
+                        + Agregar criterio
+                    </button>
+
+                </form>
+            </div>
+
+        </section>
+
+        <!-- COLUMNA DERECHA -->
+        <section class="rubrica-panel">
+
+            <h2>Calificar entrega</h2>
+
+            <div class="rubrica-descripcion">
+                Selecciona una entrega para asignar su calificación.
+            </div>
+
+            <div style="text-align:center;padding:35px 15px;">
+
+                <div style="font-size:45px;margin-bottom:12px;">📋</div>
+
+                <h3 style="margin-bottom:8px;">
+                    Evaluación de entregas
+                </h3>
+
+                <p style="color:#718096;font-size:14px;">
+                    Aquí conectaremos las entregas de los grupos con los
+                    criterios de evaluación y el cálculo automático de la nota.
+                </p>
+
+                <div class="rubrica-total"
+                     style="margin-top:25px;">
+
+                    <span>Nota máxima</span>
+                    <span class="rubrica-nota">100/100</span>
+
+                </div>
+
+            </div>
+
+            <div class="rubrica-aviso">
+                La calificación individual y el guardado de notas se habilitarán
+                en el siguiente paso, conectando esta sección con las entregas
+                y su historial.
+            </div>
+
+        </section>
+
+    </div>
+</div>
+
+{% endblock %}

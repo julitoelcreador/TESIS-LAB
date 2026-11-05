@@ -1,0 +1,286 @@
+
+{% extends "base.html" %}
+
+{% block title %}Mis estadísticas | TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+    .estadisticas-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 15px;
+        margin-top: 25px;
+    }
+
+    .estadistica-card {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 18px;
+        padding: 23px;
+        min-height: 175px;
+        box-shadow: 0 8px 25px rgba(15,35,65,.07);
+        transition: .25s;
+    }
+
+    .estadistica-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 30px rgba(15,35,65,.12);
+    }
+
+    .estadistica-icono {
+        width: 43px;
+        height: 43px;
+        border-radius: 13px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        margin-bottom: 17px;
+    }
+
+    .estadistica-card h3 {
+        color: #64748b;
+        font-size: 14px;
+        margin: 0 0 8px;
+    }
+
+    .estadistica-numero {
+        color: #10213d;
+        font-size: 34px;
+        font-weight: 800;
+        margin: 0 0 8px;
+    }
+
+    .estadistica-descripcion {
+        color: #94a3b8;
+        font-size: 12px;
+        margin: 0;
+    }
+
+    .icono-azul { background:#e8f1ff; color:#2563eb; }
+    .icono-verde { background:#e6f8ef; color:#16a34a; }
+    .icono-naranja { background:#fff2df; color:#ea8a16; }
+    .icono-morado { background:#f1eaff; color:#8b5cf6; }
+
+    .analisis-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        margin-top: 25px;
+    }
+
+    .analisis-card {
+        background: #fff;
+        border: 1px solid #e8edf4;
+        border-radius: 18px;
+        padding: 25px;
+        box-shadow: 0 8px 25px rgba(15,35,65,.06);
+    }
+
+    .analisis-card h2 {
+        color: #10213d;
+        font-size: 19px;
+        margin: 0 0 22px;
+    }
+
+    .nivel-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 17px 15px;
+        margin-bottom: 11px;
+        background: #f7f9fc;
+        border-radius: 12px;
+        gap: 12px;
+    }
+
+    .nivel-nombre {
+        color: #475569;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .nivel-cantidad {
+        background: #e8f1ff;
+        color: #2563eb;
+        min-width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 800;
+    }
+
+    .fallo-item { margin-bottom: 19px; }
+
+    .fallo-info {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 8px;
+        font-size: 13px;
+    }
+
+    .fallo-nombre {
+        color: #475569;
+        font-weight: 600;
+    }
+
+    .fallo-porcentaje {
+        color: #10213d;
+        font-weight: 800;
+    }
+
+    .fallo-barra {
+        width: 100%;
+        height: 9px;
+        background: #edf1f6;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .fallo-progreso {
+        height: 100%;
+        background: #3b82f6;
+        border-radius: 20px;
+    }
+
+    .analisis-descripcion {
+        color: #94a3b8;
+        font-size: 12px;
+        margin-top: 20px;
+    }
+
+    .estadisticas-vacio {
+        color: #94a3b8;
+        background: #f7f9fc;
+        padding: 20px;
+        border-radius: 12px;
+        font-size: 13px;
+    }
+
+    @media (max-width: 900px) {
+        .estadisticas-grid { grid-template-columns: repeat(2,1fr); }
+        .analisis-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 550px) {
+        .estadisticas-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<h1>Mis estadísticas</h1>
+<p style="color:#94a3b8;">
+    Cómo va tu trabajo de acompañamiento este año.
+</p>
+
+<!-- CUATRO ESTADÍSTICAS -->
+<div class="estadisticas-grid">
+
+    <div class="estadistica-card">
+        <div class="estadistica-icono icono-azul">📄</div>
+        <h3>Entregas revisadas</h3>
+        <p class="estadistica-numero">{{ entregas_revisadas }}</p>
+        <p class="estadistica-descripcion">
+            {{ tutorias_registradas }} tutorías aceptadas
+        </p>
+    </div>
+
+    <div class="estadistica-card">
+        <div class="estadistica-icono icono-verde">⏱️</div>
+        <h3>Días promedio de revisión</h3>
+        <p class="estadistica-numero">
+            {{ dias_promedio if dias_promedio is not none else '—' }}
+        </p>
+        <p class="estadistica-descripcion">
+            Desde el envío hasta la revisión
+        </p>
+    </div>
+
+    <div class="estadistica-card">
+        <div class="estadistica-icono icono-naranja">⭐</div>
+        <h3>Nota promedio</h3>
+        <p class="estadistica-numero">
+            {{ nota_promedio if nota_promedio is not none else '—' }}
+            <span style="font-size:17px;">/100</span>
+        </p>
+        <p class="estadistica-descripcion">
+            De las evaluaciones realizadas
+        </p>
+    </div>
+
+    <div class="estadistica-card">
+        <div class="estadistica-icono icono-morado">🏆</div>
+        <h3>Aprobadas a la primera</h3>
+        <p class="estadistica-numero">{{ porcentaje_primera }}%</p>
+        <p class="estadistica-descripcion">
+            Aprobadas en su primera versión
+        </p>
+    </div>
+
+</div>
+
+<!-- ANÁLISIS DE GRUPOS -->
+<div class="analisis-grid">
+
+    <section class="analisis-card">
+        <h2>Grupos por nivel</h2>
+
+        {% set nombres_niveles = {
+            1: 'Perfil y tema',
+            2: 'Marco teórico',
+            3: 'Metodología y resultados',
+            4: 'Monografía final'
+        } %}
+
+        {% for nivel in range(1, 5) %}
+            <div class="nivel-item">
+                <span class="nivel-nombre">
+                    Nivel {{ nivel }} · {{ nombres_niveles[nivel] }}
+                </span>
+                <span class="nivel-cantidad">
+                    {{ cantidades_nivel.get(nivel, 0) }}
+                </span>
+            </div>
+        {% endfor %}
+    </section>
+
+    <section class="analisis-card">
+        <h2>Dónde fallan más los grupos</h2>
+
+        {% if criterios %}
+            {% for criterio in criterios %}
+                <div class="fallo-item">
+                    <div class="fallo-info">
+                        <span class="fallo-nombre">
+                            {{ criterio.criterio_nombre }}
+                        </span>
+                        <span class="fallo-porcentaje">
+                            {{ criterio.porcentaje }}%
+                        </span>
+                    </div>
+
+                    <div class="fallo-barra">
+                        <div class="fallo-progreso"
+                             style="width: {{ criterio.porcentaje }}%;">
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="estadisticas-vacio">
+                Todavía no hay evaluaciones de rúbricas registradas.
+            </p>
+        {% endif %}
+
+        <p class="analisis-descripcion">
+            Porcentaje promedio obtenido en cada criterio de la rúbrica.
+            Los porcentajes más bajos indican mayores dificultades.
+        </p>
+    </section>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,288 @@
+
+/* =========================================
+   TESIS LAB - ESTILOS DE INNOVACIONES
+========================================= */
+
+:root {
+    --azul: #10264b;
+    --azul-secundario: #174a85;
+    --fondo: #f4f7fb;
+    --blanco: #ffffff;
+    --borde: #e1e7f0;
+    --texto: #18263b;
+    --muted: #64748b;
+}
+
+/* CONFIGURACIÓN GENERAL */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: var(--fondo);
+    color: var(--texto);
+    font-family: Arial, sans-serif;
+}
+
+/* ENCABEZADO */
+
+.encabezado {
+    width: 100%;
+    padding: 22px;
+    background: var(--azul);
+    color: white;
+}
+
+.encabezado-contenido {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.logo {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.logo span {
+    display: block;
+    margin-top: 5px;
+    color: #cbdaf0;
+    font-size: 12px;
+    font-weight: normal;
+}
+
+/* MENÚ */
+
+.menu {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 22px;
+}
+
+.menu a {
+    color: #dbeafe;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.menu a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+/* CONTENIDO */
+
+.contenedor {
+    width: 100%;
+    max-width: 1100px;
+    margin: 30px auto;
+    padding: 0 18px;
+}
+
+/* TÍTULOS */
+
+.titulo-pagina {
+    margin-bottom: 25px;
+}
+
+.titulo-pagina h1 {
+    margin: 0 0 8px;
+    color: var(--azul);
+    font-size: 27px;
+}
+
+.titulo-pagina p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* TARJETAS */
+
+.card {
+    width: 100%;
+    margin-bottom: 16px;
+    padding: 22px;
+    border: 1px solid var(--borde);
+    border-radius: 13px;
+    background: var(--blanco);
+    box-shadow: 0 3px 12px #14294a0a;
+}
+
+.card h2 {
+    margin-top: 0;
+    color: var(--azul);
+    font-size: 19px;
+}
+
+.card p {
+    color: var(--texto);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* INICIO DE INNOVACIONES */
+
+.tarjetas-inicio {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 100%;
+}
+
+.tarjetas-inicio .card {
+    width: 100%;
+}
+
+/* BOTONES */
+
+.btn,
+button {
+    display: inline-block;
+    padding: 11px 16px;
+    border: none;
+    border-radius: 8px;
+    background: var(--azul-secundario);
+    color: white;
+    font-size: 14px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.btn:hover,
+button:hover {
+    opacity: 0.9;
+}
+
+/* FORMULARIOS */
+
+input,
+select,
+textarea {
+    width: 100%;
+    margin: 7px 0 14px;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+/* ESTADOS */
+
+.muted {
+    color: var(--muted);
+}
+
+.pill {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: #edf2f7;
+    font-size: 12px;
+}
+
+.verde {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.amarillo {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.rojo {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* BARRAS DE PROGRESO */
+
+.barra {
+    width: 100%;
+    height: 10px;
+    overflow: hidden;
+    border-radius: 20px;
+    background: #e5e7eb;
+}
+
+.barra span {
+    display: block;
+    height: 100%;
+    background: #2563eb;
+}
+
+/* MENSAJES */
+
+.mensaje {
+    margin: 12px 0;
+    padding: 13px;
+    border-radius: 8px;
+    background: #fff7ed;
+}
+
+/* PIE DE PÁGINA */
+
+.pie {
+    padding: 25px 15px;
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+/* ADAPTACIÓN A CELULARES */
+
+@media (max-width: 600px) {
+
+    .encabezado {
+        padding: 18px;
+    }
+
+    .titulo-pagina h1 {
+        font-size: 23px;
+    }
+
+    .card {
+        padding: 17px;
+    }
+
+}
+
+
+/* INICIO: TARJETAS EN VERTICAL */
+
+.tarjetas-inicio {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+}
+
+.tarjetas-inicio .card {
+    width: 100%;
+    margin: 0;
+    padding: 22px;
+}
+
+.tarjetas-inicio .card h2 {
+    margin-top: 0;
+    margin-bottom: 12px;
+}
+
+.tarjetas-inicio .card p {
+    line-height: 1.6;
+    margin-bottom: 18px;
+}

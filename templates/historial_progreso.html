@@ -1,0 +1,406 @@
+
+{% extends "base.html" %}
+
+{% block title %}Historial de progreso | TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+    .historial-container {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 25px;
+    }
+
+    .historial-header {
+        margin-bottom: 25px;
+    }
+
+    .historial-breadcrumb {
+        color: #718096;
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .historial-header h1 {
+        color: #172b4d;
+        font-size: 27px;
+        margin: 0 0 8px;
+    }
+
+    .historial-descripcion {
+        color: #718096;
+        font-size: 14px;
+    }
+
+    .historial-resumen {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        background: white;
+        border: 1px solid #e5eaf1;
+        border-radius: 13px;
+        padding: 22px 25px;
+        margin-bottom: 25px;
+    }
+
+    .resumen-label {
+        color: #718096;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .resumen-porcentaje {
+        color: #2876d2;
+        font-size: 34px;
+        font-weight: 750;
+    }
+
+    .btn-exportar {
+        background: #2876d2;
+        color: white;
+        text-decoration: none;
+        padding: 11px 17px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-exportar:hover {
+        background: #1d5eac;
+        color: white;
+    }
+
+    .historial-seccion {
+        margin-bottom: 28px;
+    }
+
+    .historial-seccion h2 {
+        color: #172b4d;
+        font-size: 18px;
+        margin-bottom: 15px;
+    }
+
+    .grafica-card {
+        background: white;
+        border: 1px solid #e5eaf1;
+        border-radius: 13px;
+        padding: 22px;
+    }
+
+    .grafica-fila {
+        display: grid;
+        grid-template-columns: 85px 1fr 35px;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 19px;
+    }
+
+    .grafica-fila:last-child {
+        margin-bottom: 0;
+    }
+
+    .grafica-nombre {
+        color: #52627a;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .grafica-fondo {
+        width: 100%;
+        height: 13px;
+        background: #edf2f7;
+        border-radius: 20px;
+        overflow: hidden;
+    }
+
+    .grafica-barra {
+        height: 100%;
+        background: #2876d2;
+        border-radius: 20px;
+        transition: width .3s ease;
+    }
+
+    .grafica-cantidad {
+        color: #172b4d;
+        font-size: 14px;
+        font-weight: 700;
+        text-align: right;
+    }
+
+    .investigaciones-lista {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .investigacion-card {
+        background: white;
+        border: 1px solid #e5eaf1;
+        border-radius: 12px;
+        padding: 19px 21px;
+    }
+
+    .investigacion-titulo {
+        color: #172b4d;
+        font-size: 15px;
+        font-weight: 700;
+        margin-bottom: 9px;
+        line-height: 1.5;
+    }
+
+    .investigacion-informacion {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .investigacion-grupo {
+        color: #718096;
+        font-size: 13px;
+    }
+
+    .investigacion-porcentaje {
+        color: #2876d2;
+        font-size: 19px;
+        font-weight: 750;
+    }
+
+    .sin-investigaciones {
+        background: white;
+        border: 1px dashed #cbd5e0;
+        border-radius: 12px;
+        padding: 35px 20px;
+        text-align: center;
+        color: #718096;
+        font-size: 14px;
+    }
+    .grafica-card {
+        background: white;
+        border: 1px solid #e5eaf1;
+        border-radius: 13px;
+        padding: 22px;
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 18px;
+        }
+
+    .grafica-fila {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+    .grafica-nombre {
+        color: #52627a;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .grafica-fondo {
+        width: 100%;
+        height: 130px;
+        background: #edf2f7;
+        border-radius: 9px;
+        overflow: hidden;
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .grafica-barra {
+        width: 100%;
+        background: #2876d2;
+        border-radius: 8px 8px 0 0;
+        transition: height .3s ease;
+    }
+
+    .grafica-cantidad {
+        color: #172b4d;
+        font-size: 17px;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    @media (max-width: 650px) {
+        .grafica-card {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    @media (max-width: 650px) {
+        .historial-container {
+            padding: 15px;
+        }
+
+        .historial-resumen {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .grafica-card {
+            padding: 16px;
+        }
+
+        .grafica-fila {
+            grid-template-columns: 65px 1fr 25px;
+            gap: 8px;
+        }
+    }
+
+    @media print {
+        .btn-exportar {
+            display: none;
+        }
+
+        .historial-container {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<div class="historial-container">
+
+    <!-- ENCABEZADO -->
+
+    <div class="historial-header">
+
+        <div class="historial-breadcrumb">
+            Administración / Historial de progreso
+        </div>
+
+        <h1>Historial de progreso</h1>
+
+        <div class="historial-descripcion">
+            Seguimiento general del avance de las investigaciones académicas.
+        </div>
+
+    </div>
+
+
+    <!-- RESUMEN GENERAL -->
+
+    <div class="historial-resumen">
+
+        <div>
+            <div class="resumen-label">
+                Avance promedio de la gestión
+            </div>
+
+            <div class="resumen-porcentaje">
+                {{ avance_promedio }}%
+            </div>
+        </div>
+
+        <button
+            type="button"
+            class="btn-exportar"
+            onclick="window.print()"
+        >
+            Exportar reporte
+        </button>
+
+    </div>
+
+
+    <!-- INVESTIGACIONES POR NIVEL -->
+
+    <section class="historial-seccion">
+
+        <h2>Investigaciones por nivel</h2>
+
+        <div class="grafica-card">
+
+            {% set maximo = namespace(valor=1) %}
+
+            {% for item in investigaciones_por_nivel %}
+                {% if item.cantidad > maximo.valor %}
+                    {% set maximo.valor = item.cantidad %}
+                {% endif %}
+            {% endfor %}
+
+            {% for item in investigaciones_por_nivel %}
+
+                <div class="grafica-fila">
+
+                    <div class="grafica-nombre">
+                        Nivel {{ item.nivel }}
+                    </div>
+
+                    <div class="grafica-fondo">
+
+                        <div
+                            class="grafica-barra"
+                            style="height: {{ (item.cantidad * 100 / maximo.valor)|round }}%;"
+                        ></div>
+
+                    </div>
+
+                    <div class="grafica-cantidad">
+                        {{ item.cantidad }}
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- DETALLE POR INVESTIGACIÓN -->
+
+    <section class="historial-seccion">
+
+        <h2>Detalle por investigación</h2>
+
+        {% if investigaciones %}
+
+            <div class="investigaciones-lista">
+
+                {% for investigacion in investigaciones %}
+
+                    <article class="investigacion-card">
+
+                        <div class="investigacion-titulo">
+                            {{ investigacion.titulo }}
+                        </div>
+
+                        <div class="investigacion-informacion">
+
+                            <div class="investigacion-grupo">
+                                {{ investigacion.grupo_nombre }}
+                                · Nivel {{ investigacion.nivel_actual }}
+                            </div>
+
+                            <div class="investigacion-porcentaje">
+                                {{ investigacion.porcentaje_avance }}%
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="sin-investigaciones">
+                Todavía no hay investigaciones registradas.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}

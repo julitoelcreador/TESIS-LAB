@@ -1,0 +1,168 @@
+
+{% extends "base.html" %}
+
+{% block title %}Revisor de estructura | TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+    .revisor-pagina {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+    }
+
+    .revisor-encabezado {
+        padding: 28px;
+        border-radius: 16px;
+        background: linear-gradient(120deg, #102b50, #1b579c);
+        color: white;
+    }
+
+    .revisor-encabezado h1 {
+        margin: 0 0 10px;
+        font-size: 26px;
+    }
+
+    .revisor-encabezado p {
+        margin: 0;
+        color: #dceaff;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    .revisor-lista {
+        display: flex;
+        flex-direction: column;
+        gap: 13px;
+    }
+
+    .revisor-investigacion {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 20px;
+        border: 1px solid #e0e7f0;
+        border-radius: 13px;
+        background: white;
+    }
+
+    .revisor-investigacion h3 {
+        margin: 0 0 8px;
+        color: #17365f;
+        font-size: 16px;
+    }
+
+    .revisor-investigacion p {
+        margin: 4px 0;
+        color: #64748b;
+        font-size: 12px;
+    }
+
+    .revisor-boton {
+        display: inline-block;
+        flex-shrink: 0;
+        padding: 11px 16px;
+        border-radius: 9px;
+        background: #1756a0;
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .revisor-boton:hover {
+        background: #10447f;
+    }
+
+    .revisor-vacio {
+        padding: 28px;
+        border: 1px dashed #cbd5e1;
+        border-radius: 13px;
+        background: white;
+        color: #64748b;
+        text-align: center;
+        line-height: 1.7;
+    }
+
+    @media (max-width: 600px) {
+        .revisor-investigacion {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+
+        .revisor-boton {
+            width: 100%;
+            text-align: center;
+        }
+    }
+</style>
+
+<div class="revisor-pagina">
+
+    <section class="revisor-encabezado">
+        <h1>📝 Revisor de estructura académica</h1>
+
+        <p>
+            Selecciona una investigación para revisar su estructura,
+            consultar el checklist académico y detectar posibles
+            observaciones sobre citas y referencias.
+        </p>
+    </section>
+
+    <section class="revisor-lista">
+
+        {% for investigacion in investigaciones_revisor %}
+
+            <article class="revisor-investigacion">
+
+                <div>
+                    <h3>{{ investigacion["titulo"] }}</h3>
+
+                    <p>
+                        <strong>Grupo:</strong>
+                        {{ investigacion["grupo_nombre"] or "Sin grupo" }}
+                    </p>
+
+                    <p>
+                        <strong>Área:</strong>
+                        {{ investigacion["area_principal"] or "No definida" }}
+                    </p>
+
+                    <p>
+                        <strong>Subárea:</strong>
+                        {{ investigacion["subarea"] or "No definida" }}
+                    </p>
+                </div>
+
+                <a
+                    href="{{ url_for(
+                        'revisor_academico',
+                        investigacion_id=investigacion['id']
+                    ) }}"
+                    class="revisor-boton"
+                >
+                    Revisar estructura →
+                </a>
+
+            </article>
+
+        {% else %}
+
+            <div class="revisor-vacio">
+                <h3>No hay investigaciones disponibles</h3>
+
+                <p>
+                    Cuando tengas una investigación asignada,
+                    aparecerá aquí para que puedas revisarla.
+                </p>
+            </div>
+
+        {% endfor %}
+
+    </section>
+
+</div>
+
+{% endblock %}

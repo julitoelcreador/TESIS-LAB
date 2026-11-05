@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block title %}Catálogo Académico · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+.catalogo-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 8px 0 35px;
+}
+
+
+
+.catalogo-hero {
+    padding: 10px 0 20px !important;
+    margin-bottom: 24px;
+    background: transparent !important;
+    color: #102343 !important;
+    box-shadow: none !important;
+}
+
+.catalogo-eyebrow {
+    display: block;
+    margin-bottom: 10px;
+    color: #0759b5 !important;
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    opacity: 1 !important;
+}
+
+.catalogo-hero h1 {
+    display: block;
+    margin: 0 0 12px;
+    color: #102343 !important;
+    font-size: 32px;
+    font-weight: 900;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.catalogo-hero p {
+    margin: 0;
+    color: #334966 !important;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.8;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.catalogo-card {
+    padding: 23px;
+    margin-bottom: 18px;
+    border: 1px solid #e2e9f2;
+    border-radius: 17px;
+    background: white;
+    box-shadow: 0 5px 18px rgba(15, 35, 65, .04);
+}
+
+.catalogo-search {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 22px;
+}
+
+.catalogo-search input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 1px solid #dce4ef;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 13px;
+}
+
+.catalogo-search button {
+    padding: 12px 19px;
+    border: 0;
+    border-radius: 10px;
+    background: #0878ed;
+    color: white;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.catalogo-count {
+    margin-bottom: 16px;
+    color: #718096;
+    font-size: 12px;
+}
+
+.catalogo-item {
+    padding: 20px;
+    margin-bottom: 13px;
+    border: 1px solid #e3eaf3;
+    border-radius: 14px;
+    background: #fff;
+}
+
+.catalogo-item:last-child {
+    margin-bottom: 0;
+}
+
+.catalogo-item h2 {
+    margin: 0 0 14px;
+    color: #102343;
+    font-size: 17px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.catalogo-details {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.catalogo-detail {
+    padding: 11px 12px;
+    border-radius: 9px;
+    background: #f5f8fc;
+    overflow-wrap: anywhere;
+}
+
+.catalogo-detail span {
+    display: block;
+    margin-bottom: 5px;
+    color: #718096;
+    font-size: 10px;
+    font-weight: 750;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.catalogo-detail strong {
+    color: #263c5b;
+    font-size: 12px;
+}
+
+.catalogo-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 10px;
+    border-radius: 20px;
+    background: #edf3fa;
+    color: #435873;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.catalogo-status.asignada {
+    background: #e5f7ed;
+    color: #17663a;
+}
+
+.catalogo-empty {
+    padding: 35px 20px;
+    text-align: center;
+    color: #718096;
+    font-size: 13px;
+    line-height: 1.8;
+}
+
+@media (max-width: 600px) {
+    .catalogo-hero {
+        padding: 22px 17px;
+    }
+
+    .catalogo-card {
+        padding: 16px;
+    }
+
+    .catalogo-search {
+        flex-direction: column;
+    }
+
+    .catalogo-search button {
+        width: 100%;
+    }
+
+    .catalogo-details {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .catalogo-item {
+        padding: 15px;
+    }
+}
+
+.catalogo-search select {
+    min-width: 190px;
+    padding: 12px 14px;
+    border: 1px solid #dce4ef;
+    border-radius: 10px;
+    background: white;
+    color: #263c5b;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-solicitar-tutoria {
+    padding: 9px 13px;
+    border: none;
+    border-radius: 8px;
+    background: #0878ed;
+    color: white;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.btn-solicitar-tutoria:hover {
+    background: #0759b5;
+}
+</style>
+
+<div class="catalogo-page">
+
+    <section class="catalogo-hero">
+        <span class="catalogo-eyebrow">
+            TESIS LAB · INVESTIGACIÓN ACADÉMICA
+        </span>
+
+        <h1>📚 Catálogo Académico</h1>
+
+        <p>
+            Explora las investigaciones, consulta sus áreas y tutores
+            responsables y encuentra los trabajos registrados en la plataforma.
+        </p>
+    </section>
+
+    <section class="catalogo-card">
+
+        <form method="GET"
+        action="{{ url_for('catalogo_academico') }}"
+        class="catalogo-search">
+
+        <input
+        type="text"
+        name="buscar"
+        value="{{ buscar }}"
+        placeholder="Buscar por título, integrante o tutor..."
+      >
+
+        <select name="area">
+        <option value="">Todas las áreas</option>
+
+        {% for area in areas %}
+            <option value="{{ area }}"
+                {% if area_seleccionada == area %}selected{% endif %}>
+                {{ area }}
+            </option>
+        {% endfor %}
+        </select>
+           <button type="submit">Filtrar</button>
+
+        </form>
+
+        <div class="catalogo-count">
+            {{ catalogo_investigaciones|length }}
+            investigación(es) encontrada(s)
+        </div>
+
+        {% if catalogo_investigaciones %}
+
+            {% for investigacion in catalogo_investigaciones %}
+
+                <article class="catalogo-item">
+
+                    <h2>
+                        {{ investigacion['titulo'] }}
+                    </h2>
+
+                    <div class="catalogo-details">
+
+                        <div class="catalogo-detail">
+                        <span>Integrantes del grupo</span>
+                        <strong>
+                        {{ investigacion['integrantes'] or 'Sin integrantes registrados' }}
+                        </strong>
+                        </div>
+                       <div class="catalogo-detail">
+                        <span>Área</span>
+                        <strong>
+                        {{ investigacion['area_principal'] }}
+                        </strong>
+                        </div>
+                       <div class="catalogo-detail">
+                        <span>Tutor responsable</span>
+
+                        <strong>
+                        {% if investigacion['profesor_id'] %}
+                        {{ investigacion['tutor_nombre'] or '' }}
+                        {{ investigacion['tutor_apellido'] or '' }}
+                        {% else %}
+                        Sin tutor asignado
+                        {% endif %}
+                        </strong>
+
+                        <div style="margin-top: 10px;">
+                        <button type="button" class="btn-solicitar-tutoria">
+                        Solicitar tutoría
+                        </button>
+                        </div>
+                    </div>
+
+                    {% if investigacion['profesor_id'] == usuario['id'] %}
+
+                        <span class="catalogo-status asignada">
+                            ✓ Asignada a ti
+                        </span>
+
+                    {% elif investigacion['profesor_id'] %}
+
+                        <span class="catalogo-status">
+                            Asignada a otro tutor
+                        </span>
+
+                    {% else %}
+
+                        <span class="catalogo-status">
+                            Sin tutor asignado
+                        </span>
+
+                    {% endif %}
+
+                </article>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="catalogo-empty">
+                <div style="font-size: 35px;">🔎</div>
+                <strong>No se encontraron investigaciones.</strong>
+                <br>
+                Prueba con otro título, grupo o nombre de tutor.
+            </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+{% endblock %}

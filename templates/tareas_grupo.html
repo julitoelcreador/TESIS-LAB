@@ -1,0 +1,588 @@
+
+{% extends "base.html" %}
+
+{% block title %}Tareas del grupo · TESIS LAB{% endblock %}
+
+{% block content %}
+
+<style>
+.tareas-page {
+    width: min(1100px, 94%);
+    margin: 25px auto 45px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    color: #172b4d;
+}
+
+.tareas-card {
+    background: white;
+    border: 1px solid #e5eaf2;
+    border-radius: 15px;
+    padding: 23px;
+    box-shadow: 0 4px 15px rgba(20, 40, 80, .05);
+    min-width: 0;
+}
+
+.tareas-card h2 {
+    font-size: 19px;
+    margin: 0 0 18px;
+}
+
+/* RENDIMIENTO DE INTEGRANTES */
+
+.integrantes-rendimiento {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 15px;
+    width: 100%;
+}
+
+.integrante-rendimiento {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    min-width: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.integrante-rendimiento strong {
+    display: block;
+    color: #172554;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.integrante-rendimiento p {
+    color: #64748b;
+    font-size: 14px;
+    margin: 0;
+}
+
+/* BARRAS DE PROGRESO */
+
+.barra-fondo {
+    width: 100%;
+    height: 8px;
+    background: #edf0f5;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.barra-progreso {
+    height: 100%;
+    background: #2563eb;
+    border-radius: 20px;
+}
+
+/* DISTRIBUCIÓN DE TAREAS Y FORMULARIO */
+
+.tareas-contenido {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 20px;
+    align-items: start;
+}
+
+.tareas-lista {
+    min-width: 0;
+}
+
+.tareas-asignar {
+    padding: 18px;
+    position: sticky;
+    top: 20px;
+}
+
+.tareas-asignar h2 {
+    font-size: 17px;
+}
+
+/* FILTROS */
+
+.filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-bottom: 18px;
+}
+
+.filtro {
+    padding: 9px 15px;
+    border: 1px solid #dce3ed;
+    border-radius: 9px;
+    color: #34445e;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+.filtro.activo {
+    background: #15366b;
+    color: white;
+    border-color: #15366b;
+}
+
+/* TARJETAS DE TAREAS */
+
+.tarea-item {
+    border: 1px solid #e5eaf2;
+    border-radius: 12px;
+    padding: 17px;
+    margin-bottom: 12px;
+}
+
+.tarea-superior {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.tarea-item h3 {
+    font-size: 16px;
+    margin: 0 0 8px;
+}
+
+.tarea-detalle {
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* ESTADOS */
+
+.estado {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.estado-pendiente {
+    background: #fff4d6;
+    color: #946200;
+}
+
+.estado-completada {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.estado-atrasada {
+    color: #b42318;
+    font-weight: 700;
+}
+
+/* FORMULARIO */
+
+.tareas-form {
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+}
+
+.tareas-form label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.tareas-form input,
+.tareas-form select,
+.tareas-form textarea {
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid #dce3ed;
+    border-radius: 9px;
+    font: inherit;
+    box-sizing: border-box;
+}
+
+.tareas-form textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.btn-tarea {
+    border: none;
+    background: #15366b;
+    color: white;
+    padding: 11px 17px;
+    border-radius: 9px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-completar {
+    border: 1px solid #cbd5e1;
+    background: white;
+    color: #334155;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.sin-datos {
+    color: #64748b;
+    text-align: center;
+    padding: 22px 10px;
+}
+
+/* DISEÑO RESPONSIVE */
+
+@media (max-width: 800px) {
+    .tareas-contenido {
+        grid-template-columns: 1fr;
+    }
+
+    .tareas-asignar {
+        position: static;
+    }
+}
+
+@media (max-width: 650px) {
+    .integrantes-rendimiento {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .tareas-card {
+        padding: 17px;
+    }
+}
+
+.rendimiento-card {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+</style>
+
+
+<div class="tareas-page">
+
+    <!-- ================================================ -->
+    <!-- RENDIMIENTO POR INTEGRANTE                       -->
+    <!-- ================================================ -->
+
+    <section class="rendimiento-card">
+        <h2>Rendimiento por integrante</h2>
+
+        <div class="integrantes-rendimiento">
+
+            {% for miembro in miembros %}
+
+                {% set porcentaje = (miembro["terminadas"] * 100 / miembro["total"]) if miembro["total"] > 0 else 0 %}
+
+                <div class="integrante-rendimiento">
+
+                    <strong>
+                        {{ miembro["nombre"] }} {{ miembro["apellido"] }}
+                    </strong>
+
+                    <p>
+                        Le faltan
+                        {{ miembro["total"] - miembro["terminadas"] }}
+                        de {{ miembro["total"] }} tareas
+                    </p>
+
+                    <div class="barra-fondo" style="margin-top: 15px;">
+
+                        <div
+                            class="barra-progreso"
+                            style="width: {{ porcentaje }}%;">
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <p class="sin-datos">
+                    Todavía no hay integrantes registrados.
+                </p>
+
+            {% endfor %}
+
+        </div>
+
+    </section>
+
+
+    <!-- ================================================ -->
+    <!-- LISTA DE TAREAS Y ASIGNACIÓN                     -->
+    <!-- ================================================ -->
+
+    <div class="tareas-contenido">
+
+        <!-- LISTA DE TAREAS: IZQUIERDA -->
+
+        <section class="tareas-card tareas-lista">
+
+            <h2>Lista de tareas</h2>
+
+            <p>
+                <strong>
+                    {{ total_terminadas }} de {{ total_tareas }} terminadas
+                </strong>
+            </p>
+
+            <!-- FILTROS -->
+
+            <div class="filtros">
+
+                <a
+                    class="filtro {% if filtro == 'Todas' %}activo{% endif %}"
+                    href="{{ url_for('tareas_grupo_innovacion', investigacion_id=investigacion['id'], filtro='Todas') }}">
+                    Todas
+                </a>
+
+                <a
+                    class="filtro {% if filtro == 'Pendientes' %}activo{% endif %}"
+                    href="{{ url_for('tareas_grupo_innovacion', investigacion_id=investigacion['id'], filtro='Pendientes') }}">
+                    Pendientes
+                </a>
+
+                <a
+                    class="filtro {% if filtro == 'Terminadas' %}activo{% endif %}"
+                    href="{{ url_for('tareas_grupo_innovacion', investigacion_id=investigacion['id'], filtro='Terminadas') }}">
+                    Terminadas
+                </a>
+
+            </div>
+
+
+            <!-- TAREAS REGISTRADAS -->
+
+            {% for tarea in tareas %}
+
+                <article class="tarea-item">
+
+                    <div class="tarea-superior">
+
+                        <div>
+
+                            <h3>
+                                {{ tarea["titulo"] }}
+                            </h3>
+
+                            <div class="tarea-detalle">
+
+                                Responsable:
+
+                                {{ tarea["nombre"] or "Sin asignar" }}
+                                {{ tarea["apellido"] or "" }}
+
+                                <br>
+
+                                Fecha límite:
+
+                                {{ tarea["fecha_limite"] or "Sin fecha" }}
+
+                            </div>
+
+                        </div>
+
+                        <div>
+
+                            {% if tarea["estado"] == "Completada" %}
+
+                                <span class="estado estado-completada">
+                                    Terminada
+                                </span>
+
+                            {% else %}
+
+                                <span class="estado estado-pendiente">
+                                    Pendiente
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DESCRIPCIÓN -->
+
+                    {% if tarea["descripcion"] %}
+
+                        <p class="tarea-detalle">
+                            {{ tarea["descripcion"] }}
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- AVISO DE ATRASO -->
+
+                    {% if tarea["atrasada"] %}
+
+                        <p class="estado-atrasada">
+                            Esta tarea está atrasada.
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- COMPLETAR TAREA -->
+
+                    {% if tarea["estado"] != "Completada" %}
+
+                        {% if usuario["rol"] != "estudiante" or tarea["responsable_id"] == usuario["id"] %}
+
+                            <form
+                                method="POST"
+                                action="{{ url_for('completar_tarea_grupal', tarea_id=tarea['id']) }}">
+
+                                <button
+                                    type="submit"
+                                    class="btn-completar">
+
+                                    Marcar como terminada
+
+                                </button>
+
+                            </form>
+
+                        {% endif %}
+
+                    {% endif %}
+
+                </article>
+
+            {% else %}
+
+                <p class="sin-datos">
+                    No hay tareas para mostrar con este filtro.
+                </p>
+
+            {% endfor %}
+
+        </section>
+
+
+        <!-- ============================================ -->
+        <!-- ASIGNAR TAREA: DERECHA                       -->
+        <!-- ============================================ -->
+
+        {% if puede_asignar %}
+
+            <section class="tareas-card tareas-asignar">
+
+                <h2>Asignar tarea</h2>
+
+                <form
+                    method="POST"
+                    class="tareas-form">
+
+                    <!-- TÍTULO -->
+
+                    <div>
+
+                        <label for="titulo">
+                            Título de la tarea
+                        </label>
+
+                        <input
+                            type="text"
+                            id="titulo"
+                            name="titulo"
+                            placeholder="Ej. Buscar antecedentes"
+                            required>
+
+                    </div>
+
+
+                    <!-- DESCRIPCIÓN -->
+
+                    <div>
+
+                        <label for="descripcion">
+                            Descripción
+                        </label>
+
+                        <textarea
+                            id="descripcion"
+                            name="descripcion"
+                            placeholder="Describe qué debe realizar el integrante..."></textarea>
+
+                    </div>
+
+
+                    <!-- RESPONSABLE -->
+
+                    <div>
+
+                        <label for="responsable_id">
+                            Responsable
+                        </label>
+
+                        <select
+                            id="responsable_id"
+                            name="responsable_id">
+
+                            <option value="">
+                                Sin asignar
+                            </option>
+
+                            {% for miembro in miembros %}
+
+                                <option value="{{ miembro['id'] }}">
+                                    {{ miembro["nombre"] }}
+                                    {{ miembro["apellido"] }}
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- FECHA LÍMITE -->
+
+                    <div>
+
+                        <label for="fecha_limite">
+                            Fecha límite
+                        </label>
+
+                        <input
+                            type="date"
+                            id="fecha_limite"
+                            name="fecha_limite">
+
+                    </div>
+
+
+                    <!-- BOTÓN -->
+
+                    <button
+                        type="submit"
+                        class="btn-tarea">
+
+                        Crear tarea
+
+                    </button>
+
+                </form>
+
+            </section>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}
